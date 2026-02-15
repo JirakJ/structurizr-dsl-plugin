@@ -2,6 +2,20 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.2.4] - 2026-02-15
+
+### Added
+- **Context Validation Inspection** (FR-503) — detects invalid parent-child nesting (container outside softwareSystem, etc.)
+- **Relationship Validation Inspection** (FR-504) — warns on self-referencing relationships, unresolved targets, `this` outside element scope
+- **Rename Refactoring** (FR-607) — Shift+F6 with identifier validation
+- **Go to Symbol** (FR-407) — Ctrl+Alt+Shift+N for project-wide identifier search
+- **!include File Navigation** (FR-207/FR-406) — Ctrl+Click on file paths in `!include` directives
+- **Tag Completion** (FR-303) — suggests tags used across workspace
+- **Style Property Completion** (FR-305) — context-aware completion for shapes, colors, borders, routing
+- **Deprecated Keyword Strikethrough** (FR-505) — visual warning for `!ref`, `!extend`, `!constant`
+- 7 new live templates: `depenv`, `depnode`, `dynview`, `filtview`, `infnode`, `inc`, `cst`
+- 192 new tests (866 total)
+
 ## [2026.2.3] - 2026-02-15
 
 ### Added

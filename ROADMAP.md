@@ -23,27 +23,27 @@
 - [x] Export to SVG/PNG/PlantUML/Mermaid (Pro)
 - [x] CLI integration with auto-download (Pro)
 - [x] Global + project settings
-- [x] 674 unit tests
+- [x] 866 unit tests
 
 ---
 
 ### 🔜 Next Release (v2026.3.x)
 
 #### Must Have
-- [ ] **FR-503: Context Validation Inspection** — explicit inspection for invalid parent-child nesting (e.g., `container` outside `softwareSystem`)
-- [ ] **FR-207: `!include` File Resolution** — resolve `!include` paths to actual files, enable Ctrl+Click on paths
-- [ ] **FR-405: File Structure Popup** — Ctrl+F12 popup showing file structure
-- [ ] **FR-407: Go to Symbol** — Ctrl+Alt+Shift+N for project-wide symbol search
-- [ ] **FR-504: Relationship Validation** — validate allowed source/destination combinations per C4 model
-- [ ] **Rename Refactoring** (FR-607) — Shift+F6 to rename identifiers across all references
+- [x] ~~**FR-503: Context Validation Inspection**~~ ✅ v2026.2.4
+- [x] ~~**FR-207: `!include` File Resolution**~~ ✅ v2026.2.4
+- [ ] **FR-405: File Structure Popup** — Ctrl+F12 popup showing file structure (works via Structure View)
+- [x] ~~**FR-407: Go to Symbol**~~ ✅ v2026.2.4
+- [x] ~~**FR-504: Relationship Validation**~~ ✅ v2026.2.4
+- [x] ~~**Rename Refactoring** (FR-607)~~ ✅ v2026.2.4
 
 #### Should Have
-- [ ] **FR-303: Tag Completion** — collect and suggest tags used across the workspace
+- [x] ~~**FR-303: Tag Completion**~~ ✅ v2026.2.4
 - [ ] **FR-304: Snippet Templates** — workspace, view, and deployment boilerplate snippets
-- [ ] **FR-305: Style Property Completion** — complete shape, colour, icon values in styles blocks
-- [ ] **FR-406: Navigate to !include'd Files** — Ctrl+Click on file paths in `!include` directives
-- [ ] **FR-505: Deprecated Keyword Warnings** — strikethrough + suggestion for `!extend`, `!ref`
-- [ ] **FR-606: More Live Templates** — deployment environment, dynamic view, filtered view
+- [x] ~~**FR-305: Style Property Completion**~~ ✅ v2026.2.4
+- [x] ~~**FR-406: Navigate to !include'd Files**~~ ✅ v2026.2.4
+- [x] ~~**FR-505: Deprecated Keyword Warnings**~~ ✅ v2026.2.4
+- [x] ~~**FR-606: More Live Templates**~~ ✅ v2026.2.4 (7 new templates)
 
 ---
 
