@@ -168,6 +168,15 @@ extends CompletionProvider<CompletionParameters> {
             result.addElement((LookupElement)LookupElementBuilder.create((String)directive).withTypeText("directive").withBoldness(true));
         }
         this.addLiveTemplates(result);
+        $this$forEach$iv = (Iterable)OTHER_KEYWORDS;
+        $i$f$forEach = false;
+        iterator = $this$forEach$iv.iterator();
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            keyword = (String)object;
+            bl = false;
+            result.addElement((LookupElement)LookupElementBuilder.create((String)keyword).withIcon(StructurizrIcons.WORKSPACE).withTypeText("keyword"));
+        }
     }
 
     private final Icon getIconForElement(String keyword) {
@@ -210,17 +219,17 @@ extends CompletionProvider<CompletionParameters> {
     }
 
     static {
-        CORE_KEYWORDS = java.util.Arrays.asList("workspace", "model", "views", "configuration");
-        Pair[] pairArray = new Pair[]{TuplesKt.to((Object)"person", (Object)"model element"), TuplesKt.to((Object)"softwareSystem", (Object)"model element"), TuplesKt.to((Object)"container", (Object)"model element"), TuplesKt.to((Object)"component", (Object)"model element"), TuplesKt.to((Object)"group", (Object)"grouping"), TuplesKt.to((Object)"enterprise", (Object)"boundary")};
+        CORE_KEYWORDS = java.util.Arrays.asList("workspace", "model", "views", "configuration", "archetypes");
+        Pair[] pairArray = new Pair[]{TuplesKt.to((Object)"person", (Object)"model element"), TuplesKt.to((Object)"softwareSystem", (Object)"model element"), TuplesKt.to((Object)"container", (Object)"model element"), TuplesKt.to((Object)"component", (Object)"model element"), TuplesKt.to((Object)"group", (Object)"grouping"), TuplesKt.to((Object)"enterprise", (Object)"boundary"), TuplesKt.to((Object)"element", (Object)"model element")};
         MODEL_ELEMENTS = MapsKt.mapOf(pairArray);
-        DEPLOYMENT_KEYWORDS = java.util.Arrays.asList("deploymentEnvironment", "deploymentGroup", "deploymentNode", "infrastructureNode", "softwareSystemInstance", "containerInstance");
+        DEPLOYMENT_KEYWORDS = java.util.Arrays.asList("deploymentEnvironment", "deploymentGroup", "deploymentNode", "infrastructureNode", "softwareSystemInstance", "containerInstance", "instanceOf", "healthCheck");
         VIEW_KEYWORDS = java.util.Arrays.asList("systemLandscape", "systemContext", "container", "component", "dynamic", "deployment", "filtered", "custom", "image");
         STYLE_KEYWORDS = java.util.Arrays.asList("styles", "element", "relationship", "themes", "theme", "branding", "terminology");
         STYLE_PROPERTIES = java.util.Arrays.asList("shape", "icon", "width", "height", "background", "color", "colour", "stroke", "strokeWidth", "fontSize", "border", "opacity", "metadata", "thickness", "style", "routing", "position", "dashed");
         SHAPES = java.util.Arrays.asList("Box", "RoundedBox", "Circle", "Ellipse", "Hexagon", "Cylinder", "Pipe", "Person", "Robot", "Folder", "WebBrowser", "MobileDevicePortrait", "MobileDeviceLandscape", "Component");
         LAYOUT_DIRECTIONS = java.util.Arrays.asList("tb", "bt", "lr", "rl");
-        DIRECTIVES = java.util.Arrays.asList("!include", "!docs", "!adrs", "!identifiers", "!impliedRelationships", "!constant", "!const", "!var", "!plugin", "!script");
-        OTHER_KEYWORDS = java.util.Arrays.asList("include", "exclude", "autoLayout", "default", "animation", "title", "description", "tags", "url", "properties", "perspectives", "users", "extends", "ref", "this", "true", "false", "read", "write", "private", "public", "hierarchical", "flat");
+        DIRECTIVES = java.util.Arrays.asList("!include", "!docs", "!adrs", "!identifiers", "!impliedRelationships", "!constant", "!const", "!var", "!plugin", "!script", "!components", "!extend", "!ref", "!element", "!elements", "!relationship", "!relationships");
+        OTHER_KEYWORDS = java.util.Arrays.asList("include", "exclude", "autoLayout", "default", "animation", "title", "description", "tag", "tags", "technology", "instances", "url", "properties", "perspectives", "users", "extends", "ref", "this", "true", "false", "read", "write", "private", "public", "hierarchical", "flat", "light", "dark");
     }
 
     @Metadata(mv={2, 0, 0}, k=1, xi=48, d1={"\u0000 \n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0003\n\u0002\u0010 \n\u0002\u0010\u000e\n\u0002\b\u0003\n\u0002\u0010$\n\u0002\b\u0013\b\u0086\u0003\u0018\u00002\u00020\u0001B\t\b\u0002\u00a2\u0006\u0004\b\u0002\u0010\u0003R\u0017\u0010\u0004\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0007\u0010\bR\u001d\u0010\t\u001a\u000e\u0012\u0004\u0012\u00020\u0006\u0012\u0004\u0012\u00020\u00060\n\u00a2\u0006\b\n\u0000\u001a\u0004\b\u000b\u0010\fR\u0017\u0010\r\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u000e\u0010\bR\u0017\u0010\u000f\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0010\u0010\bR\u0017\u0010\u0011\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0012\u0010\bR\u0017\u0010\u0013\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0014\u0010\bR\u0017\u0010\u0015\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0016\u0010\bR\u0017\u0010\u0017\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0018\u0010\bR\u0017\u0010\u0019\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u001a\u0010\bR\u0017\u0010\u001b\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u001c\u0010\b\u00a8\u0006\u001d"}, d2={"Lcom/jakubjirak/structurizr/completion/StructurizrCompletionProvider$Companion;", "", "<init>", "()V", "CORE_KEYWORDS", "", "", "getCORE_KEYWORDS", "()Ljava/util/List;", "MODEL_ELEMENTS", "", "getMODEL_ELEMENTS", "()Ljava/util/Map;", "DEPLOYMENT_KEYWORDS", "getDEPLOYMENT_KEYWORDS", "VIEW_KEYWORDS", "getVIEW_KEYWORDS", "STYLE_KEYWORDS", "getSTYLE_KEYWORDS", "STYLE_PROPERTIES", "getSTYLE_PROPERTIES", "SHAPES", "getSHAPES", "LAYOUT_DIRECTIONS", "getLAYOUT_DIRECTIONS", "DIRECTIVES", "getDIRECTIVES", "OTHER_KEYWORDS", "getOTHER_KEYWORDS", "structurizr-dsl-plugin"})

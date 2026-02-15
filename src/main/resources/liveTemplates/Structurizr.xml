@@ -1,0 +1,93 @@
+<templateSet group="Structurizr">
+  <template name="ws" value="workspace &quot;$NAME$&quot; &quot;$DESCRIPTION$&quot; {&#10;&#10;    model {&#10;        $END$&#10;    }&#10;&#10;    views {&#10;&#10;    }&#10;}" description="Workspace with model and views" toReformat="true" toShortenFQNames="false">
+    <variable name="NAME" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="per" value="$IDENTIFIER$ = person &quot;$NAME$&quot; &quot;$DESCRIPTION$&quot;" description="Person definition" toReformat="false" toShortenFQNames="false">
+    <variable name="IDENTIFIER" expression="" defaultValue="&quot;user&quot;" alwaysStopAt="true" />
+    <variable name="NAME" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="ss" value="$IDENTIFIER$ = softwareSystem &quot;$NAME$&quot; &quot;$DESCRIPTION$&quot; {&#10;    $END$&#10;}" description="Software System definition" toReformat="false" toShortenFQNames="false">
+    <variable name="IDENTIFIER" expression="" defaultValue="&quot;system&quot;" alwaysStopAt="true" />
+    <variable name="NAME" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="con" value="$IDENTIFIER$ = container &quot;$NAME$&quot; &quot;$DESCRIPTION$&quot; &quot;$TECHNOLOGY$&quot; {&#10;    $END$&#10;}" description="Container definition" toReformat="false" toShortenFQNames="false">
+    <variable name="IDENTIFIER" expression="" defaultValue="&quot;container&quot;" alwaysStopAt="true" />
+    <variable name="NAME" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <variable name="TECHNOLOGY" expression="" defaultValue="&quot;Technology&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="comp" value="$IDENTIFIER$ = component &quot;$NAME$&quot; &quot;$DESCRIPTION$&quot; &quot;$TECHNOLOGY$&quot;" description="Component definition" toReformat="false" toShortenFQNames="false">
+    <variable name="IDENTIFIER" expression="" defaultValue="&quot;comp&quot;" alwaysStopAt="true" />
+    <variable name="NAME" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <variable name="TECHNOLOGY" expression="" defaultValue="&quot;Technology&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="rel" value="$SOURCE$ -&gt; $DESTINATION$ &quot;$DESCRIPTION$&quot;" description="Relationship (->)" toReformat="false" toShortenFQNames="false">
+    <variable name="SOURCE" expression="" defaultValue="&quot;source&quot;" alwaysStopAt="true" />
+    <variable name="DESTINATION" expression="" defaultValue="&quot;destination&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="dep" value="deploymentEnvironment &quot;$ENVIRONMENT$&quot; {&#10;    deploymentNode &quot;$NODE_NAME$&quot; &quot;$NODE_DESCRIPTION$&quot; &quot;$TECHNOLOGY$&quot; {&#10;        $END$&#10;    }&#10;}" description="Deployment environment with node" toReformat="false" toShortenFQNames="false">
+    <variable name="ENVIRONMENT" expression="" defaultValue="&quot;Production&quot;" alwaysStopAt="true" />
+    <variable name="NODE_NAME" expression="" defaultValue="&quot;Node Name&quot;" alwaysStopAt="true" />
+    <variable name="NODE_DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <variable name="TECHNOLOGY" expression="" defaultValue="&quot;Technology&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="sv" value="systemContext $SYSTEM$ &quot;$KEY$&quot; &quot;$DESCRIPTION$&quot; {&#10;    include *&#10;    autoLayout&#10;}" description="System Context view" toReformat="false" toShortenFQNames="false">
+    <variable name="SYSTEM" expression="" defaultValue="&quot;softwareSystem&quot;" alwaysStopAt="true" />
+    <variable name="KEY" expression="" defaultValue="&quot;SystemContext&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="cv" value="container $SYSTEM$ &quot;$KEY$&quot; &quot;$DESCRIPTION$&quot; {&#10;    include *&#10;    autoLayout&#10;}" description="Container view" toReformat="false" toShortenFQNames="false">
+    <variable name="SYSTEM" expression="" defaultValue="&quot;softwareSystem&quot;" alwaysStopAt="true" />
+    <variable name="KEY" expression="" defaultValue="&quot;Containers&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="sty" value="styles {&#10;    element &quot;$TAG$&quot; {&#10;        background $BACKGROUND$&#10;        color $COLOR$&#10;        $END$&#10;    }&#10;}" description="Styles block" toReformat="false" toShortenFQNames="false">
+    <variable name="TAG" expression="" defaultValue="&quot;Element&quot;" alwaysStopAt="true" />
+    <variable name="BACKGROUND" expression="" defaultValue="&quot;#438DD5&quot;" alwaysStopAt="true" />
+    <variable name="COLOR" expression="" defaultValue="&quot;#ffffff&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+</templateSet>

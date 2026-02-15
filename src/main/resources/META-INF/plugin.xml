@@ -9,14 +9,16 @@
 
 <h3>Features</h3>
 <ul>
-    <li>✨ Syntax highlighting with customizable colors</li>
-    <li>🔧 Code completion for keywords, elements, and references</li>
-    <li>🔍 Code navigation (Go to Declaration, Find Usages)</li>
-    <li>📁 Structure view for easy navigation</li>
-    <li>📐 Code folding for blocks</li>
-    <li>⚠️ Error detection and inspections</li>
+    <li>✨ Syntax highlighting with customizable colors and <code>${...}</code> variable substitution highlighting</li>
+    <li>🔧 Code completion for all keywords, elements, and references</li>
+    <li>🔍 Code navigation (Go to Declaration, Find Usages, Structure View, Breadcrumbs)</li>
+    <li>📁 Full C4 model support: person, softwareSystem, container, component, deploymentNode, and more</li>
+    <li>📐 Code folding and formatting</li>
+    <li>⚠️ 7 code inspections (undefined references, unused elements, duplicate identifiers, empty blocks, missing properties, deprecated keywords, invalid colors)</li>
+    <li>📝 Live templates for quick scaffolding (workspace, person, softwareSystem, container, component, relationship, deployment, views, styles)</li>
     <li>🖼️ Live diagram preview (PRO)</li>
-    <li>📤 Export to PNG, SVG, PlantUML (PRO)</li>
+    <li>📤 Export to SVG, PNG, PlantUML, Mermaid (PRO)</li>
+    <li>🔧 Structurizr CLI integration (PRO)</li>
 </ul>
 
 <h3>Getting Started</h3>
@@ -78,6 +80,9 @@
     <notificationGroup id="Structurizr DSL" displayType="BALLOON" />
     <!-- Documentation -->
     <lang.documentationProvider language="Structurizr" implementationClass="com.jakubjirak.structurizr.documentation.StructurizrDocumentationProvider" />
+    <!-- Live Templates -->
+    <defaultLiveTemplates>/liveTemplates/Structurizr</defaultLiveTemplates>
+    <liveTemplateContext contextId="STRUCTURIZR_DSL" implementation="com.jakubjirak.structurizr.language.StructurizrLiveTemplateContext"/>
     <!-- Line Marker (for navigation) -->
     <codeInsight.lineMarkerProvider language="Structurizr" implementationClass="com.jakubjirak.structurizr.navigation.StructurizrLineMarkerProvider" />
     <!-- Preview Services -->
