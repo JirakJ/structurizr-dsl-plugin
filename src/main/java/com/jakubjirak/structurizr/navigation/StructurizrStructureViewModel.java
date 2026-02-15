@@ -30,7 +30,7 @@ public final class StructurizrStructureViewModel
 extends StructureViewModelBase
 implements StructureViewModel.ElementInfoProvider {
     public StructurizrStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
-        super(psiFile, editor, (StructureViewTreeElement)new StructurizrStructureViewElement(psiFile));
+        super(psiFile, editor, (StructureViewTreeElement)new StructurizrStructureViewElement((com.intellij.psi.PsiElement)psiFile));
         Intrinsics.checkNotNullParameter((Object)psiFile, (String)"psiFile");
     }
 

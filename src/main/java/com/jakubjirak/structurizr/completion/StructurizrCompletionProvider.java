@@ -30,11 +30,14 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ProcessingContext;
 import com.jakubjirak.structurizr.language.StructurizrIcons;
+import com.jakubjirak.structurizr.language.psi.StructurizrTypes;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import javax.swing.Icon;
 import kotlin.Metadata;
 import kotlin.Pair;
@@ -168,6 +171,7 @@ extends CompletionProvider<CompletionParameters> {
             result.addElement((LookupElement)LookupElementBuilder.create((String)directive).withTypeText("directive").withBoldness(true));
         }
         this.addLiveTemplates(result);
+        this.addIdentifierCompletions(parameters, result);
         $this$forEach$iv = (Iterable)OTHER_KEYWORDS;
         $i$f$forEach = false;
         iterator = $this$forEach$iv.iterator();
@@ -216,6 +220,59 @@ extends CompletionProvider<CompletionParameters> {
         Intrinsics.checkNotNullParameter((Object)lookupElement, (String)"<unused var>");
         String template = "softwareSystem \"Name\" \"Description\" {\n    \n}";
         context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), (CharSequence)template);
+    }
+
+    private final void addIdentifierCompletions(CompletionParameters parameters, CompletionResultSet result) {
+        PsiElement file = parameters.getOriginalFile();
+        List<PsiElement> assignments = new ArrayList<>();
+        collectAssignments(file, assignments);
+        for (PsiElement assignment : assignments) {
+            com.intellij.lang.ASTNode idNode = assignment.getNode().findChildByType(StructurizrTypes.IDENTIFIER);
+            if (idNode == null) continue;
+            String name = idNode.getText();
+            if (name == null || name.isEmpty()) continue;
+            String typeText = getAssignmentTypeText(assignment);
+            Icon icon = getAssignmentIcon(assignment);
+            result.addElement((LookupElement)LookupElementBuilder.create((String)name)
+                .withIcon(icon)
+                .withTypeText(typeText)
+                .withBoldness(false));
+        }
+    }
+
+    private static void collectAssignments(PsiElement element, List<PsiElement> result) {
+        for (PsiElement child : element.getChildren()) {
+            if (child.getNode().getElementType() == StructurizrTypes.ELEMENT_ASSIGNMENT) {
+                result.add(child);
+            }
+            collectAssignments(child, result);
+        }
+    }
+
+    private static String getAssignmentTypeText(PsiElement assignment) {
+        for (PsiElement child : assignment.getChildren()) {
+            IElementType t = child.getNode().getElementType();
+            if (t == StructurizrTypes.PERSON_DEFINITION) return "Person";
+            if (t == StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION) return "Software System";
+            if (t == StructurizrTypes.CONTAINER_DEFINITION) return "Container";
+            if (t == StructurizrTypes.COMPONENT_DEFINITION) return "Component";
+            if (t == StructurizrTypes.DEPLOYMENT_NODE_DEFINITION) return "Deployment Node";
+            if (t == StructurizrTypes.INFRASTRUCTURE_NODE_DEFINITION) return "Infrastructure Node";
+        }
+        return "element";
+    }
+
+    private static Icon getAssignmentIcon(PsiElement assignment) {
+        for (PsiElement child : assignment.getChildren()) {
+            IElementType t = child.getNode().getElementType();
+            if (t == StructurizrTypes.PERSON_DEFINITION) return StructurizrIcons.PERSON;
+            if (t == StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION) return StructurizrIcons.SOFTWARE_SYSTEM;
+            if (t == StructurizrTypes.CONTAINER_DEFINITION) return StructurizrIcons.CONTAINER;
+            if (t == StructurizrTypes.COMPONENT_DEFINITION) return StructurizrIcons.COMPONENT;
+            if (t == StructurizrTypes.DEPLOYMENT_NODE_DEFINITION) return StructurizrIcons.DEPLOYMENT;
+            if (t == StructurizrTypes.INFRASTRUCTURE_NODE_DEFINITION) return StructurizrIcons.DEPLOYMENT;
+        }
+        return StructurizrIcons.WORKSPACE;
     }
 
     static {

@@ -1,53 +1,115 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  com.intellij.lang.Language
- *  com.intellij.psi.PsiElement
- *  com.intellij.ui.breadcrumbs.BreadcrumbsProvider
- *  kotlin.Metadata
- *  kotlin.jvm.internal.Intrinsics
- *  kotlin.text.StringsKt
- *  org.jetbrains.annotations.NotNull
- *  org.jetbrains.annotations.Nullable
- */
 package com.jakubjirak.structurizr.navigation;
 
 import com.intellij.lang.Language;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.ui.breadcrumbs.BreadcrumbsProvider;
 import com.jakubjirak.structurizr.language.StructurizrLanguage;
-import kotlin.Metadata;
-import kotlin.jvm.internal.Intrinsics;
-import kotlin.text.StringsKt;
+import com.jakubjirak.structurizr.language.psi.StructurizrTypes;
+import java.util.Set;
+import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Metadata(mv={2, 0, 0}, k=1, xi=48, d1={"\u0000,\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0010\u0011\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0010\u000b\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\u0002\u0018\u00002\u00020\u0001B\u0007\u00a2\u0006\u0004\b\u0002\u0010\u0003J\u0013\u0010\u0004\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005H\u0016\u00a2\u0006\u0002\u0010\u0007J\u0010\u0010\b\u001a\u00020\t2\u0006\u0010\n\u001a\u00020\u000bH\u0016J\u0010\u0010\f\u001a\u00020\r2\u0006\u0010\n\u001a\u00020\u000bH\u0016J\u0012\u0010\u000e\u001a\u0004\u0018\u00010\r2\u0006\u0010\n\u001a\u00020\u000bH\u0016\u00a8\u0006\u000f"}, d2={"Lcom/jakubjirak/structurizr/navigation/StructurizrBreadcrumbsProvider;", "Lcom/intellij/ui/breadcrumbs/BreadcrumbsProvider;", "<init>", "()V", "getLanguages", "", "Lcom/intellij/lang/Language;", "()[Lcom/intellij/lang/Language;", "acceptElement", "", "element", "Lcom/intellij/psi/PsiElement;", "getElementInfo", "", "getElementTooltip", "structurizr-dsl-plugin"})
 public final class StructurizrBreadcrumbsProvider
 implements BreadcrumbsProvider {
+
+    private static final Set<IElementType> ACCEPTED_TYPES = new HashSet<>();
+    static {
+        ACCEPTED_TYPES.add(StructurizrTypes.WORKSPACE_BLOCK);
+        ACCEPTED_TYPES.add(StructurizrTypes.MODEL_BLOCK);
+        ACCEPTED_TYPES.add(StructurizrTypes.VIEWS_BLOCK);
+        ACCEPTED_TYPES.add(StructurizrTypes.STYLES_BLOCK);
+        ACCEPTED_TYPES.add(StructurizrTypes.CONFIGURATION_BLOCK);
+        ACCEPTED_TYPES.add(StructurizrTypes.PERSON_DEFINITION);
+        ACCEPTED_TYPES.add(StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION);
+        ACCEPTED_TYPES.add(StructurizrTypes.CONTAINER_DEFINITION);
+        ACCEPTED_TYPES.add(StructurizrTypes.COMPONENT_DEFINITION);
+        ACCEPTED_TYPES.add(StructurizrTypes.GROUP_BLOCK);
+        ACCEPTED_TYPES.add(StructurizrTypes.DEPLOYMENT_ENVIRONMENT_BLOCK);
+        ACCEPTED_TYPES.add(StructurizrTypes.DEPLOYMENT_NODE_DEFINITION);
+        ACCEPTED_TYPES.add(StructurizrTypes.INFRASTRUCTURE_NODE_DEFINITION);
+        ACCEPTED_TYPES.add(StructurizrTypes.ENTERPRISE_BLOCK);
+        ACCEPTED_TYPES.add(StructurizrTypes.ELEMENT_ASSIGNMENT);
+        ACCEPTED_TYPES.add(StructurizrTypes.SYSTEM_LANDSCAPE_VIEW);
+        ACCEPTED_TYPES.add(StructurizrTypes.SYSTEM_CONTEXT_VIEW);
+        ACCEPTED_TYPES.add(StructurizrTypes.CONTAINER_VIEW);
+        ACCEPTED_TYPES.add(StructurizrTypes.COMPONENT_VIEW);
+        ACCEPTED_TYPES.add(StructurizrTypes.DEPLOYMENT_VIEW);
+        ACCEPTED_TYPES.add(StructurizrTypes.DYNAMIC_VIEW);
+        ACCEPTED_TYPES.add(StructurizrTypes.CUSTOM_VIEW);
+        ACCEPTED_TYPES.add(StructurizrTypes.FILTERED_VIEW);
+        ACCEPTED_TYPES.add(StructurizrTypes.IMAGE_VIEW);
+    }
+
     @NotNull
     public Language[] getLanguages() {
-        Language[] languageArray = new Language[]{StructurizrLanguage.INSTANCE};
-        return languageArray;
+        return new Language[]{StructurizrLanguage.INSTANCE};
     }
 
     public boolean acceptElement(@NotNull PsiElement element) {
-        Intrinsics.checkNotNullParameter((Object)element, (String)"element");
-        return false;
+        IElementType type = element.getNode().getElementType();
+        return ACCEPTED_TYPES.contains(type);
     }
 
     @NotNull
     public String getElementInfo(@NotNull PsiElement element) {
-        Intrinsics.checkNotNullParameter((Object)element, (String)"element");
-        String string = element.getText();
-        Intrinsics.checkNotNullExpressionValue((Object)string, (String)"getText(...)");
-        return StringsKt.take((String)string, (int)20);
+        IElementType type = element.getNode().getElementType();
+        String typeName = getTypeName(type);
+        String name = extractName(element, type);
+        if (name != null) {
+            return typeName + ": " + name;
+        }
+        return typeName;
     }
 
     @Nullable
     public String getElementTooltip(@NotNull PsiElement element) {
-        Intrinsics.checkNotNullParameter((Object)element, (String)"element");
+        IElementType type = element.getNode().getElementType();
+        return "Structurizr " + getTypeName(type);
+    }
+
+    private static String getTypeName(IElementType type) {
+        if (type == StructurizrTypes.WORKSPACE_BLOCK) return "workspace";
+        if (type == StructurizrTypes.MODEL_BLOCK) return "model";
+        if (type == StructurizrTypes.VIEWS_BLOCK) return "views";
+        if (type == StructurizrTypes.STYLES_BLOCK) return "styles";
+        if (type == StructurizrTypes.CONFIGURATION_BLOCK) return "configuration";
+        if (type == StructurizrTypes.PERSON_DEFINITION) return "person";
+        if (type == StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION) return "softwareSystem";
+        if (type == StructurizrTypes.CONTAINER_DEFINITION) return "container";
+        if (type == StructurizrTypes.COMPONENT_DEFINITION) return "component";
+        if (type == StructurizrTypes.GROUP_BLOCK) return "group";
+        if (type == StructurizrTypes.DEPLOYMENT_ENVIRONMENT_BLOCK) return "deploymentEnvironment";
+        if (type == StructurizrTypes.DEPLOYMENT_NODE_DEFINITION) return "deploymentNode";
+        if (type == StructurizrTypes.INFRASTRUCTURE_NODE_DEFINITION) return "infrastructureNode";
+        if (type == StructurizrTypes.ENTERPRISE_BLOCK) return "enterprise";
+        if (type == StructurizrTypes.ELEMENT_ASSIGNMENT) return "element";
+        if (type == StructurizrTypes.SYSTEM_LANDSCAPE_VIEW) return "systemLandscape";
+        if (type == StructurizrTypes.SYSTEM_CONTEXT_VIEW) return "systemContext";
+        if (type == StructurizrTypes.CONTAINER_VIEW) return "container view";
+        if (type == StructurizrTypes.COMPONENT_VIEW) return "component view";
+        if (type == StructurizrTypes.DEPLOYMENT_VIEW) return "deployment view";
+        if (type == StructurizrTypes.DYNAMIC_VIEW) return "dynamic view";
+        if (type == StructurizrTypes.CUSTOM_VIEW) return "custom view";
+        if (type == StructurizrTypes.FILTERED_VIEW) return "filtered view";
+        if (type == StructurizrTypes.IMAGE_VIEW) return "image view";
+        return type.toString();
+    }
+
+    private static String extractName(PsiElement element, IElementType type) {
+        if (type == StructurizrTypes.ELEMENT_ASSIGNMENT) {
+            com.intellij.lang.ASTNode idNode = element.getNode().findChildByType(StructurizrTypes.IDENTIFIER);
+            if (idNode != null) return idNode.getText();
+        }
+        com.intellij.lang.ASTNode stringNode = element.getNode().findChildByType(StructurizrTypes.STRING);
+        if (stringNode != null) {
+            String text = stringNode.getText();
+            if (text.length() >= 2 && text.startsWith("\"") && text.endsWith("\"")) {
+                return text.substring(1, text.length() - 1);
+            }
+            return text;
+        }
         return null;
     }
 }

@@ -45,6 +45,12 @@ implements FindUsagesProvider {
 
     public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
         Intrinsics.checkNotNullParameter((Object)psiElement, (String)"psiElement");
+        if (psiElement.getNode().getElementType() == StructurizrTypes.IDENTIFIER) {
+            PsiElement parent = psiElement.getParent();
+            if (parent != null && parent.getNode().getElementType() == StructurizrTypes.ELEMENT_ASSIGNMENT) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -57,12 +63,32 @@ implements FindUsagesProvider {
     @NotNull
     public String getType(@NotNull PsiElement element) {
         Intrinsics.checkNotNullParameter((Object)element, (String)"element");
+        PsiElement parent = element.getParent();
+        if (parent != null) {
+            IElementType parentType = parent.getNode().getElementType();
+            if (parentType == StructurizrTypes.ELEMENT_ASSIGNMENT) {
+                // Look at the definition child of the assignment to determine type
+                for (PsiElement child : parent.getChildren()) {
+                    IElementType childType = child.getNode().getElementType();
+                    if (childType == StructurizrTypes.PERSON_DEFINITION) return "person";
+                    if (childType == StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION) return "software system";
+                    if (childType == StructurizrTypes.CONTAINER_DEFINITION) return "container";
+                    if (childType == StructurizrTypes.COMPONENT_DEFINITION) return "component";
+                    if (childType == StructurizrTypes.DEPLOYMENT_NODE_DEFINITION) return "deployment node";
+                    if (childType == StructurizrTypes.INFRASTRUCTURE_NODE_DEFINITION) return "infrastructure node";
+                }
+            }
+        }
         return "element";
     }
 
     @NotNull
     public String getDescriptiveName(@NotNull PsiElement element) {
         Intrinsics.checkNotNullParameter((Object)element, (String)"element");
+        if (element.getNode().getElementType() == StructurizrTypes.IDENTIFIER) {
+            String text = element.getText();
+            return text != null ? text : "";
+        }
         String string = element.getText();
         Intrinsics.checkNotNullExpressionValue((Object)string, (String)"getText(...)");
         return string;

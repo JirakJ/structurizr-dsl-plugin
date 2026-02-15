@@ -38,6 +38,18 @@ implements Annotator {
             "STRUCTURIZR_VARIABLE_REFERENCE", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR);
 
     @NotNull
+    private static final TextAttributesKey DEFINITION_IDENTIFIER = TextAttributesKey.createTextAttributesKey(
+            "STRUCTURIZR_DEFINITION_IDENTIFIER", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+
+    @NotNull
+    private static final TextAttributesKey ARROW_OPERATOR = TextAttributesKey.createTextAttributesKey(
+            "STRUCTURIZR_ARROW_OPERATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN);
+
+    @NotNull
+    private static final TextAttributesKey DEPRECATED_DIRECTIVE = TextAttributesKey.createTextAttributesKey(
+            "STRUCTURIZR_DEPRECATED_DIRECTIVE", DefaultLanguageHighlighterColors.METADATA);
+
+    @NotNull
     public static TextAttributesKey getVARIABLE_REFERENCE() {
         return VARIABLE_REFERENCE;
     }
@@ -47,7 +59,9 @@ implements Annotator {
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
         Intrinsics.checkNotNullParameter((Object)element, (String)"element");
         Intrinsics.checkNotNullParameter((Object)holder, (String)"holder");
-        if (element.getNode().getElementType() == StructurizrTypes.STRING) {
+        com.intellij.psi.tree.IElementType type = element.getNode().getElementType();
+
+        if (type == StructurizrTypes.STRING) {
             String text = element.getText();
             int elementStart = element.getTextRange().getStartOffset();
             Matcher matcher = SUBSTITUTION_PATTERN.matcher(text);
@@ -56,6 +70,36 @@ implements Annotator {
                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                         .range(range)
                         .textAttributes(VARIABLE_REFERENCE)
+                        .create();
+            }
+        }
+
+        // Highlight IDENTIFIER in ELEMENT_ASSIGNMENT (definition site)
+        if (type == StructurizrTypes.IDENTIFIER) {
+            PsiElement parent = element.getParent();
+            if (parent != null && parent.getNode().getElementType() == StructurizrTypes.ELEMENT_ASSIGNMENT) {
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                        .range(element.getTextRange())
+                        .textAttributes(DEFINITION_IDENTIFIER)
+                        .create();
+            }
+        }
+
+        // Highlight arrow operators
+        if (type == StructurizrTypes.ARROW || type == StructurizrTypes.ARROW_LEFT || type == StructurizrTypes.ARROW_BOTH) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(element.getTextRange())
+                    .textAttributes(ARROW_OPERATOR)
+                    .create();
+        }
+
+        // Highlight deprecated directives !ref, !extend
+        if (type == StructurizrTypes.REF) {
+            PsiElement parent = element.getParent();
+            if (parent != null && parent.getNode().getElementType() == StructurizrTypes.REF_STATEMENT) {
+                holder.newAnnotation(HighlightSeverity.WARNING, "Deprecated: use !extend instead of !ref")
+                        .range(element.getTextRange())
+                        .textAttributes(DEPRECATED_DIRECTIVE)
                         .create();
             }
         }

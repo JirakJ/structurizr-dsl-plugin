@@ -36,6 +36,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.jakubjirak.structurizr.formatting.StructurizrBlock;
 import com.jakubjirak.structurizr.language.StructurizrLanguage;
+import com.jakubjirak.structurizr.language.psi.StructurizrTypes;
 import kotlin.Metadata;
 import kotlin.jvm.internal.Intrinsics;
 import org.jetbrains.annotations.NotNull;
@@ -58,6 +59,13 @@ implements FormattingModelBuilder {
     }
 
     private final SpacingBuilder createSpaceBuilder(CodeStyleSettings settings) {
-        return new SpacingBuilder(settings, (Language)StructurizrLanguage.INSTANCE);
+        return new SpacingBuilder(settings, (Language)StructurizrLanguage.INSTANCE)
+            .before(StructurizrTypes.LBRACE).spaces(1)
+            .after(StructurizrTypes.LBRACE).lineBreakInCode()
+            .before(StructurizrTypes.RBRACE).lineBreakInCode()
+            .around(StructurizrTypes.EQUALS).spaces(1)
+            .around(StructurizrTypes.ARROW).spaces(1)
+            .around(StructurizrTypes.ARROW_LEFT).spaces(1)
+            .around(StructurizrTypes.ARROW_BOTH).spaces(1);
     }
 }

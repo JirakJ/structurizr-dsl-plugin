@@ -46,6 +46,7 @@
     <completion.contributor language="Structurizr" implementationClass="com.jakubjirak.structurizr.completion.StructurizrCompletionContributor" />
     <!-- Navigation -->
     <lang.findUsagesProvider language="Structurizr" implementationClass="com.jakubjirak.structurizr.navigation.StructurizrFindUsagesProvider" />
+    <psi.referenceContributor language="Structurizr" implementation="com.jakubjirak.structurizr.navigation.StructurizrReferenceContributor"/>
     <lang.psiStructureViewFactory language="Structurizr" implementationClass="com.jakubjirak.structurizr.navigation.StructurizrStructureViewFactory" />
     <breadcrumbsInfoProvider implementationClass="com.jakubjirak.structurizr.navigation.StructurizrBreadcrumbsProvider" />
     <!-- Code Folding -->

@@ -1,29 +1,49 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
- *  com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
- *  com.intellij.psi.PsiElement
- *  kotlin.Metadata
- *  kotlin.jvm.internal.Intrinsics
- *  org.jetbrains.annotations.NotNull
- */
 package com.jakubjirak.structurizr.navigation;
 
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
+import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
+import com.jakubjirak.structurizr.language.StructurizrIcons;
+import com.jakubjirak.structurizr.language.psi.StructurizrTypes;
 import java.util.Collection;
-import kotlin.Metadata;
-import kotlin.jvm.internal.Intrinsics;
+import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
-@Metadata(mv={2, 0, 0}, k=1, xi=48, d1={"\u0000\"\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0010\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u001f\n\u0002\u0018\u0002\n\u0000\u0018\u00002\u00020\u0001B\u0007\u00a2\u0006\u0004\b\u0002\u0010\u0003J$\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0006\u001a\u00020\u00072\u0012\u0010\b\u001a\u000e\u0012\n\b\u0000\u0012\u0006\u0012\u0002\b\u00030\n0\tH\u0014\u00a8\u0006\u000b"}, d2={"Lcom/jakubjirak/structurizr/navigation/StructurizrLineMarkerProvider;", "Lcom/intellij/codeInsight/daemon/RelatedItemLineMarkerProvider;", "<init>", "()V", "collectNavigationMarkers", "", "element", "Lcom/intellij/psi/PsiElement;", "result", "", "Lcom/intellij/codeInsight/daemon/RelatedItemLineMarkerInfo;", "structurizr-dsl-plugin"})
 public final class StructurizrLineMarkerProvider
 extends RelatedItemLineMarkerProvider {
     protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
-        Intrinsics.checkNotNullParameter((Object)element, (String)"element");
-        Intrinsics.checkNotNullParameter(result, (String)"result");
+        IElementType elementType = element.getNode().getElementType();
+
+        // Only mark keyword tokens (leaf elements) that are the first keyword of a definition
+        PsiElement parent = element.getParent();
+        if (parent == null) return;
+        IElementType parentType = parent.getNode().getElementType();
+
+        if (elementType == StructurizrTypes.PERSON && parentType == StructurizrTypes.PERSON_DEFINITION) {
+            addMarker(element, StructurizrIcons.PERSON, "Person definition", result);
+        } else if (elementType == StructurizrTypes.SOFTWARE_SYSTEM && parentType == StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION) {
+            addMarker(element, StructurizrIcons.SOFTWARE_SYSTEM, "Software System definition", result);
+        } else if (elementType == StructurizrTypes.CONTAINER && parentType == StructurizrTypes.CONTAINER_DEFINITION) {
+            addMarker(element, StructurizrIcons.CONTAINER, "Container definition", result);
+        } else if (elementType == StructurizrTypes.COMPONENT && parentType == StructurizrTypes.COMPONENT_DEFINITION) {
+            addMarker(element, StructurizrIcons.COMPONENT, "Component definition", result);
+        } else if (elementType == StructurizrTypes.DEPLOYMENT_NODE && parentType == StructurizrTypes.DEPLOYMENT_NODE_DEFINITION) {
+            addMarker(element, StructurizrIcons.DEPLOYMENT, "Deployment Node definition", result);
+        } else if (elementType == StructurizrTypes.INFRASTRUCTURE_NODE && parentType == StructurizrTypes.INFRASTRUCTURE_NODE_DEFINITION) {
+            addMarker(element, StructurizrIcons.DEPLOYMENT, "Infrastructure Node definition", result);
+        } else if (elementType == StructurizrTypes.ARROW && parentType == StructurizrTypes.RELATIONSHIP_STATEMENT) {
+            addMarker(element, StructurizrIcons.RELATIONSHIP, "Relationship", result);
+        }
+    }
+
+    private static void addMarker(PsiElement element, Icon icon, String tooltip, Collection<? super RelatedItemLineMarkerInfo<?>> result) {
+        NavigationGutterIconBuilder<PsiElement> builder =
+            NavigationGutterIconBuilder.create(icon)
+                .setTargets(element)
+                .setTooltipText(tooltip);
+        result.add(builder.createLineMarkerInfo(element));
     }
 }

@@ -31,8 +31,11 @@ import com.intellij.formatting.Wrap;
 import com.intellij.formatting.WrapType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.jakubjirak.structurizr.language.psi.StructurizrTypes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import kotlin.Metadata;
 import kotlin.jvm.internal.Intrinsics;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +52,42 @@ implements ASTBlock {
     private final Alignment alignment;
     @NotNull
     private final SpacingBuilder spacingBuilder;
+
+    private static final Set<com.intellij.psi.tree.IElementType> BLOCK_TYPES = new HashSet<>();
+    static {
+        BLOCK_TYPES.add(StructurizrTypes.WORKSPACE_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.MODEL_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.VIEWS_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.STYLES_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.CONFIGURATION_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.PERSON_DEFINITION);
+        BLOCK_TYPES.add(StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION);
+        BLOCK_TYPES.add(StructurizrTypes.CONTAINER_DEFINITION);
+        BLOCK_TYPES.add(StructurizrTypes.COMPONENT_DEFINITION);
+        BLOCK_TYPES.add(StructurizrTypes.DEPLOYMENT_ENVIRONMENT_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.DEPLOYMENT_NODE_DEFINITION);
+        BLOCK_TYPES.add(StructurizrTypes.INFRASTRUCTURE_NODE_DEFINITION);
+        BLOCK_TYPES.add(StructurizrTypes.GROUP_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.ENTERPRISE_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.ELEMENT_ASSIGNMENT);
+        BLOCK_TYPES.add(StructurizrTypes.SYSTEM_LANDSCAPE_VIEW);
+        BLOCK_TYPES.add(StructurizrTypes.SYSTEM_CONTEXT_VIEW);
+        BLOCK_TYPES.add(StructurizrTypes.CONTAINER_VIEW);
+        BLOCK_TYPES.add(StructurizrTypes.COMPONENT_VIEW);
+        BLOCK_TYPES.add(StructurizrTypes.DEPLOYMENT_VIEW);
+        BLOCK_TYPES.add(StructurizrTypes.DYNAMIC_VIEW);
+        BLOCK_TYPES.add(StructurizrTypes.CUSTOM_VIEW);
+        BLOCK_TYPES.add(StructurizrTypes.FILTERED_VIEW);
+        BLOCK_TYPES.add(StructurizrTypes.IMAGE_VIEW);
+        BLOCK_TYPES.add(StructurizrTypes.ELEMENT_STYLE);
+        BLOCK_TYPES.add(StructurizrTypes.RELATIONSHIP_STYLE);
+        BLOCK_TYPES.add(StructurizrTypes.ANIMATION_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.PROPERTIES_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.PERSPECTIVES_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.USERS_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.BRANDING_BLOCK);
+        BLOCK_TYPES.add(StructurizrTypes.TERMINOLOGY_BLOCK);
+    }
 
     public StructurizrBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment, @NotNull SpacingBuilder spacingBuilder) {
         Intrinsics.checkNotNullParameter((Object)node, (String)"node");
@@ -78,6 +117,19 @@ implements ASTBlock {
 
     @Nullable
     public Indent getIndent() {
+        com.intellij.psi.tree.IElementType type = this.node.getElementType();
+        ASTNode parentNode = this.node.getTreeParent();
+        if (parentNode != null) {
+            com.intellij.psi.tree.IElementType parentType = parentNode.getElementType();
+            // RBRACE should have no indent
+            if (type == StructurizrTypes.RBRACE) {
+                return Indent.getNoneIndent();
+            }
+            // Children inside block types should be indented (except LBRACE and RBRACE)
+            if (BLOCK_TYPES.contains(parentType) && type != StructurizrTypes.LBRACE) {
+                return Indent.getNormalIndent();
+            }
+        }
         return Indent.getNoneIndent();
     }
 
@@ -112,6 +164,10 @@ implements ASTBlock {
 
     @NotNull
     public ChildAttributes getChildAttributes(int newChildIndex) {
+        com.intellij.psi.tree.IElementType type = this.node.getElementType();
+        if (BLOCK_TYPES.contains(type)) {
+            return new ChildAttributes(Indent.getNormalIndent(), null);
+        }
         return new ChildAttributes(Indent.getNoneIndent(), null);
     }
 }
