@@ -4,25 +4,37 @@
   <vendor email="your@email.com" url="https://github.com/JirakJ/structurizr-plugin">Jakub Jirak</vendor>
   <!-- Marketplace product code and pricing -->
   <product-descriptor code="PSTRUCTURIZRDSL" release-date="20260215" release-version="20262" optional="true" />
-  <description><![CDATA[<h2>Structurizr DSL Support for JetBrains IDEs</h2>
-<p>Full language support for Structurizr DSL - the text-based language for C4 model architecture diagrams.</p>
+  <description><![CDATA[
+<h2>Structurizr DSL</h2>
+<p>
+  Architecture diagrams as code. Structurizr DSL brings full IDE support for the Structurizr DSL language
+  — the industry-standard way to define C4 model architecture diagrams with code. Write, navigate, and
+  preview your software architecture directly in your JetBrains IDE.
+</p>
 
-<h3>Features</h3>
+<h2>Key Features</h2>
 <ul>
-    <li>✨ Syntax highlighting with customizable colors and <code>${...}</code> variable substitution highlighting</li>
-    <li>🔧 Code completion for all keywords, elements, and references</li>
-    <li>🔍 Code navigation (Go to Declaration, Find Usages, Structure View, Breadcrumbs)</li>
-    <li>📁 Full C4 model support: person, softwareSystem, container, component, deploymentNode, and more</li>
-    <li>📐 Code folding and formatting</li>
-    <li>⚠️ 7 code inspections (undefined references, unused elements, duplicate identifiers, empty blocks, missing properties, deprecated keywords, invalid colors)</li>
-    <li>📝 Live templates for quick scaffolding (workspace, person, softwareSystem, container, component, relationship, deployment, views, styles)</li>
-    <li>🖼️ Live diagram preview (PRO)</li>
-    <li>📤 Export to SVG, PNG, PlantUML, Mermaid (PRO)</li>
-    <li>🔧 Structurizr CLI integration (PRO)</li>
+  <li><b>Rich Syntax Highlighting</b> — Full colorization with variable substitution support</li>
+  <li><b>Intelligent Completion</b> — Context-aware suggestions for elements, relationships, and views</li>
+  <li><b>Navigation</b> — Go to declaration, find usages, and structure view for DSL files</li>
+  <li><b>7 Code Inspections</b> — Catches errors and warnings before rendering</li>
+  <li><b>9 Live Templates</b> — Quick scaffolding for common diagram patterns</li>
+  <li><b>Code Folding &amp; Formatting</b> — Collapse sections and auto-format DSL files</li>
+  <li><b>Refactoring</b> — Rename elements across all usages safely</li>
 </ul>
 
-<h3>Getting Started</h3>
-<p>Create a new file with <code>.dsl</code> extension and start writing your C4 model!</p>]]></description>
+<h2>Why Structurizr DSL?</h2>
+<p>
+  C4 model diagrams are the standard for communicating software architecture. This plugin makes authoring
+  Structurizr DSL as productive as writing code — with all the IDE features developers expect.
+</p>
+
+<h2>Free vs Pro</h2>
+<ul>
+  <li><b>Free:</b> Syntax highlighting, code completion, navigation, inspections, live templates, formatting</li>
+  <li><b>Pro:</b> Live diagram preview, multi-format export (SVG, PNG, PlantUML, Mermaid), Structurizr CLI integration, and team workspace synchronization</li>
+</ul>
+]]></description>
   <change-notes><![CDATA[<h3>1.0.0</h3>
 <ul>
     <li>Initial release</li>
