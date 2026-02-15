@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+  <!-- Model icon - 3D cube -->
+  <polygon points="8,1 15,5 15,11 8,15 1,11 1,5" fill="#66BB6A" stroke="#43A047" stroke-width="0.5"/>
+  <polygon points="8,1 15,5 8,9 1,5" fill="#81C784"/>
+  <line x1="8" y1="9" x2="8" y2="15" stroke="#43A047" stroke-width="0.5"/>
+</svg>

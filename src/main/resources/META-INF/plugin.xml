@@ -1,0 +1,149 @@
+<idea-plugin>
+  <id>com.jakubjirak.structurizr</id>
+  <name>Structurizr DSL</name>
+  <vendor email="your@email.com" url="https://github.com/JirakJ/structurizr-plugin">Jakub Jirak</vendor>
+  <!-- Marketplace product code and pricing -->
+  <product-descriptor code="PSTRUCTURIZRDSL" release-date="20260215" release-version="20262" optional="true" />
+  <description><![CDATA[<h2>Structurizr DSL Support for JetBrains IDEs</h2>
+<p>Full language support for Structurizr DSL - the text-based language for C4 model architecture diagrams.</p>
+
+<h3>Features</h3>
+<ul>
+    <li>✨ Syntax highlighting with customizable colors</li>
+    <li>🔧 Code completion for keywords, elements, and references</li>
+    <li>🔍 Code navigation (Go to Declaration, Find Usages)</li>
+    <li>📁 Structure view for easy navigation</li>
+    <li>📐 Code folding for blocks</li>
+    <li>⚠️ Error detection and inspections</li>
+    <li>🖼️ Live diagram preview (PRO)</li>
+    <li>📤 Export to PNG, SVG, PlantUML (PRO)</li>
+</ul>
+
+<h3>Getting Started</h3>
+<p>Create a new file with <code>.dsl</code> extension and start writing your C4 model!</p>]]></description>
+  <change-notes><![CDATA[<h3>1.0.0</h3>
+<ul>
+    <li>Initial release</li>
+    <li>Syntax highlighting</li>
+    <li>Code completion</li>
+    <li>Code navigation</li>
+    <li>Structure view</li>
+    <li>Code folding</li>
+</ul>]]></change-notes>
+  <!-- Product and dependencies -->
+  <depends>com.intellij.modules.platform</depends>
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Language -->
+    <fileType name="Structurizr DSL" implementationClass="com.jakubjirak.structurizr.language.StructurizrFileType" fieldName="INSTANCE" language="Structurizr" extensions="dsl" />
+    <lang.parserDefinition language="Structurizr" implementationClass="com.jakubjirak.structurizr.language.parser.StructurizrParserDefinition" />
+    <!-- Syntax Highlighting -->
+    <lang.syntaxHighlighterFactory language="Structurizr" implementationClass="com.jakubjirak.structurizr.highlighting.StructurizrSyntaxHighlighterFactory" />
+    <annotator language="Structurizr" implementationClass="com.jakubjirak.structurizr.highlighting.StructurizrAnnotator" />
+    <colorSettingsPage implementationClass="com.jakubjirak.structurizr.highlighting.StructurizrColorSettingsPage" />
+    <!-- Code Completion -->
+    <completion.contributor language="Structurizr" implementationClass="com.jakubjirak.structurizr.completion.StructurizrCompletionContributor" />
+    <!-- Navigation -->
+    <lang.findUsagesProvider language="Structurizr" implementationClass="com.jakubjirak.structurizr.navigation.StructurizrFindUsagesProvider" />
+    <lang.psiStructureViewFactory language="Structurizr" implementationClass="com.jakubjirak.structurizr.navigation.StructurizrStructureViewFactory" />
+    <breadcrumbsInfoProvider implementationClass="com.jakubjirak.structurizr.navigation.StructurizrBreadcrumbsProvider" />
+    <!-- Code Folding -->
+    <lang.foldingBuilder language="Structurizr" implementationClass="com.jakubjirak.structurizr.folding.StructurizrFoldingBuilder" />
+    <!-- Formatting -->
+    <lang.formatter language="Structurizr" implementationClass="com.jakubjirak.structurizr.formatting.StructurizrFormattingModelBuilder" />
+    <codeStyleSettingsProvider implementationClass="com.jakubjirak.structurizr.formatting.StructurizrCodeStyleSettingsProvider" />
+    <langCodeStyleSettingsProvider implementationClass="com.jakubjirak.structurizr.formatting.StructurizrLanguageCodeStyleSettingsProvider" />
+    <!-- Inspections -->
+    <localInspection language="Structurizr" shortName="StructurizrUndefinedReference" displayName="Undefined reference" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.UndefinedReferenceInspection" />
+    <localInspection language="Structurizr" shortName="StructurizrUnusedElement" displayName="Unused element" groupName="Structurizr" enabledByDefault="true" level="WEAK WARNING" implementationClass="com.jakubjirak.structurizr.inspections.UnusedElementInspection" />
+    <localInspection language="Structurizr" shortName="StructurizrDuplicateIdentifier" displayName="Duplicate identifier" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.DuplicateIdentifierInspection" />
+    <localInspection language="Structurizr" shortName="StructurizrEmptyBlock" displayName="Empty block" groupName="Structurizr" enabledByDefault="true" level="WEAK WARNING" implementationClass="com.jakubjirak.structurizr.inspections.EmptyBlockInspection" />
+    <localInspection language="Structurizr" shortName="StructurizrMissingRequiredProperty" displayName="Missing required property" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.MissingRequiredPropertyInspection" />
+    <localInspection language="Structurizr" shortName="StructurizrDeprecatedKeyword" displayName="Deprecated keyword" groupName="Structurizr" enabledByDefault="true" level="WARNING" implementationClass="com.jakubjirak.structurizr.inspections.DeprecatedKeywordInspection" />
+    <localInspection language="Structurizr" shortName="StructurizrInvalidColor" displayName="Invalid color value" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.InvalidColorInspection" />
+    <!-- Commenter -->
+    <lang.commenter language="Structurizr" implementationClass="com.jakubjirak.structurizr.language.StructurizrCommenter" />
+    <!-- Brace Matcher -->
+    <lang.braceMatcher language="Structurizr" implementationClass="com.jakubjirak.structurizr.language.StructurizrBraceMatcher" />
+    <!-- Quote Handler -->
+    <lang.quoteHandler language="Structurizr" implementationClass="com.jakubjirak.structurizr.language.StructurizrQuoteHandler" />
+    <!-- Settings -->
+    <applicationConfigurable parentId="tools" instance="com.jakubjirak.structurizr.settings.StructurizrSettingsConfigurable" id="com.jakubjirak.structurizr.settings" displayName="Structurizr DSL" />
+    <applicationService serviceImplementation="com.jakubjirak.structurizr.settings.StructurizrSettings" />
+    <!-- Project Settings -->
+    <projectConfigurable parentId="com.jakubjirak.structurizr.settings" instance="com.jakubjirak.structurizr.settings.StructurizrProjectSettingsConfigurable" id="com.jakubjirak.structurizr.projectSettings" displayName="Project Settings" />
+    <projectService serviceImplementation="com.jakubjirak.structurizr.settings.StructurizrProjectSettings" />
+    <!-- File Templates -->
+    <internalFileTemplate name="Structurizr Workspace" />
+    <!-- Notifications -->
+    <notificationGroup id="Structurizr DSL" displayType="BALLOON" />
+    <!-- Documentation -->
+    <lang.documentationProvider language="Structurizr" implementationClass="com.jakubjirak.structurizr.documentation.StructurizrDocumentationProvider" />
+    <!-- Line Marker (for navigation) -->
+    <codeInsight.lineMarkerProvider language="Structurizr" implementationClass="com.jakubjirak.structurizr.navigation.StructurizrLineMarkerProvider" />
+    <!-- Preview Services -->
+    <projectService serviceImplementation="com.jakubjirak.structurizr.preview.DiagramRendererService" />
+    <applicationService serviceImplementation="com.jakubjirak.structurizr.preview.StructurizrCliService" />
+    <!-- Export Service -->
+    <projectService serviceImplementation="com.jakubjirak.structurizr.export.StructurizrExportService" />
+    <!-- Split Editor with Preview -->
+    <fileEditorProvider implementationClass="com.jakubjirak.structurizr.preview.StructurizrSplitEditorProvider" />
+    <!-- Preview Tool Window -->
+    <toolWindow id="Structurizr Preview" anchor="right" secondary="true" icon="/icons/structurizr.svg" factoryClass="com.jakubjirak.structurizr.preview.StructurizrPreviewToolWindowFactory" />
+  </extensions>
+  <actions>
+    <!-- New File Action -->
+    <action id="Structurizr.NewFile" class="com.jakubjirak.structurizr.actions.NewStructurizrFileAction" text="Structurizr DSL File" description="Create a new Structurizr DSL file" icon="/icons/structurizr.svg">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile" />
+    </action>
+    <!-- Refresh Preview Action -->
+    <action id="Structurizr.RefreshPreview" class="com.jakubjirak.structurizr.actions.RefreshPreviewAction" text="Refresh Structurizr Preview" description="Refresh the diagram preview" icon="AllIcons.Actions.Refresh">
+      <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift R" />
+    </action>
+    <!-- Export Diagram Action -->
+    <action id="Structurizr.ExportDiagram" class="com.jakubjirak.structurizr.actions.ExportDiagramAction" text="Export Structurizr Diagram..." description="Export diagram to various formats" icon="AllIcons.ToolbarDecorator.Export">
+      <add-to-group group-id="EditorPopupMenu" anchor="last" />
+    </action>
+    <!-- Quick Export Actions -->
+    <action id="Structurizr.ExportSvg" class="com.jakubjirak.structurizr.actions.QuickExportSvgAction" text="Export as SVG..." description="Quick export to SVG format" />
+    <action id="Structurizr.ExportPng" class="com.jakubjirak.structurizr.actions.QuickExportPngAction" text="Export as PNG..." description="Quick export to PNG format" />
+    <action id="Structurizr.ExportPlantUml" class="com.jakubjirak.structurizr.actions.QuickExportPlantUmlAction" text="Export as PlantUML..." description="Quick export to PlantUML format" />
+    <!-- Copy to Clipboard Actions -->
+    <action id="Structurizr.CopyAsSvg" class="com.jakubjirak.structurizr.actions.CopyAsSvgAction" text="Copy as SVG" description="Copy diagram as SVG to clipboard" />
+    <action id="Structurizr.CopyAsPlantUml" class="com.jakubjirak.structurizr.actions.CopyAsPlantUmlAction" text="Copy as PlantUML" description="Copy diagram as PlantUML to clipboard" />
+    <action id="Structurizr.CopyAsMermaid" class="com.jakubjirak.structurizr.actions.CopyAsMermaidAction" text="Copy as Mermaid" description="Copy diagram as Mermaid to clipboard" />
+    <action id="Structurizr.CopyAsImage" class="com.jakubjirak.structurizr.actions.CopyAsImageAction" text="Copy as Image" description="Copy diagram as image to clipboard" />
+    <!-- Export Submenu -->
+    <group id="Structurizr.ExportMenu" text="Export" popup="true" icon="AllIcons.ToolbarDecorator.Export">
+      <reference ref="Structurizr.ExportDiagram" />
+      <separator />
+      <reference ref="Structurizr.ExportSvg" />
+      <reference ref="Structurizr.ExportPng" />
+      <reference ref="Structurizr.ExportPlantUml" />
+    </group>
+    <!-- Copy Submenu -->
+    <group id="Structurizr.CopyMenu" text="Copy Diagram" popup="true" icon="AllIcons.Actions.Copy">
+      <reference ref="Structurizr.CopyAsSvg" />
+      <reference ref="Structurizr.CopyAsPlantUml" />
+      <reference ref="Structurizr.CopyAsMermaid" />
+      <separator />
+      <reference ref="Structurizr.CopyAsImage" />
+    </group>
+    <!-- Menu Group -->
+    <group id="Structurizr.MainMenu" text="Structurizr" popup="true">
+      <reference ref="Structurizr.NewFile" />
+      <separator />
+      <reference ref="Structurizr.RefreshPreview" />
+      <separator />
+      <reference ref="Structurizr.ExportMenu" />
+      <reference ref="Structurizr.CopyMenu" />
+      <add-to-group group-id="ToolsMenu" anchor="last" />
+    </group>
+    <!-- Editor Context Menu -->
+    <group id="Structurizr.EditorContextMenu">
+      <reference ref="Structurizr.RefreshPreview" />
+      <reference ref="Structurizr.ExportMenu" />
+      <reference ref="Structurizr.CopyMenu" />
+      <add-to-group group-id="EditorPopupMenu" anchor="before" relative-to-action="$Cut" />
+    </group>
+  </actions>
+</idea-plugin>
