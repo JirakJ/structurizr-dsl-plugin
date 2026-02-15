@@ -20,12 +20,16 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.markup.EffectType;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes;
 import kotlin.Metadata;
 import kotlin.jvm.internal.Intrinsics;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.Color;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -93,13 +97,31 @@ implements Annotator {
                     .create();
         }
 
-        // Highlight deprecated directives !ref, !extend
+        // Highlight deprecated directives !ref, !extend, !constant
         if (type == StructurizrTypes.REF) {
             PsiElement parent = element.getParent();
             if (parent != null && parent.getNode().getElementType() == StructurizrTypes.REF_STATEMENT) {
-                holder.newAnnotation(HighlightSeverity.WARNING, "Deprecated: use !extend instead of !ref")
+                TextAttributes strikethrough = new TextAttributes();
+                strikethrough.setEffectType(EffectType.STRIKEOUT);
+                strikethrough.setEffectColor(Color.GRAY);
+                holder.newAnnotation(HighlightSeverity.WARNING, "!ref is deprecated, use !element instead")
                         .range(element.getTextRange())
                         .textAttributes(DEPRECATED_DIRECTIVE)
+                        .enforcedTextAttributes(strikethrough)
+                        .create();
+            }
+        }
+
+        if (type == StructurizrTypes.DIRECTIVE_CONSTANT) {
+            PsiElement parent = element.getParent();
+            if (parent != null && parent.getNode().getElementType() == StructurizrTypes.CONSTANT_DIRECTIVE) {
+                TextAttributes strikethrough = new TextAttributes();
+                strikethrough.setEffectType(EffectType.STRIKEOUT);
+                strikethrough.setEffectColor(Color.GRAY);
+                holder.newAnnotation(HighlightSeverity.WARNING, "!constant is deprecated, use !const instead")
+                        .range(element.getTextRange())
+                        .textAttributes(DEPRECATED_DIRECTIVE)
+                        .enforcedTextAttributes(strikethrough)
                         .create();
             }
         }

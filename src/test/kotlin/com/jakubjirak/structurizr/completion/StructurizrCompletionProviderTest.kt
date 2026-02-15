@@ -509,4 +509,224 @@ class StructurizrCompletionProviderTest {
             assertNotNull(provider)
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun getStaticStringList(name: String): List<String> {
+        val field = StructurizrCompletionProvider::class.java.getDeclaredField(name)
+        field.isAccessible = true
+        return field.get(null) as List<String>
+    }
+
+    @Nested
+    @DisplayName("ELEMENT_STYLE_PROPERTIES")
+    inner class ElementStyleProperties {
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES field exists`() {
+            val field = StructurizrCompletionProvider::class.java.getDeclaredField("ELEMENT_STYLE_PROPERTIES")
+            field.isAccessible = true
+            assertNotNull(field.get(null))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES is not empty`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").isNotEmpty())
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains shape`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("shape"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains icon`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("icon"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains width`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("width"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains height`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("height"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains background`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("background"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains color`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("color"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains colour`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("colour"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains stroke`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("stroke"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains fontSize`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("fontSize"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains border`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("border"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains opacity`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("opacity"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains metadata`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("metadata"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES contains description`() {
+            assertTrue(getStaticStringList("ELEMENT_STYLE_PROPERTIES").contains("description"))
+        }
+
+        @Test
+        fun `ELEMENT_STYLE_PROPERTIES has exactly 14 entries`() {
+            assertEquals(14, getStaticStringList("ELEMENT_STYLE_PROPERTIES").size)
+        }
+    }
+
+    @Nested
+    @DisplayName("RELATIONSHIP_STYLE_PROPERTIES")
+    inner class RelationshipStyleProperties {
+
+        @Test
+        fun `RELATIONSHIP_STYLE_PROPERTIES field exists`() {
+            val field = StructurizrCompletionProvider::class.java.getDeclaredField("RELATIONSHIP_STYLE_PROPERTIES")
+            field.isAccessible = true
+            assertNotNull(field.get(null))
+        }
+
+        @Test
+        fun `RELATIONSHIP_STYLE_PROPERTIES is not empty`() {
+            assertTrue(getStaticStringList("RELATIONSHIP_STYLE_PROPERTIES").isNotEmpty())
+        }
+
+        @Test
+        fun `RELATIONSHIP_STYLE_PROPERTIES contains thickness`() {
+            assertTrue(getStaticStringList("RELATIONSHIP_STYLE_PROPERTIES").contains("thickness"))
+        }
+
+        @Test
+        fun `RELATIONSHIP_STYLE_PROPERTIES contains color`() {
+            assertTrue(getStaticStringList("RELATIONSHIP_STYLE_PROPERTIES").contains("color"))
+        }
+
+        @Test
+        fun `RELATIONSHIP_STYLE_PROPERTIES contains dashed`() {
+            assertTrue(getStaticStringList("RELATIONSHIP_STYLE_PROPERTIES").contains("dashed"))
+        }
+
+        @Test
+        fun `RELATIONSHIP_STYLE_PROPERTIES contains routing`() {
+            assertTrue(getStaticStringList("RELATIONSHIP_STYLE_PROPERTIES").contains("routing"))
+        }
+
+        @Test
+        fun `RELATIONSHIP_STYLE_PROPERTIES contains fontSize`() {
+            assertTrue(getStaticStringList("RELATIONSHIP_STYLE_PROPERTIES").contains("fontSize"))
+        }
+
+        @Test
+        fun `RELATIONSHIP_STYLE_PROPERTIES contains width`() {
+            assertTrue(getStaticStringList("RELATIONSHIP_STYLE_PROPERTIES").contains("width"))
+        }
+
+        @Test
+        fun `RELATIONSHIP_STYLE_PROPERTIES contains position`() {
+            assertTrue(getStaticStringList("RELATIONSHIP_STYLE_PROPERTIES").contains("position"))
+        }
+
+        @Test
+        fun `RELATIONSHIP_STYLE_PROPERTIES contains opacity`() {
+            assertTrue(getStaticStringList("RELATIONSHIP_STYLE_PROPERTIES").contains("opacity"))
+        }
+
+        @Test
+        fun `RELATIONSHIP_STYLE_PROPERTIES has exactly 9 entries`() {
+            assertEquals(9, getStaticStringList("RELATIONSHIP_STYLE_PROPERTIES").size)
+        }
+    }
+
+    @Nested
+    @DisplayName("BORDER_VALUES")
+    inner class BorderValues {
+
+        @Test
+        fun `BORDER_VALUES field exists`() {
+            val field = StructurizrCompletionProvider::class.java.getDeclaredField("BORDER_VALUES")
+            field.isAccessible = true
+            assertNotNull(field.get(null))
+        }
+
+        @Test
+        fun `BORDER_VALUES contains solid`() {
+            assertTrue(getStaticStringList("BORDER_VALUES").contains("solid"))
+        }
+
+        @Test
+        fun `BORDER_VALUES contains dashed`() {
+            assertTrue(getStaticStringList("BORDER_VALUES").contains("dashed"))
+        }
+
+        @Test
+        fun `BORDER_VALUES contains dotted`() {
+            assertTrue(getStaticStringList("BORDER_VALUES").contains("dotted"))
+        }
+
+        @Test
+        fun `BORDER_VALUES has exactly 3 entries`() {
+            assertEquals(3, getStaticStringList("BORDER_VALUES").size)
+        }
+    }
+
+    @Nested
+    @DisplayName("ROUTING_VALUES")
+    inner class RoutingValues {
+
+        @Test
+        fun `ROUTING_VALUES field exists`() {
+            val field = StructurizrCompletionProvider::class.java.getDeclaredField("ROUTING_VALUES")
+            field.isAccessible = true
+            assertNotNull(field.get(null))
+        }
+
+        @Test
+        fun `ROUTING_VALUES contains Direct`() {
+            assertTrue(getStaticStringList("ROUTING_VALUES").contains("Direct"))
+        }
+
+        @Test
+        fun `ROUTING_VALUES contains Orthogonal`() {
+            assertTrue(getStaticStringList("ROUTING_VALUES").contains("Orthogonal"))
+        }
+
+        @Test
+        fun `ROUTING_VALUES contains Curved`() {
+            assertTrue(getStaticStringList("ROUTING_VALUES").contains("Curved"))
+        }
+
+        @Test
+        fun `ROUTING_VALUES has exactly 3 entries`() {
+            assertEquals(3, getStaticStringList("ROUTING_VALUES").size)
+        }
+    }
 }

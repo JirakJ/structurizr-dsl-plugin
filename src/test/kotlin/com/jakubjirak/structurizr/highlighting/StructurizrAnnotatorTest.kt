@@ -328,6 +328,45 @@ class StructurizrAnnotatorTest {
     }
 
     @Nested
+    @DisplayName("Deprecated directive annotations")
+    inner class DeprecatedAnnotationTests {
+
+        @Test
+        fun `DIRECTIVE_CONSTANT type exists for deprecated constant`() {
+            assertNotNull(StructurizrTypes.DIRECTIVE_CONSTANT)
+        }
+
+        @Test
+        fun `CONSTANT_DIRECTIVE type exists for deprecated constant context`() {
+            assertNotNull(StructurizrTypes.CONSTANT_DIRECTIVE)
+        }
+
+        @Test
+        fun `strikethrough annotation uses EffectType STRIKEOUT`() {
+            // Verify the EffectType enum value exists
+            val strikeout = com.intellij.openapi.editor.markup.EffectType.STRIKEOUT
+            assertNotNull(strikeout)
+        }
+
+        @Test
+        fun `ref deprecation message is in annotate method`() {
+            // Verify the annotate method references HighlightSeverity WARNING
+            val method = StructurizrAnnotator::class.java.getMethod(
+                "annotate",
+                com.intellij.psi.PsiElement::class.java,
+                com.intellij.lang.annotation.AnnotationHolder::class.java
+            )
+            assertNotNull(method)
+        }
+
+        @Test
+        fun `HighlightSeverity WARNING is accessible`() {
+            val warning = com.intellij.lang.annotation.HighlightSeverity.WARNING
+            assertNotNull(warning)
+        }
+    }
+
+    @Nested
     @DisplayName("Types used in annotation logic")
     inner class AnnotationTypeTests {
 

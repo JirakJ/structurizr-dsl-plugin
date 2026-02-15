@@ -47,6 +47,7 @@
     <!-- Navigation -->
     <lang.findUsagesProvider language="Structurizr" implementationClass="com.jakubjirak.structurizr.navigation.StructurizrFindUsagesProvider" />
     <psi.referenceContributor language="Structurizr" implementation="com.jakubjirak.structurizr.navigation.StructurizrReferenceContributor"/>
+    <psi.referenceContributor language="Structurizr" implementation="com.jakubjirak.structurizr.navigation.StructurizrIncludeReferenceContributor"/>
     <lang.psiStructureViewFactory language="Structurizr" implementationClass="com.jakubjirak.structurizr.navigation.StructurizrStructureViewFactory" />
     <breadcrumbsInfoProvider implementationClass="com.jakubjirak.structurizr.navigation.StructurizrBreadcrumbsProvider" />
     <!-- Code Folding -->
@@ -63,10 +64,15 @@
     <localInspection language="Structurizr" shortName="StructurizrMissingRequiredProperty" displayName="Missing required property" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.MissingRequiredPropertyInspection" />
     <localInspection language="Structurizr" shortName="StructurizrDeprecatedKeyword" displayName="Deprecated keyword" groupName="Structurizr" enabledByDefault="true" level="WARNING" implementationClass="com.jakubjirak.structurizr.inspections.DeprecatedKeywordInspection" />
     <localInspection language="Structurizr" shortName="StructurizrInvalidColor" displayName="Invalid color value" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.InvalidColorInspection" />
+    <localInspection language="Structurizr" shortName="StructurizrInvalidContext" displayName="Invalid element context" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.InvalidContextInspection" />
+    <localInspection language="Structurizr" shortName="StructurizrInvalidRelationship" displayName="Invalid relationship" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.InvalidRelationshipInspection" />
     <!-- Commenter -->
     <lang.commenter language="Structurizr" implementationClass="com.jakubjirak.structurizr.language.StructurizrCommenter" />
     <!-- Brace Matcher -->
     <lang.braceMatcher language="Structurizr" implementationClass="com.jakubjirak.structurizr.language.StructurizrBraceMatcher" />
+    <!-- Refactoring -->
+    <lang.namesValidator language="Structurizr" implementationClass="com.jakubjirak.structurizr.refactoring.StructurizrNamesValidator"/>
+    <lang.refactoringSupport language="Structurizr" implementationClass="com.jakubjirak.structurizr.refactoring.StructurizrRefactoringSupportProvider"/>
     <!-- Quote Handler -->
     <lang.quoteHandler language="Structurizr" implementationClass="com.jakubjirak.structurizr.language.StructurizrQuoteHandler" />
     <!-- Settings -->
@@ -86,6 +92,8 @@
     <liveTemplateContext contextId="STRUCTURIZR_DSL" implementation="com.jakubjirak.structurizr.language.StructurizrLiveTemplateContext"/>
     <!-- Line Marker (for navigation) -->
     <codeInsight.lineMarkerProvider language="Structurizr" implementationClass="com.jakubjirak.structurizr.navigation.StructurizrLineMarkerProvider" />
+    <!-- Go to Symbol -->
+    <gotoSymbolContributor implementation="com.jakubjirak.structurizr.navigation.StructurizrGotoSymbolContributor"/>
     <!-- Preview Services -->
     <projectService serviceImplementation="com.jakubjirak.structurizr.preview.DiagramRendererService" />
     <applicationService serviceImplementation="com.jakubjirak.structurizr.preview.StructurizrCliService" />

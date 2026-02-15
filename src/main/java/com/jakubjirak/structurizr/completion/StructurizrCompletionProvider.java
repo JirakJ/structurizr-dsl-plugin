@@ -31,13 +31,16 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+
 import com.intellij.util.ProcessingContext;
 import com.jakubjirak.structurizr.language.StructurizrIcons;
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Set;
 import javax.swing.Icon;
 import kotlin.Metadata;
 import kotlin.Pair;
@@ -76,6 +79,14 @@ extends CompletionProvider<CompletionParameters> {
     private static final List<String> DIRECTIVES;
     @NotNull
     private static final List<String> OTHER_KEYWORDS;
+    @NotNull
+    private static final List<String> ELEMENT_STYLE_PROPERTIES;
+    @NotNull
+    private static final List<String> RELATIONSHIP_STYLE_PROPERTIES;
+    @NotNull
+    private static final List<String> BORDER_VALUES;
+    @NotNull
+    private static final List<String> ROUTING_VALUES;
 
     protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context, @NotNull CompletionResultSet result) {
         boolean bl;
@@ -172,6 +183,8 @@ extends CompletionProvider<CompletionParameters> {
         }
         this.addLiveTemplates(result);
         this.addIdentifierCompletions(parameters, result);
+        this.addTagCompletions(parameters, result);
+        this.addContextualStyleCompletions(parameters, result);
         $this$forEach$iv = (Iterable)OTHER_KEYWORDS;
         $i$f$forEach = false;
         iterator = $this$forEach$iv.iterator();
@@ -275,6 +288,155 @@ extends CompletionProvider<CompletionParameters> {
         return StructurizrIcons.WORKSPACE;
     }
 
+    private final void addTagCompletions(CompletionParameters parameters, CompletionResultSet result) {
+        PsiElement position = parameters.getPosition();
+        // Check if we are in a tags context
+        PsiElement parent = position.getParent();
+        boolean inTagsContext = false;
+        if (parent != null) {
+            IElementType parentType = parent.getNode().getElementType();
+            if (parentType == StructurizrTypes.TAGS_STATEMENT || parentType == StructurizrTypes.TAGS_STRING) {
+                inTagsContext = true;
+            }
+        }
+        // Also check if previous sibling is a TAGS token
+        if (!inTagsContext) {
+            PsiElement prev = position.getPrevSibling();
+            while (prev != null && prev.getText().trim().isEmpty()) {
+                prev = prev.getPrevSibling();
+            }
+            if (prev != null && prev.getNode().getElementType() == StructurizrTypes.TAGS) {
+                inTagsContext = true;
+            }
+        }
+        if (!inTagsContext) return;
+
+        PsiElement file = parameters.getOriginalFile();
+        Set<String> tags = new LinkedHashSet<>();
+        collectTags(file, tags);
+        for (String tag : tags) {
+            result.addElement((LookupElement)LookupElementBuilder.create((String)tag)
+                .withIcon(StructurizrIcons.STYLES)
+                .withTypeText("Tag"));
+        }
+    }
+
+    private static void collectTags(PsiElement element, Set<String> tags) {
+        for (PsiElement child : element.getChildren()) {
+            IElementType type = child.getNode().getElementType();
+            if (type == StructurizrTypes.TAGS_STATEMENT || type == StructurizrTypes.TAGS_STRING) {
+                String text = child.getText();
+                // Remove the "tags" keyword prefix if present
+                if (text.startsWith("tags")) {
+                    text = text.substring(4).trim();
+                }
+                // Split by whitespace and commas, strip quotes
+                for (String part : text.split("[,\\s]+")) {
+                    String tag = part.replace("\"", "").trim();
+                    if (!tag.isEmpty()) {
+                        tags.add(tag);
+                    }
+                }
+            }
+            collectTags(child, tags);
+        }
+    }
+
+    private final void addContextualStyleCompletions(CompletionParameters parameters, CompletionResultSet result) {
+        PsiElement position = parameters.getPosition();
+        PsiElement parent = position.getParent();
+
+        // Walk up to find if we're inside an element style or relationship style block
+        PsiElement current = parent;
+        boolean inElementStyle = false;
+        boolean inRelationshipStyle = false;
+        boolean afterShapeKeyword = false;
+        boolean afterBorderKeyword = false;
+        boolean afterRoutingKeyword = false;
+
+        while (current != null) {
+            IElementType t = current.getNode().getElementType();
+            if (t == StructurizrTypes.ELEMENT_STYLE) {
+                inElementStyle = true;
+                break;
+            }
+            if (t == StructurizrTypes.RELATIONSHIP_STYLE) {
+                inRelationshipStyle = true;
+                break;
+            }
+            current = current.getParent();
+        }
+
+        // Check if previous non-whitespace sibling is a shape/border/routing keyword
+        PsiElement prev = position.getPrevSibling();
+        while (prev != null && prev.getText().trim().isEmpty()) {
+            prev = prev.getPrevSibling();
+        }
+        if (prev != null) {
+            IElementType prevType = prev.getNode().getElementType();
+            if (prevType == StructurizrTypes.SHAPE) {
+                afterShapeKeyword = true;
+            } else if (prevType == StructurizrTypes.BORDER) {
+                afterBorderKeyword = true;
+            } else if (prevType == StructurizrTypes.ROUTING) {
+                afterRoutingKeyword = true;
+            }
+            // Also check text for keyword matching
+            String prevText = prev.getText().trim();
+            if ("shape".equals(prevText)) afterShapeKeyword = true;
+            if ("border".equals(prevText)) afterBorderKeyword = true;
+            if ("routing".equals(prevText)) afterRoutingKeyword = true;
+        }
+
+        // Offer shape values when after "shape" keyword
+        if (afterShapeKeyword) {
+            for (String shape : SHAPES) {
+                result.addElement((LookupElement)LookupElementBuilder.create((String)shape)
+                    .withTypeText("shape value")
+                    .withBoldness(true));
+            }
+            return;
+        }
+
+        // Offer border values when after "border" keyword
+        if (afterBorderKeyword) {
+            for (String border : BORDER_VALUES) {
+                result.addElement((LookupElement)LookupElementBuilder.create((String)border)
+                    .withTypeText("border value")
+                    .withBoldness(true));
+            }
+            return;
+        }
+
+        // Offer routing values when after "routing" keyword
+        if (afterRoutingKeyword) {
+            for (String routing : ROUTING_VALUES) {
+                result.addElement((LookupElement)LookupElementBuilder.create((String)routing)
+                    .withTypeText("routing value")
+                    .withBoldness(true));
+            }
+            return;
+        }
+
+        // Offer element style properties
+        if (inElementStyle) {
+            for (String prop : ELEMENT_STYLE_PROPERTIES) {
+                result.addElement((LookupElement)LookupElementBuilder.create((String)prop)
+                    .withIcon(StructurizrIcons.STYLES)
+                    .withTypeText("element style property"));
+            }
+        }
+
+        // Offer relationship style properties
+        if (inRelationshipStyle) {
+            for (String prop : RELATIONSHIP_STYLE_PROPERTIES) {
+                result.addElement((LookupElement)LookupElementBuilder.create((String)prop)
+                    .withIcon(StructurizrIcons.STYLES)
+                    .withTypeText("relationship style property"));
+            }
+        }
+    }
+
     static {
         CORE_KEYWORDS = java.util.Arrays.asList("workspace", "model", "views", "configuration", "archetypes");
         Pair[] pairArray = new Pair[]{TuplesKt.to((Object)"person", (Object)"model element"), TuplesKt.to((Object)"softwareSystem", (Object)"model element"), TuplesKt.to((Object)"container", (Object)"model element"), TuplesKt.to((Object)"component", (Object)"model element"), TuplesKt.to((Object)"group", (Object)"grouping"), TuplesKt.to((Object)"enterprise", (Object)"boundary"), TuplesKt.to((Object)"element", (Object)"model element")};
@@ -287,6 +449,10 @@ extends CompletionProvider<CompletionParameters> {
         LAYOUT_DIRECTIONS = java.util.Arrays.asList("tb", "bt", "lr", "rl");
         DIRECTIVES = java.util.Arrays.asList("!include", "!docs", "!adrs", "!identifiers", "!impliedRelationships", "!constant", "!const", "!var", "!plugin", "!script", "!components", "!extend", "!ref", "!element", "!elements", "!relationship", "!relationships");
         OTHER_KEYWORDS = java.util.Arrays.asList("include", "exclude", "autoLayout", "default", "animation", "title", "description", "tag", "tags", "technology", "instances", "url", "properties", "perspectives", "users", "extends", "ref", "this", "true", "false", "read", "write", "private", "public", "hierarchical", "flat", "light", "dark");
+        ELEMENT_STYLE_PROPERTIES = java.util.Arrays.asList("shape", "icon", "width", "height", "background", "color", "colour", "stroke", "strokeWidth", "fontSize", "border", "opacity", "metadata", "description");
+        RELATIONSHIP_STYLE_PROPERTIES = java.util.Arrays.asList("thickness", "color", "colour", "dashed", "routing", "fontSize", "width", "position", "opacity");
+        BORDER_VALUES = java.util.Arrays.asList("solid", "dashed", "dotted");
+        ROUTING_VALUES = java.util.Arrays.asList("Direct", "Orthogonal", "Curved");
     }
 
     @Metadata(mv={2, 0, 0}, k=1, xi=48, d1={"\u0000 \n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0003\n\u0002\u0010 \n\u0002\u0010\u000e\n\u0002\b\u0003\n\u0002\u0010$\n\u0002\b\u0013\b\u0086\u0003\u0018\u00002\u00020\u0001B\t\b\u0002\u00a2\u0006\u0004\b\u0002\u0010\u0003R\u0017\u0010\u0004\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0007\u0010\bR\u001d\u0010\t\u001a\u000e\u0012\u0004\u0012\u00020\u0006\u0012\u0004\u0012\u00020\u00060\n\u00a2\u0006\b\n\u0000\u001a\u0004\b\u000b\u0010\fR\u0017\u0010\r\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u000e\u0010\bR\u0017\u0010\u000f\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0010\u0010\bR\u0017\u0010\u0011\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0012\u0010\bR\u0017\u0010\u0013\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0014\u0010\bR\u0017\u0010\u0015\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0016\u0010\bR\u0017\u0010\u0017\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0018\u0010\bR\u0017\u0010\u0019\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u001a\u0010\bR\u0017\u0010\u001b\u001a\b\u0012\u0004\u0012\u00020\u00060\u0005\u00a2\u0006\b\n\u0000\u001a\u0004\b\u001c\u0010\b\u00a8\u0006\u001d"}, d2={"Lcom/jakubjirak/structurizr/completion/StructurizrCompletionProvider$Companion;", "", "<init>", "()V", "CORE_KEYWORDS", "", "", "getCORE_KEYWORDS", "()Ljava/util/List;", "MODEL_ELEMENTS", "", "getMODEL_ELEMENTS", "()Ljava/util/Map;", "DEPLOYMENT_KEYWORDS", "getDEPLOYMENT_KEYWORDS", "VIEW_KEYWORDS", "getVIEW_KEYWORDS", "STYLE_KEYWORDS", "getSTYLE_KEYWORDS", "STYLE_PROPERTIES", "getSTYLE_PROPERTIES", "SHAPES", "getSHAPES", "LAYOUT_DIRECTIONS", "getLAYOUT_DIRECTIONS", "DIRECTIVES", "getDIRECTIVES", "OTHER_KEYWORDS", "getOTHER_KEYWORDS", "structurizr-dsl-plugin"})

@@ -90,4 +90,64 @@
       <option name="STRUCTURIZR_DSL" value="true" />
     </context>
   </template>
+
+  <template name="depenv" value="deploymentEnvironment &quot;$NAME$&quot; {&#10;    $END$&#10;}" description="Deployment Environment" toReformat="false" toShortenFQNames="false">
+    <variable name="NAME" expression="" defaultValue="&quot;Production&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="depnode" value="$IDENTIFIER$ = deploymentNode &quot;$NAME$&quot; &quot;$DESCRIPTION$&quot; &quot;$TECHNOLOGY$&quot; {&#10;    $END$&#10;}" description="Deployment Node" toReformat="false" toShortenFQNames="false">
+    <variable name="IDENTIFIER" expression="" defaultValue="&quot;node&quot;" alwaysStopAt="true" />
+    <variable name="NAME" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <variable name="TECHNOLOGY" expression="" defaultValue="&quot;Technology&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="dynview" value="dynamic $SCOPE$ &quot;$KEY$&quot; &quot;$DESCRIPTION$&quot; {&#10;    $END$&#10;}" description="Dynamic View" toReformat="false" toShortenFQNames="false">
+    <variable name="SCOPE" expression="" defaultValue="&quot;*&quot;" alwaysStopAt="true" />
+    <variable name="KEY" expression="" defaultValue="&quot;DynamicView&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="filtview" value="filtered &quot;$BASE_KEY$&quot; include &quot;$TAGS$&quot; &quot;$KEY$&quot; &quot;$DESCRIPTION$&quot;" description="Filtered View" toReformat="false" toShortenFQNames="false">
+    <variable name="BASE_KEY" expression="" defaultValue="&quot;SystemContext&quot;" alwaysStopAt="true" />
+    <variable name="TAGS" expression="" defaultValue="&quot;Element&quot;" alwaysStopAt="true" />
+    <variable name="KEY" expression="" defaultValue="&quot;FilteredView&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="infnode" value="infrastructureNode &quot;$NAME$&quot; &quot;$DESCRIPTION$&quot; &quot;$TECHNOLOGY$&quot;" description="Infrastructure Node" toReformat="false" toShortenFQNames="false">
+    <variable name="NAME" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="" defaultValue="&quot;Description&quot;" alwaysStopAt="true" />
+    <variable name="TECHNOLOGY" expression="" defaultValue="&quot;Technology&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="inc" value="!include $PATH$" description="Include directive" toReformat="false" toShortenFQNames="false">
+    <variable name="PATH" expression="" defaultValue="&quot;path/to/file.dsl&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="cst" value="!const $NAME$ &quot;$VALUE$&quot;" description="Constant" toReformat="false" toShortenFQNames="false">
+    <variable name="NAME" expression="" defaultValue="&quot;NAME&quot;" alwaysStopAt="true" />
+    <variable name="VALUE" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
 </templateSet>
