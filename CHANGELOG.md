@@ -2,6 +2,19 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.3.2] - 2026-03-05
+
+### Fixed
+- **Syntax Highlighting Colors** — Colors now match the official Structurizr website appearance (https://structurizr.com/dsl)
+  - Keywords: Structurizr blue (#1168BD) — matching the official editor
+  - Identifiers/variables: dark red (#772222 light / #aa2222 dark)
+  - Strings: subtle gray (#555555 light / #aaaaaa dark)
+  - Comments: medium gray (#999999), italic
+  - Constants/substitutions: green (#00aa00)
+  - Braces, arrows, operators: Structurizr blue (#1168BD)
+- Added `additionalTextAttributes` for both Default (light) and Darcula (dark) schemes
+- Plugin editor now provides a consistent, familiar look for Structurizr DSL users
+
 ## [2026.3.1] - 2026-03-05
 
 ### Changed

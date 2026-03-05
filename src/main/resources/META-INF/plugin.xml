@@ -74,6 +74,9 @@
     <lang.syntaxHighlighterFactory language="Structurizr" implementationClass="com.jakubjirak.structurizr.highlighting.StructurizrSyntaxHighlighterFactory" />
     <annotator language="Structurizr" implementationClass="com.jakubjirak.structurizr.highlighting.StructurizrAnnotator" />
     <colorSettingsPage implementationClass="com.jakubjirak.structurizr.highlighting.StructurizrColorSettingsPage" />
+    <!-- Color schemes matching official Structurizr website appearance -->
+    <additionalTextAttributes scheme="Default" file="colorSchemes/StructurizrDefault.xml"/>
+    <additionalTextAttributes scheme="Darcula" file="colorSchemes/StructurizrDarcula.xml"/>
     <!-- Code Completion -->
     <completion.contributor language="Structurizr" implementationClass="com.jakubjirak.structurizr.completion.StructurizrCompletionContributor" />
     <!-- Navigation -->
