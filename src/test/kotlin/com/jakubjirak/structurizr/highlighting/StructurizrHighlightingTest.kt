@@ -14,12 +14,11 @@ class StructurizrHighlightingTest {
     @DisplayName("StructurizrSyntaxHighlighter TextAttributesKeys via Companion")
     inner class TextAttributesKeys {
 
-        private val companionObj = StructurizrSyntaxHighlighter.Companion
-        private val companionClass = companionObj.javaClass
+        private val outerClass = StructurizrSyntaxHighlighter::class.java
 
         private fun getKey(name: String): TextAttributesKey {
-            val method: Method = companionClass.getMethod("get$name")
-            return method.invoke(companionObj) as TextAttributesKey
+            val field = outerClass.getField(name)
+            return field.get(null) as TextAttributesKey
         }
 
         @Test

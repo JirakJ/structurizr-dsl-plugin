@@ -2,6 +2,19 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.3.1] - 2026-03-05
+
+### Changed
+- **Full Kotlin Migration** — Migrated all 82 hand-written source files from decompiled Java to idiomatic Kotlin with proper KDoc documentation
+- **License Headers** — Added copyright headers to all source files
+- **CI/CD Pipeline** — Added GitHub Actions workflow for automated build, test, and verification on every push and PR
+- Removed all decompilation artifacts (`@Metadata`, `Intrinsics`, `SourceDebugExtension`)
+- Replaced Java collections and patterns with Kotlin idioms (`when`, `?.let`, `apply`, `companion object`, `object`, expression bodies)
+- Updated 7 reflection-based test suites to match Kotlin class structure
+
+### Fixed
+- `StructurizrPsiImplUtil` compilation — replaced `Intrinsics.areEqual` with `Objects.equals`
+
 ## [2026.2.4] - 2026-02-15
 
 ### Added

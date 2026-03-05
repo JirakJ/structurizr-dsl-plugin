@@ -70,13 +70,13 @@
 
 ### 🏗️ Technical Debt
 
-- [ ] Migrate decompiled Java sources to Kotlin (262 files)
+- [x] ~~Migrate decompiled Java sources to Kotlin (82 hand-written files)~~ ✅ v2026.3.1
 - [ ] Add source .bnf grammar file (currently using pre-generated parser)
 - [ ] Add source .flex lexer file (currently using pre-generated lexer)
-- [ ] Set up GitHub Actions CI/CD pipeline
+- [x] ~~Set up GitHub Actions CI/CD pipeline~~ ✅ v2026.3.1
 - [ ] Add integration tests using CodeInsightTestFixture
 - [ ] Add UI tests using RemoteRobot
 
 ---
 
-*Last updated: 2026-02-15*
+*Last updated: 2026-03-05*

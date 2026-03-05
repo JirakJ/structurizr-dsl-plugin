@@ -160,13 +160,16 @@ class StructurizrBreadcrumbsProviderTest {
     @DisplayName("getTypeName mapping via reflection")
     inner class TypeNameMappingTests {
 
+        private val companionObj: Any = StructurizrBreadcrumbsProvider::class.java
+            .getDeclaredField("Companion").get(null)
+
         private fun getTypeName(type: com.intellij.psi.tree.IElementType): String {
-            val method: Method = StructurizrBreadcrumbsProvider::class.java.getDeclaredMethod(
+            val method: Method = companionObj.javaClass.getDeclaredMethod(
                 "getTypeName",
                 com.intellij.psi.tree.IElementType::class.java
             )
             method.isAccessible = true
-            return method.invoke(null, type) as String
+            return method.invoke(companionObj, type) as String
         }
 
         @Test

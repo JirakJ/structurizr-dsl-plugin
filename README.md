@@ -90,8 +90,15 @@ Configure: CLI path, auto-preview, export format, diagram theme, auto-layout dir
 
 ```bash
 ./gradlew test
-# 674 tests
+# 866 tests
 ```
+
+## CI/CD
+
+The project uses GitHub Actions for continuous integration:
+
+- **CI** (`ci.yml`) — Runs build, test, and verifyPlugin on every push/PR to `main`
+- **Release** (`release.yml`) — Builds, creates GitHub release, and publishes to JetBrains Marketplace on tag push
 
 ## License
 

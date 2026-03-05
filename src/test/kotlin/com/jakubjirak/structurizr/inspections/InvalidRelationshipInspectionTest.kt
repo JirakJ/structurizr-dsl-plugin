@@ -94,9 +94,13 @@ class InvalidRelationshipInspectionTest {
     @DisplayName("Internal methods via reflection")
     inner class InternalMethods {
 
+        private val companionObj: Any = InvalidRelationshipInspection::class.java
+            .getDeclaredField("Companion").get(null)
+        private val companionClass: Class<*> = companionObj.javaClass
+
         @Test
         fun `isInsideElementScope method exists`() {
-            val method = InvalidRelationshipInspection::class.java.getDeclaredMethod(
+            val method = companionClass.getDeclaredMethod(
                 "isInsideElementScope",
                 com.intellij.psi.PsiElement::class.java
             )
@@ -106,7 +110,7 @@ class InvalidRelationshipInspectionTest {
 
         @Test
         fun `getRootIdentifier method exists`() {
-            val method = InvalidRelationshipInspection::class.java.getDeclaredMethod(
+            val method = companionClass.getDeclaredMethod(
                 "getRootIdentifier",
                 String::class.java
             )
@@ -116,37 +120,37 @@ class InvalidRelationshipInspectionTest {
 
         @Test
         fun `getRootIdentifier extracts root from dotted path`() {
-            val method = InvalidRelationshipInspection::class.java.getDeclaredMethod(
+            val method = companionClass.getDeclaredMethod(
                 "getRootIdentifier",
                 String::class.java
             )
             method.isAccessible = true
-            assertEquals("system", method.invoke(null, "system.container"))
+            assertEquals("system", method.invoke(companionObj, "system.container"))
         }
 
         @Test
         fun `getRootIdentifier returns full string when no dot`() {
-            val method = InvalidRelationshipInspection::class.java.getDeclaredMethod(
+            val method = companionClass.getDeclaredMethod(
                 "getRootIdentifier",
                 String::class.java
             )
             method.isAccessible = true
-            assertEquals("mySystem", method.invoke(null, "mySystem"))
+            assertEquals("mySystem", method.invoke(companionObj, "mySystem"))
         }
 
         @Test
-        fun `getRootIdentifier returns empty for null`() {
-            val method = InvalidRelationshipInspection::class.java.getDeclaredMethod(
+        fun `getRootIdentifier returns empty for empty string`() {
+            val method = companionClass.getDeclaredMethod(
                 "getRootIdentifier",
                 String::class.java
             )
             method.isAccessible = true
-            assertEquals("", method.invoke(null, null as String?))
+            assertEquals("", method.invoke(companionObj, ""))
         }
 
         @Test
         fun `isBuiltIn method exists`() {
-            val method = InvalidRelationshipInspection::class.java.getDeclaredMethod(
+            val method = companionClass.getDeclaredMethod(
                 "isBuiltIn",
                 String::class.java
             )
@@ -156,42 +160,42 @@ class InvalidRelationshipInspectionTest {
 
         @Test
         fun `isBuiltIn returns true for this`() {
-            val method = InvalidRelationshipInspection::class.java.getDeclaredMethod(
+            val method = companionClass.getDeclaredMethod(
                 "isBuiltIn",
                 String::class.java
             )
             method.isAccessible = true
-            assertTrue(method.invoke(null, "this") as Boolean)
+            assertTrue(method.invoke(companionObj, "this") as Boolean)
         }
 
         @Test
         fun `isBuiltIn returns true for source`() {
-            val method = InvalidRelationshipInspection::class.java.getDeclaredMethod(
+            val method = companionClass.getDeclaredMethod(
                 "isBuiltIn",
                 String::class.java
             )
             method.isAccessible = true
-            assertTrue(method.invoke(null, "source") as Boolean)
+            assertTrue(method.invoke(companionObj, "source") as Boolean)
         }
 
         @Test
         fun `isBuiltIn returns true for destination`() {
-            val method = InvalidRelationshipInspection::class.java.getDeclaredMethod(
+            val method = companionClass.getDeclaredMethod(
                 "isBuiltIn",
                 String::class.java
             )
             method.isAccessible = true
-            assertTrue(method.invoke(null, "destination") as Boolean)
+            assertTrue(method.invoke(companionObj, "destination") as Boolean)
         }
 
         @Test
         fun `isBuiltIn returns false for regular identifier`() {
-            val method = InvalidRelationshipInspection::class.java.getDeclaredMethod(
+            val method = companionClass.getDeclaredMethod(
                 "isBuiltIn",
                 String::class.java
             )
             method.isAccessible = true
-            assertFalse(method.invoke(null, "mySystem") as Boolean)
+            assertFalse(method.invoke(companionObj, "mySystem") as Boolean)
         }
     }
 

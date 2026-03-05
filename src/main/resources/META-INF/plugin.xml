@@ -3,7 +3,7 @@
   <name>Structurizr DSL</name>
   <vendor email="your@email.com" url="https://github.com/JirakJ/structurizr-plugin">Jakub Jirak</vendor>
   <!-- Marketplace product code and pricing -->
-  <product-descriptor code="PSTRUCTURIZRDSL" release-date="20260215" release-version="20262" optional="true" />
+  <product-descriptor code="PSTRUCTURIZRDSL" release-date="20260305" release-version="20263" optional="true" />
   <description><![CDATA[<h2>Structurizr DSL — Architecture Diagrams as Code in Your IDE</h2>
 
 <p>
