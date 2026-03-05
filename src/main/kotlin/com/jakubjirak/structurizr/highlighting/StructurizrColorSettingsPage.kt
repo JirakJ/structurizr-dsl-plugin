@@ -52,7 +52,6 @@ class StructurizrColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor("Keywords//Style", StructurizrSyntaxHighlighter.STYLE_KEYWORD),
             AttributesDescriptor("Properties", StructurizrSyntaxHighlighter.PROPERTY),
             AttributesDescriptor("Directives", StructurizrSyntaxHighlighter.DIRECTIVE),
-            AttributesDescriptor("Constants", StructurizrSyntaxHighlighter.CONSTANT),
             AttributesDescriptor("String", StructurizrSyntaxHighlighter.STRING),
             AttributesDescriptor("Number", StructurizrSyntaxHighlighter.NUMBER),
             AttributesDescriptor("Color literal", StructurizrSyntaxHighlighter.COLOR),
@@ -61,7 +60,6 @@ class StructurizrColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor("Operator", StructurizrSyntaxHighlighter.OPERATOR),
             AttributesDescriptor("Arrow (->)", StructurizrSyntaxHighlighter.ARROW),
             AttributesDescriptor("Braces", StructurizrSyntaxHighlighter.BRACES),
-            AttributesDescriptor("Star (*)", StructurizrSyntaxHighlighter.STAR),
             AttributesDescriptor("Variable reference (\${...})", StructurizrAnnotator.VARIABLE_REFERENCE),
             AttributesDescriptor("Bad character", StructurizrSyntaxHighlighter.BAD_CHARACTER),
         )

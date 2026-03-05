@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase
+import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.jakubjirak.structurizr.language.lexer.StructurizrLexerAdapter
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
@@ -98,7 +99,7 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
             StructurizrTypes.POSITION,
             StructurizrTypes.DASHED -> PROPERTY_KEYS
 
-            // Shape constants
+            // Shape values — gray (rendered as string/default on the official website)
             StructurizrTypes.SHAPE_BOX,
             StructurizrTypes.SHAPE_ROUNDED_BOX,
             StructurizrTypes.SHAPE_CIRCLE,
@@ -112,13 +113,13 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
             StructurizrTypes.SHAPE_WEB_BROWSER,
             StructurizrTypes.SHAPE_MOBILE_PORTRAIT,
             StructurizrTypes.SHAPE_MOBILE_LANDSCAPE,
-            StructurizrTypes.SHAPE_COMPONENT -> CONSTANT_KEYS
+            StructurizrTypes.SHAPE_COMPONENT -> STRING_KEYS
 
-            // Layout direction constants
+            // Layout direction values — gray (rendered as string/default on the official website)
             StructurizrTypes.LAYOUT_TB,
             StructurizrTypes.LAYOUT_BT,
             StructurizrTypes.LAYOUT_LR,
-            StructurizrTypes.LAYOUT_RL -> CONSTANT_KEYS
+            StructurizrTypes.LAYOUT_RL -> STRING_KEYS
 
             // Metadata-like keywords
             StructurizrTypes.TITLE,
@@ -144,13 +145,13 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
             StructurizrTypes.DIRECTIVE_PLUGIN,
             StructurizrTypes.DIRECTIVE_SCRIPT -> DIRECTIVE_KEYS
 
-            // Identifier mode constants
+            // Identifier mode keywords — blue (keyword on the official website)
             StructurizrTypes.HIERARCHICAL,
-            StructurizrTypes.FLAT -> CONSTANT_KEYS
+            StructurizrTypes.FLAT -> KEYWORD_KEYS
 
-            // Boolean constants
+            // Boolean values — gray (rendered as string/default on the official website)
             StructurizrTypes.TRUE,
-            StructurizrTypes.FALSE -> CONSTANT_KEYS
+            StructurizrTypes.FALSE -> STRING_KEYS
 
             // Access keywords
             StructurizrTypes.READ,
@@ -176,11 +177,14 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
             StructurizrTypes.COMMA,
             StructurizrTypes.DOT -> OPERATOR_KEYS
 
-            // Star
-            StructurizrTypes.STAR -> STAR_KEYS
+            // Star — red (rendered as variable on the official website, used in include/exclude *)
+            StructurizrTypes.STAR -> IDENTIFIER_KEYS
 
             // Bang
             StructurizrTypes.BANG -> OPERATOR_KEYS
+
+            // Variable substitution start
+            StructurizrTypes.VAR_START -> CONSTANT_KEYS
 
             // Literals
             StructurizrTypes.STRING -> STRING_KEYS
@@ -194,7 +198,10 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
             StructurizrTypes.LINE_COMMENT,
             StructurizrTypes.BLOCK_COMMENT -> COMMENT_KEYS
 
-            else -> BAD_CHARACTER_KEYS
+            // Bad characters
+            TokenType.BAD_CHARACTER -> BAD_CHARACTER_KEYS
+
+            else -> EMPTY_KEYS
         }
 
     companion object {
@@ -293,5 +300,6 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
         private val BRACES_KEYS = arrayOf(BRACES)
         private val STAR_KEYS = arrayOf(STAR)
         private val BAD_CHARACTER_KEYS = arrayOf(BAD_CHARACTER)
+        private val EMPTY_KEYS = emptyArray<TextAttributesKey>()
     }
 }

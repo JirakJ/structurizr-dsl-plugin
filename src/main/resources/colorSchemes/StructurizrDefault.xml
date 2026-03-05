@@ -2,6 +2,7 @@
 <!--
   Structurizr DSL color scheme for IntelliJ Light/Default themes.
   Colors match the official Structurizr website (https://structurizr.com/dsl).
+  Source: structurizr/structurizr CSS — structurizr.css
 -->
 <list>
     <!-- Keywords — #1168BD (Structurizr blue) -->
@@ -50,14 +51,7 @@
         </value>
     </option>
 
-    <!-- Constants — #00aa00 (green) -->
-    <option name="STRUCTURIZR_CONSTANT">
-        <value>
-            <option name="FOREGROUND" value="00aa00"/>
-        </value>
-    </option>
-
-    <!-- Strings — #555555 (dark gray) -->
+    <!-- Strings — #555555 (dark gray) — includes shape values, booleans, layout dirs -->
     <option name="STRUCTURIZR_STRING">
         <value>
             <option name="FOREGROUND" value="555555"/>
@@ -78,14 +72,14 @@
         </value>
     </option>
 
-    <!-- Identifiers/variables — #772222 (dark red/maroon) -->
+    <!-- Identifiers/variables — #772222 (dark red/maroon) — includes * wildcard -->
     <option name="STRUCTURIZR_IDENTIFIER">
         <value>
             <option name="FOREGROUND" value="772222"/>
         </value>
     </option>
 
-    <!-- Comments — #999999 (medium gray) -->
+    <!-- Comments — #999999 (medium gray, italic) -->
     <option name="STRUCTURIZR_COMMENT">
         <value>
             <option name="FOREGROUND" value="999999"/>
@@ -114,16 +108,9 @@
         </value>
     </option>
 
-    <!-- Star — #1168BD (blue) -->
-    <option name="STRUCTURIZR_STAR">
-        <value>
-            <option name="FOREGROUND" value="1168bd"/>
-        </value>
-    </option>
-
     <!-- Annotator-provided keys -->
 
-    <!-- Variable reference ${...} — #00aa00 (green, same as constants) -->
+    <!-- Variable reference ${...} — #00aa00 (green, constant on the website) -->
     <option name="STRUCTURIZR_VARIABLE_REFERENCE">
         <value>
             <option name="FOREGROUND" value="00aa00"/>
@@ -148,6 +135,13 @@
     <option name="STRUCTURIZR_DEPRECATED_DIRECTIVE">
         <value>
             <option name="FOREGROUND" value="cccccc"/>
+        </value>
+    </option>
+
+    <!-- Constants (${...} start token) — #00aa00 (green) -->
+    <option name="STRUCTURIZR_CONSTANT">
+        <value>
+            <option name="FOREGROUND" value="00aa00"/>
         </value>
     </option>
 </list>

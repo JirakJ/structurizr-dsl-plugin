@@ -2,6 +2,18 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.3.3] - 2026-03-05
+
+### Fixed
+- **Token Classification** — Aligned syntax token coloring with the official Structurizr ACE editor at structurizr.com:
+  - Shape values (Person, Cylinder, Box, etc.) now render as gray text (string) instead of green constants
+  - Layout directions (lr, tb, rl, bt) now render as gray text instead of green constants
+  - Boolean values (true/false) now render as gray text instead of green constants
+  - Identifier mode keywords (hierarchical/flat) now render as blue (keyword) instead of green
+  - Wildcard `*` (in include/exclude) now renders as red (variable) matching the website
+  - Added handling for `${` (VAR_START) token — previously showed as bad character
+  - Fixed `else` branch in highlighter — unknown tokens no longer render as error characters
+
 ## [2026.3.2] - 2026-03-05
 
 ### Fixed
