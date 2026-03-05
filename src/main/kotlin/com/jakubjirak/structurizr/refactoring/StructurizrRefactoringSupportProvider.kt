@@ -1,0 +1,23 @@
+/* Copyright 2026 Jakub Jirák. All rights reserved. Licensed under the proprietary license. See LICENSE for details. */
+package com.jakubjirak.structurizr.refactoring
+
+import com.intellij.lang.refactoring.RefactoringSupportProvider
+import com.intellij.psi.PsiElement
+import com.jakubjirak.structurizr.language.psi.StructurizrElementAssignment
+import com.jakubjirak.structurizr.language.psi.StructurizrTypes
+
+/**
+ * Provides refactoring support for Structurizr DSL elements.
+ *
+ * Enables in-place rename for identifier tokens in element assignments.
+ */
+class StructurizrRefactoringSupportProvider : RefactoringSupportProvider() {
+
+    /** Returns whether in-place rename is available for the given [element]. */
+    override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
+        if (element.node?.elementType == StructurizrTypes.IDENTIFIER) {
+            return element.parent is StructurizrElementAssignment
+        }
+        return false
+    }
+}

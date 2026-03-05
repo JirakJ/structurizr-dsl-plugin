@@ -80,9 +80,9 @@ class StructurizrAnnotatorTest {
         }
 
         @Test
-        fun `VARIABLE_REFERENCE is private`() {
+        fun `VARIABLE_REFERENCE is public`() {
             val field = StructurizrAnnotator::class.java.getDeclaredField("VARIABLE_REFERENCE")
-            assertTrue(Modifier.isPrivate(field.modifiers))
+            assertTrue(Modifier.isPublic(field.modifiers))
         }
 
         @Test
@@ -101,16 +101,16 @@ class StructurizrAnnotatorTest {
         }
 
         @Test
-        fun `getVARIABLE_REFERENCE static accessor exists`() {
-            val method = StructurizrAnnotator::class.java.getMethod("getVARIABLE_REFERENCE")
-            assertNotNull(method)
-            assertTrue(Modifier.isStatic(method.modifiers))
+        fun `VARIABLE_REFERENCE public field is directly accessible`() {
+            val field = StructurizrAnnotator::class.java.getField("VARIABLE_REFERENCE")
+            assertNotNull(field)
+            assertTrue(Modifier.isStatic(field.modifiers))
         }
 
         @Test
-        fun `getVARIABLE_REFERENCE returns correct key`() {
-            val method = StructurizrAnnotator::class.java.getMethod("getVARIABLE_REFERENCE")
-            val key = method.invoke(null) as TextAttributesKey
+        fun `VARIABLE_REFERENCE public field returns correct key`() {
+            val field = StructurizrAnnotator::class.java.getField("VARIABLE_REFERENCE")
+            val key = field.get(null) as TextAttributesKey
             assertNotNull(key)
             assertEquals("STRUCTURIZR_VARIABLE_REFERENCE", key.externalName)
         }

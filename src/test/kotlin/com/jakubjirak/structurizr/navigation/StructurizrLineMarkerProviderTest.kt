@@ -176,7 +176,9 @@ class StructurizrLineMarkerProviderTest {
 
         @Test
         fun `addMarker private method exists`() {
-            val method = StructurizrLineMarkerProvider::class.java.getDeclaredMethod(
+            val companionClass = StructurizrLineMarkerProvider::class.java.declaredClasses
+                .first { it.simpleName == "Companion" }
+            val method = companionClass.getDeclaredMethod(
                 "addMarker",
                 com.intellij.psi.PsiElement::class.java,
                 javax.swing.Icon::class.java,
@@ -188,15 +190,17 @@ class StructurizrLineMarkerProviderTest {
         }
 
         @Test
-        fun `addMarker is static`() {
-            val method = StructurizrLineMarkerProvider::class.java.getDeclaredMethod(
+        fun `addMarker is a companion object method`() {
+            val companionClass = StructurizrLineMarkerProvider::class.java.declaredClasses
+                .first { it.simpleName == "Companion" }
+            val method = companionClass.getDeclaredMethod(
                 "addMarker",
                 com.intellij.psi.PsiElement::class.java,
                 javax.swing.Icon::class.java,
                 String::class.java,
                 java.util.Collection::class.java
             )
-            assertTrue(java.lang.reflect.Modifier.isStatic(method.modifiers))
+            assertFalse(java.lang.reflect.Modifier.isStatic(method.modifiers))
         }
     }
 }

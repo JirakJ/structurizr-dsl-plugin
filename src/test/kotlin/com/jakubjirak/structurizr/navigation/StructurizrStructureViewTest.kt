@@ -294,9 +294,22 @@ class StructurizrStructureViewTest {
     @DisplayName("Element type name mapping")
     inner class ElementTypeNameTests {
 
+        private val companionObj: Any = StructurizrStructureViewElement::class.java
+            .getDeclaredField("Companion").get(null)
+        private val companionClass: Class<*> = companionObj.javaClass
+
+        private fun invokeGetElementTypeName(type: com.intellij.psi.tree.IElementType): String {
+            val method = companionClass.getDeclaredMethod(
+                "getElementTypeName",
+                com.intellij.psi.tree.IElementType::class.java
+            )
+            method.isAccessible = true
+            return method.invoke(companionObj, type) as String
+        }
+
         @Test
-        fun `getElementTypeName is a private static method`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
+        fun `getElementTypeName is a private companion method`() {
+            val method = companionClass.getDeclaredMethod(
                 "getElementTypeName",
                 com.intellij.psi.tree.IElementType::class.java
             )
@@ -306,152 +319,76 @@ class StructurizrStructureViewTest {
 
         @Test
         fun `getElementTypeName returns workspace for WORKSPACE_BLOCK`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("workspace", method.invoke(null, StructurizrTypes.WORKSPACE_BLOCK))
+            assertEquals("workspace", invokeGetElementTypeName(StructurizrTypes.WORKSPACE_BLOCK))
         }
 
         @Test
         fun `getElementTypeName returns model for MODEL_BLOCK`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("model", method.invoke(null, StructurizrTypes.MODEL_BLOCK))
+            assertEquals("model", invokeGetElementTypeName(StructurizrTypes.MODEL_BLOCK))
         }
 
         @Test
         fun `getElementTypeName returns views for VIEWS_BLOCK`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("views", method.invoke(null, StructurizrTypes.VIEWS_BLOCK))
+            assertEquals("views", invokeGetElementTypeName(StructurizrTypes.VIEWS_BLOCK))
         }
 
         @Test
         fun `getElementTypeName returns styles for STYLES_BLOCK`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("styles", method.invoke(null, StructurizrTypes.STYLES_BLOCK))
+            assertEquals("styles", invokeGetElementTypeName(StructurizrTypes.STYLES_BLOCK))
         }
 
         @Test
         fun `getElementTypeName returns configuration for CONFIGURATION_BLOCK`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("configuration", method.invoke(null, StructurizrTypes.CONFIGURATION_BLOCK))
+            assertEquals("configuration", invokeGetElementTypeName(StructurizrTypes.CONFIGURATION_BLOCK))
         }
 
         @Test
         fun `getElementTypeName returns person for PERSON_DEFINITION`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("person", method.invoke(null, StructurizrTypes.PERSON_DEFINITION))
+            assertEquals("person", invokeGetElementTypeName(StructurizrTypes.PERSON_DEFINITION))
         }
 
         @Test
         fun `getElementTypeName returns softwareSystem for SOFTWARE_SYSTEM_DEFINITION`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("softwareSystem", method.invoke(null, StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION))
+            assertEquals("softwareSystem", invokeGetElementTypeName(StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION))
         }
 
         @Test
         fun `getElementTypeName returns container for CONTAINER_DEFINITION`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("container", method.invoke(null, StructurizrTypes.CONTAINER_DEFINITION))
+            assertEquals("container", invokeGetElementTypeName(StructurizrTypes.CONTAINER_DEFINITION))
         }
 
         @Test
         fun `getElementTypeName returns component for COMPONENT_DEFINITION`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("component", method.invoke(null, StructurizrTypes.COMPONENT_DEFINITION))
+            assertEquals("component", invokeGetElementTypeName(StructurizrTypes.COMPONENT_DEFINITION))
         }
 
         @Test
         fun `getElementTypeName returns deploymentEnvironment for DEPLOYMENT_ENVIRONMENT_BLOCK`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("deploymentEnvironment", method.invoke(null, StructurizrTypes.DEPLOYMENT_ENVIRONMENT_BLOCK))
+            assertEquals("deploymentEnvironment", invokeGetElementTypeName(StructurizrTypes.DEPLOYMENT_ENVIRONMENT_BLOCK))
         }
 
         @Test
         fun `getElementTypeName returns deploymentNode for DEPLOYMENT_NODE_DEFINITION`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("deploymentNode", method.invoke(null, StructurizrTypes.DEPLOYMENT_NODE_DEFINITION))
+            assertEquals("deploymentNode", invokeGetElementTypeName(StructurizrTypes.DEPLOYMENT_NODE_DEFINITION))
         }
 
         @Test
         fun `getElementTypeName returns infrastructureNode for INFRASTRUCTURE_NODE_DEFINITION`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("infrastructureNode", method.invoke(null, StructurizrTypes.INFRASTRUCTURE_NODE_DEFINITION))
+            assertEquals("infrastructureNode", invokeGetElementTypeName(StructurizrTypes.INFRASTRUCTURE_NODE_DEFINITION))
         }
 
         @Test
         fun `getElementTypeName returns group for GROUP_BLOCK`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("group", method.invoke(null, StructurizrTypes.GROUP_BLOCK))
+            assertEquals("group", invokeGetElementTypeName(StructurizrTypes.GROUP_BLOCK))
         }
 
         @Test
         fun `getElementTypeName returns enterprise for ENTERPRISE_BLOCK`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-            assertEquals("enterprise", method.invoke(null, StructurizrTypes.ENTERPRISE_BLOCK))
+            assertEquals("enterprise", invokeGetElementTypeName(StructurizrTypes.ENTERPRISE_BLOCK))
         }
 
         @Test
         fun `getElementTypeName returns view names for view types`() {
-            val method = StructurizrStructureViewElement::class.java.getDeclaredMethod(
-                "getElementTypeName",
-                com.intellij.psi.tree.IElementType::class.java
-            )
-            method.isAccessible = true
-
             val viewMappings = mapOf(
                 StructurizrTypes.SYSTEM_LANDSCAPE_VIEW to "systemLandscape",
                 StructurizrTypes.SYSTEM_CONTEXT_VIEW to "systemContext",
@@ -465,7 +402,7 @@ class StructurizrStructureViewTest {
             )
 
             viewMappings.forEach { (type, expected) ->
-                assertEquals(expected, method.invoke(null, type), "Type name for $type")
+                assertEquals(expected, invokeGetElementTypeName(type), "Type name for $type")
             }
         }
     }

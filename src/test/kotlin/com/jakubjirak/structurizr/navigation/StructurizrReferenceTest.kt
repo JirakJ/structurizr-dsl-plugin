@@ -201,7 +201,9 @@ class StructurizrReferenceTest {
 
         @Test
         fun `collectAssignments method exists`() {
-            val method = StructurizrReference::class.java.getDeclaredMethod(
+            val companionClass = StructurizrReference::class.java.declaredClasses
+                .first { it.simpleName == "Companion" }
+            val method = companionClass.getDeclaredMethod(
                 "collectAssignments",
                 com.intellij.psi.PsiElement::class.java,
                 java.util.List::class.java
@@ -211,13 +213,15 @@ class StructurizrReferenceTest {
         }
 
         @Test
-        fun `collectAssignments is static`() {
-            val method = StructurizrReference::class.java.getDeclaredMethod(
+        fun `collectAssignments is a companion object method`() {
+            val companionClass = StructurizrReference::class.java.declaredClasses
+                .first { it.simpleName == "Companion" }
+            val method = companionClass.getDeclaredMethod(
                 "collectAssignments",
                 com.intellij.psi.PsiElement::class.java,
                 java.util.List::class.java
             )
-            assertTrue(java.lang.reflect.Modifier.isStatic(method.modifiers))
+            assertFalse(java.lang.reflect.Modifier.isStatic(method.modifiers))
         }
     }
 }
