@@ -56,6 +56,7 @@ class StructurizrColorSettingsPage : ColorSettingsPage {
             AttributesDescriptor("Number", StructurizrSyntaxHighlighter.NUMBER),
             AttributesDescriptor("Color literal", StructurizrSyntaxHighlighter.COLOR),
             AttributesDescriptor("Identifier", StructurizrSyntaxHighlighter.IDENTIFIER),
+            AttributesDescriptor("Variable (reference)", StructurizrAnnotator.VARIABLE),
             AttributesDescriptor("Comment", StructurizrSyntaxHighlighter.COMMENT),
             AttributesDescriptor("Operator", StructurizrSyntaxHighlighter.OPERATOR),
             AttributesDescriptor("Arrow (->)", StructurizrSyntaxHighlighter.ARROW),

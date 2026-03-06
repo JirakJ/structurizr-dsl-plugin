@@ -2,6 +2,19 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.3.5] - 2026-03-06
+
+### Fixed
+- **Identifier Context Coloring** — Identifiers now match the ACE editor's state-machine behavior:
+  - Identifiers after keywords (e.g., `ss` in `container ss "Diagram"`) → **gray** (#555555) — matching the ACE "default" state
+  - Identifiers in relationships (e.g., `u` and `ss.wa` in `u -> ss.wa "Uses"`) → **red** (#772222) — matching the ACE variable token
+  - Identifiers in include/exclude statements → **red** (variable)
+  - Identifiers in animation blocks → **red** (variable)
+  - Dots in qualified identifiers → context-dependent (red in relationships, gray elsewhere)
+  - `*` wildcard → always **red** (variable)
+- **Missing Keyword Recognition** — 8 keywords from the ACE editor that were missing from the lexer are now recognized via the annotator and colored **blue**:
+  - `name`, `logo`, `scope`, `visibility`, `animationStep`, `instanceOf`, `light`, `dark`
+
 ## [2026.3.4] - 2026-03-06
 
 ### Fixed

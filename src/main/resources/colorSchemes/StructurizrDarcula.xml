@@ -85,8 +85,16 @@
         </value>
     </option>
 
-    <!-- Identifiers/variables — #aa2222 (brighter red in dark mode), plain -->
+    <!-- Identifiers — #aaaaaa (gray, matches ACE "default" state for value-position text) -->
     <option name="STRUCTURIZR_IDENTIFIER">
+        <value>
+            <option name="FOREGROUND" value="aaaaaa"/>
+            <option name="FONT_TYPE" value="0"/>
+        </value>
+    </option>
+
+    <!-- Variables — #aa2222 (brighter red in dark mode, for identifiers in reference contexts) -->
+    <option name="STRUCTURIZR_VARIABLE">
         <value>
             <option name="FOREGROUND" value="aa2222"/>
             <option name="FONT_TYPE" value="0"/>

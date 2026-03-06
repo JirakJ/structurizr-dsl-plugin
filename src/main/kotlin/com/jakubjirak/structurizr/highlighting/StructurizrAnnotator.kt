@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.markup.EffectType
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.IElementType
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 import java.awt.Color
 import java.util.regex.Pattern
@@ -21,8 +22,13 @@ import java.util.regex.Pattern
  * Annotator that provides additional semantic highlighting for Structurizr DSL
  * elements beyond what the lexer-based [StructurizrSyntaxHighlighter] offers.
  *
- * Handles variable substitutions inside strings, definition-site identifiers,
- * arrow operators, and deprecated directives.
+ * Handles:
+ * - Variable substitutions inside strings (`${...}`)
+ * - Definition-site identifiers (before `=`)
+ * - Identifiers and dots in variable contexts (relationships, include/exclude, animation)
+ * - Missing keyword recognition (name, logo, scope, visibility, etc.)
+ * - Arrow operators
+ * - Deprecated directives
  */
 class StructurizrAnnotator : Annotator {
 
@@ -46,15 +52,45 @@ class StructurizrAnnotator : Annotator {
             }
         }
 
-        // Highlight IDENTIFIER at definition site (element assignment)
+        // Semantic highlighting for identifiers
         if (type == StructurizrTypes.IDENTIFIER) {
             val parent = element.parent
+
+            // 1. Definition-site identifier (before = in element assignment)
             if (parent != null && parent.node.elementType == StructurizrTypes.ELEMENT_ASSIGNMENT) {
                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .range(element.textRange)
                     .textAttributes(DEFINITION_IDENTIFIER)
                     .create()
+                return
             }
+
+            // 2. Identifier in a variable context (relationship, include/exclude, animation)
+            if (isInVariableContext(element)) {
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(element.textRange)
+                    .textAttributes(VARIABLE)
+                    .create()
+                return
+            }
+
+            // 3. Missing keyword recognition — keywords in the ACE editor that our lexer
+            //    doesn't recognize as separate token types
+            if (element.text in ACE_KEYWORDS) {
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(element.textRange)
+                    .textAttributes(StructurizrSyntaxHighlighter.KEYWORD)
+                    .create()
+                return
+            }
+        }
+
+        // Highlight dots in variable contexts (qualified identifiers like ss.wa in relationships)
+        if (type == StructurizrTypes.DOT && isInVariableContext(element)) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                .range(element.textRange)
+                .textAttributes(VARIABLE)
+                .create()
         }
 
         // Highlight arrow operators
@@ -101,6 +137,44 @@ class StructurizrAnnotator : Annotator {
         }
     }
 
+    /**
+     * Checks whether the given element is inside a "variable" context where
+     * identifiers should be colored red (matching the ACE editor's variable token).
+     *
+     * Variable contexts are: relationship statements, include/exclude,
+     * animation blocks, systemContext views (special ACE rule),
+     * and instance definitions (special ACE rule).
+     */
+    private fun isInVariableContext(element: PsiElement): Boolean {
+        var parent = element.parent
+        while (parent != null) {
+            when (parent.node.elementType) {
+                // Contexts where identifiers are red (ACE variable token)
+                StructurizrTypes.RELATIONSHIP_STATEMENT,
+                StructurizrTypes.RELATIONSHIP_IN_DYNAMIC_VIEW,
+                StructurizrTypes.INCLUDE_STATEMENT,
+                StructurizrTypes.EXCLUDE_STATEMENT,
+                StructurizrTypes.ANIMATION_BLOCK,
+                StructurizrTypes.ANIMATION_STEP,
+                // Special ACE rules: systemContext has (.+?) group as variable
+                StructurizrTypes.SYSTEM_CONTEXT_VIEW,
+                // Special ACE rules: softwareSystemInstance/containerInstance have (.*)$ as variable
+                StructurizrTypes.SOFTWARE_SYSTEM_INSTANCE_DEFINITION,
+                StructurizrTypes.CONTAINER_INSTANCE_DEFINITION -> return true
+                // Stop at block-level boundaries to avoid walking the entire tree
+                StructurizrTypes.WORKSPACE_BLOCK,
+                StructurizrTypes.MODEL_BLOCK,
+                StructurizrTypes.VIEWS_BLOCK,
+                StructurizrTypes.STYLES_BLOCK,
+                StructurizrTypes.CONFIGURATION_BLOCK,
+                StructurizrTypes.ELEMENT_STYLE,
+                StructurizrTypes.RELATIONSHIP_STYLE -> return false
+            }
+            parent = parent.parent
+        }
+        return false
+    }
+
     companion object {
         /** Highlighting key for `${...}` variable references inside strings. */
         @JvmField
@@ -112,6 +186,12 @@ class StructurizrAnnotator : Annotator {
         @JvmField
         val DEFINITION_IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
             "STRUCTURIZR_DEFINITION_IDENTIFIER", DefaultLanguageHighlighterColors.INSTANCE_FIELD
+        )
+
+        /** Highlighting key for identifiers in variable contexts (relationships, includes). */
+        @JvmField
+        val VARIABLE: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
+            "STRUCTURIZR_VARIABLE", DefaultLanguageHighlighterColors.IDENTIFIER
         )
 
         /** Highlighting key for arrow operators (`->`, `<-`, `<->`). */
@@ -127,5 +207,15 @@ class StructurizrAnnotator : Annotator {
         )
 
         private val SUBSTITUTION_PATTERN: Pattern = Pattern.compile("\\$\\{[^}]+\\}")
+
+        /**
+         * Keywords recognized by the ACE editor on structurizr.com but missing from
+         * our lexer's token types. These are colored as keywords when they appear as
+         * standalone identifiers (not inside variable contexts).
+         */
+        private val ACE_KEYWORDS = setOf(
+            "name", "logo", "scope", "visibility",
+            "animationStep", "instanceOf", "light", "dark"
+        )
     }
 }

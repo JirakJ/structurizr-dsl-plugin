@@ -173,14 +173,15 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
             StructurizrTypes.LBRACE,
             StructurizrTypes.RBRACE -> BRACES_KEYS
 
-            // Comma — blue operator
+            // Comma
             StructurizrTypes.COMMA -> OPERATOR_KEYS
 
-            // Dot — red (part of qualified identifiers like ss.wa, matches website rendering)
-            StructurizrTypes.DOT -> IDENTIFIER_KEYS
+            // Dot — gray by default (matches ACE "default" state);
+            // annotator overrides to red in variable contexts (relationships, includes)
+            StructurizrTypes.DOT -> STRING_KEYS
 
-            // Star — red (rendered as variable on the official website, used in include/exclude *)
-            StructurizrTypes.STAR -> IDENTIFIER_KEYS
+            // Star — red variable (used in include/exclude *, always a reference)
+            StructurizrTypes.STAR -> VARIABLE_KEYS
 
             // Bang
             StructurizrTypes.BANG -> OPERATOR_KEYS
@@ -193,8 +194,9 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
             StructurizrTypes.NUMBER -> NUMBER_KEYS
             StructurizrTypes.COLOR_LITERAL -> COLOR_KEYS
 
-            // Identifiers
-            StructurizrTypes.IDENTIFIER -> IDENTIFIER_KEYS
+            // Identifiers — gray by default (matches ACE "default" state);
+            // annotator overrides to red in variable contexts (relationships, includes)
+            StructurizrTypes.IDENTIFIER -> STRING_KEYS
 
             // Comments
             StructurizrTypes.LINE_COMMENT,
@@ -260,6 +262,10 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
             TextAttributesKey.createTextAttributesKey("STRUCTURIZR_IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER)
 
         @JvmField
+        val VARIABLE: TextAttributesKey =
+            TextAttributesKey.createTextAttributesKey("STRUCTURIZR_VARIABLE", DefaultLanguageHighlighterColors.IDENTIFIER)
+
+        @JvmField
         val COMMENT: TextAttributesKey =
             TextAttributesKey.createTextAttributesKey("STRUCTURIZR_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
 
@@ -296,6 +302,7 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
         private val NUMBER_KEYS = arrayOf(NUMBER)
         private val COLOR_KEYS = arrayOf(COLOR)
         private val IDENTIFIER_KEYS = arrayOf(IDENTIFIER)
+        private val VARIABLE_KEYS = arrayOf(VARIABLE)
         private val COMMENT_KEYS = arrayOf(COMMENT)
         private val OPERATOR_KEYS = arrayOf(OPERATOR)
         private val ARROW_KEYS = arrayOf(ARROW)
