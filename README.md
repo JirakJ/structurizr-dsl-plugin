@@ -7,8 +7,6 @@ Full language support for [Structurizr DSL](https://docs.structurizr.com/dsl/lan
 
 ## Features
 
-### Free Tier
-
 | Feature | Description |
 |---------|-------------|
 | **Syntax Highlighting** | Full highlighting for keywords, strings, comments, identifiers, directives, operators, colors, shapes |
@@ -27,11 +25,6 @@ Full language support for [Structurizr DSL](https://docs.structurizr.com/dsl/lan
 | **Live Templates** | 10 templates: `ws`, `per`, `ss`, `con`, `comp`, `rel`, `dep`, `sv`, `cv`, `sty` |
 | **Documentation** | Ctrl+Q hover documentation for keywords |
 | **${} Highlighting** | Variable substitution highlighting in strings |
-
-### Pro Tier
-
-| Feature | Description |
-|---------|-------------|
 | **Live Diagram Preview** | Real-time C4 diagram rendering in a tool window |
 | **Split Editor** | Side-by-side DSL code and diagram view |
 | **Export** | Export diagrams as SVG, PNG, PlantUML, Mermaid |

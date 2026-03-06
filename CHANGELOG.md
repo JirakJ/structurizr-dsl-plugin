@@ -118,7 +118,7 @@ All notable changes to the Structurizr DSL Plugin are documented here.
 - 7 inspections: undefined references, unused elements, duplicate IDs, empty blocks, missing properties, deprecated keywords, invalid colors
 - Quick fixes: create element, remove unused, rename
 - Documentation provider (Ctrl+Q) for 12 keywords
-- Live diagram preview (Pro) with built-in renderer + CLI fallback
+- Live diagram preview with built-in renderer + CLI fallback
 - Split editor (DSL + diagram side by side)
 - Export to SVG, PNG, PlantUML, Mermaid
 - Copy to clipboard as SVG, image, PlantUML, Mermaid

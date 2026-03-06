@@ -2,8 +2,6 @@
   <id>com.jakubjirak.structurizr</id>
   <name>Structurizr DSL</name>
   <vendor email="your@email.com" url="https://github.com/JirakJ/structurizr-plugin">Jakub Jirak</vendor>
-  <!-- Marketplace product code and pricing -->
-  <product-descriptor code="PSTRUCTURIZRDSL" release-date="20260305" release-version="20263" optional="true" />
   <description><![CDATA[<h2>Structurizr DSL — Architecture Diagrams as Code in Your IDE</h2>
 
 <p>
@@ -58,10 +56,10 @@
             <li><b>9 Code Inspections</b> - Detects undefined references, unused elements, duplicate identifiers, empty blocks, missing properties, deprecated keywords, invalid colors, invalid contexts, and invalid relationships</li>
             <li><b>10 Live Templates</b> - Quick scaffolding for workspaces, persons, software systems, containers, components, relationships, and views</li>
             <li><b>Code Folding and Formatting</b> - Collapse DSL blocks and auto-format files with configurable code style settings</li>
-            <li><b>Live Diagram Preview</b> - Real-time C4 diagram rendering with split editor view showing code and diagram side by side (Pro)</li>
-            <li><b>Multi-Format Export</b> - Export diagrams as SVG, PNG, PlantUML, or Mermaid with copy-to-clipboard support (Pro)</li>
-            <li><b>Structurizr CLI Integration</b> - Auto-download and manage the Structurizr CLI for rendering and validation (Pro)</li>
-            <li><b>Rename Refactoring</b> - Safely rename identifiers across all references in your DSL files (Pro)</li>
+            <li><b>Live Diagram Preview</b> - Real-time C4 diagram rendering with split editor view showing code and diagram side by side</li>
+            <li><b>Multi-Format Export</b> - Export diagrams as SVG, PNG, PlantUML, or Mermaid with copy-to-clipboard support</li>
+            <li><b>Structurizr CLI Integration</b> - Auto-download and manage the Structurizr CLI for rendering and validation</li>
+            <li><b>Rename Refactoring</b> - Safely rename identifiers across all references in your DSL files</li>
         </ul>
     ]]></change-notes>
   <!-- Product and dependencies -->
