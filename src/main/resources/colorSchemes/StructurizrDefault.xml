@@ -1,147 +1,169 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Structurizr DSL color scheme for IntelliJ Light/Default themes.
-  Colors match the official Structurizr website (https://structurizr.com/dsl).
-  Source: structurizr/structurizr CSS — structurizr.css
+  Colors and font styles match the official Structurizr website (https://structurizr.com/dsl).
+  Source: structurizr/structurizr CSS — structurizr.css + ACE mode-structurizr.js
+  FONT_TYPE: 0=plain, 1=bold, 2=italic, 3=bold+italic
+  All entries use FONT_TYPE=0 to prevent IntelliJ fallback styles (bold/italic) from leaking.
 -->
 <list>
-    <!-- Keywords — #1168BD (Structurizr blue) -->
+    <!-- Keywords — #1168BD (Structurizr blue), plain (not bold) -->
     <option name="STRUCTURIZR_KEYWORD">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
     <option name="STRUCTURIZR_ELEMENT_KEYWORD">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
     <option name="STRUCTURIZR_DEPLOYMENT_KEYWORD">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
     <option name="STRUCTURIZR_VIEW_KEYWORD">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
     <option name="STRUCTURIZR_VIEW_CONTENT_KEYWORD">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
     <option name="STRUCTURIZR_STYLE_KEYWORD">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Properties — #1168BD (treated as keywords on the website) -->
+    <!-- Properties — #1168BD (treated as keywords on the website), plain (not italic) -->
     <option name="STRUCTURIZR_PROPERTY">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Directives — #1168BD (keywords on the website) -->
+    <!-- Directives — #1168BD (keywords on the website), plain -->
     <option name="STRUCTURIZR_DIRECTIVE">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Strings — #555555 (dark gray) — includes shape values, booleans, layout dirs -->
+    <!-- Strings — #555555 (dark gray), plain -->
     <option name="STRUCTURIZR_STRING">
         <value>
             <option name="FOREGROUND" value="555555"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Numbers — #555555 (same as strings) -->
+    <!-- Numbers — #555555 (same as strings), plain -->
     <option name="STRUCTURIZR_NUMBER">
         <value>
             <option name="FOREGROUND" value="555555"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Color literals — #555555 (same as strings) -->
+    <!-- Color literals — #555555 (same as strings), plain -->
     <option name="STRUCTURIZR_COLOR">
         <value>
             <option name="FOREGROUND" value="555555"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Identifiers/variables — #772222 (dark red/maroon) — includes * wildcard -->
+    <!-- Identifiers/variables — #772222 (dark red/maroon), plain -->
     <option name="STRUCTURIZR_IDENTIFIER">
         <value>
             <option name="FOREGROUND" value="772222"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Comments — #999999 (medium gray, italic) -->
+    <!-- Comments — #999999 (medium gray), plain (website does NOT use italic) -->
     <option name="STRUCTURIZR_COMMENT">
         <value>
             <option name="FOREGROUND" value="999999"/>
-            <option name="FONT_TYPE" value="2"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Operators — #1168BD (blue, same as keywords) -->
+    <!-- Operators — #1168BD (blue, same as keywords), plain -->
     <option name="STRUCTURIZR_OPERATOR">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Arrows — #1168BD (blue, same as keywords) -->
+    <!-- Arrows — #1168BD (blue, same as keywords), plain -->
     <option name="STRUCTURIZR_ARROW">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Braces — #1168BD (blue) -->
+    <!-- Braces — #1168BD (blue), plain -->
     <option name="STRUCTURIZR_BRACES">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
     <!-- Annotator-provided keys -->
 
-    <!-- Variable reference ${...} — #00aa00 (green, constant on the website) -->
+    <!-- Variable reference ${...} — #00aa00 (green, constant on the website), plain -->
     <option name="STRUCTURIZR_VARIABLE_REFERENCE">
         <value>
             <option name="FOREGROUND" value="00aa00"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Definition identifier — #772222 (dark red, same as identifiers) -->
+    <!-- Definition identifier — #772222 (dark red, same as identifiers), plain -->
     <option name="STRUCTURIZR_DEFINITION_IDENTIFIER">
         <value>
             <option name="FOREGROUND" value="772222"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Arrow operator — #1168BD (blue) -->
+    <!-- Arrow operator — #1168BD (blue), plain -->
     <option name="STRUCTURIZR_ARROW_OPERATOR">
         <value>
             <option name="FOREGROUND" value="1168bd"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Deprecated directive — #cccccc (light gray, strikethrough) -->
+    <!-- Deprecated directive — #cccccc (light gray, strikethrough), plain -->
     <option name="STRUCTURIZR_DEPRECATED_DIRECTIVE">
         <value>
             <option name="FOREGROUND" value="cccccc"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 
-    <!-- Constants (${...} start token) — #00aa00 (green) -->
+    <!-- Constants (${...} start token) — #00aa00 (green), plain (not bold) -->
     <option name="STRUCTURIZR_CONSTANT">
         <value>
             <option name="FOREGROUND" value="00aa00"/>
+            <option name="FONT_TYPE" value="0"/>
         </value>
     </option>
 </list>

@@ -2,6 +2,17 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.3.4] - 2026-03-06
+
+### Fixed
+- **Font Styles** — Removed bold/italic font styling that leaked from IntelliJ theme defaults:
+  - Keywords now render as **plain** blue text (were bold due to IntelliJ KEYWORD fallback)
+  - Properties now render as **plain** blue text (were italic due to INSTANCE_FIELD fallback)
+  - Constants/substitutions now render as **plain** green text (were bold due to CONSTANT fallback)
+  - Comments now render as **plain** gray text (were italic; the official website uses no italic)
+  - All `FONT_TYPE=0` explicitly set in color scheme XMLs to prevent theme-dependent styling
+- **Dot in Qualified Identifiers** — The `.` in references like `ss.wa` now renders as red (#772222) matching the official Structurizr website where `ss.wa` is a single red variable token
+
 ## [2026.3.3] - 2026-03-05
 
 ### Fixed

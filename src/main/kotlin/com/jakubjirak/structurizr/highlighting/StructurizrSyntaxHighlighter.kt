@@ -173,9 +173,11 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
             StructurizrTypes.LBRACE,
             StructurizrTypes.RBRACE -> BRACES_KEYS
 
-            // Punctuation operators
-            StructurizrTypes.COMMA,
-            StructurizrTypes.DOT -> OPERATOR_KEYS
+            // Comma — blue operator
+            StructurizrTypes.COMMA -> OPERATOR_KEYS
+
+            // Dot — red (part of qualified identifiers like ss.wa, matches website rendering)
+            StructurizrTypes.DOT -> IDENTIFIER_KEYS
 
             // Star — red (rendered as variable on the official website, used in include/exclude *)
             StructurizrTypes.STAR -> IDENTIFIER_KEYS
