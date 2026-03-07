@@ -62,7 +62,7 @@
             <li><b>Rename Refactoring</b> - Safely rename identifiers across all references in your DSL files</li>
         </ul>
     ]]></change-notes>
-  <product-descriptor code="PSTRUCTDSL" release-date="20260307" release-version="20263" optional="true"/>
+  <product-descriptor code="PSTRUCTURIZRDSL" release-date="20260307" release-version="20263" optional="true"/>
   <!-- Product and dependencies -->
   <depends>com.intellij.modules.platform</depends>
   <extensions defaultExtensionNs="com.intellij">

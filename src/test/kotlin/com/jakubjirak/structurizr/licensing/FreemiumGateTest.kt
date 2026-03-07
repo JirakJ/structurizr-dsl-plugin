@@ -19,8 +19,8 @@ class FreemiumGateTest {
     inner class ProductCodeTests {
 
         @Test
-        fun `product code is PSTRUCTDSL`() {
-            assertEquals("PSTRUCTDSL", FreemiumGate.PRODUCT_CODE)
+        fun `product code is PSTRUCTURIZRDSL`() {
+            assertEquals("PSTRUCTURIZRDSL", FreemiumGate.PRODUCT_CODE)
         }
     }
 
