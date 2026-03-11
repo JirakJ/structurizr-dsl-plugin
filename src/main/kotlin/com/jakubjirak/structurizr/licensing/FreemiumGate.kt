@@ -4,8 +4,8 @@
  */
 package com.jakubjirak.structurizr.licensing
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.ui.LicensingFacade
 
 @Service(Service.Level.APP)
@@ -32,7 +32,7 @@ class FreemiumGate {
         )
 
         fun getInstance(): FreemiumGate =
-            ApplicationManager.getApplication().getService(FreemiumGate::class.java)
+            service()
     }
 
     fun getLicenseStatus(): LicenseStatus {

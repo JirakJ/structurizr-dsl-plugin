@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -23,9 +24,9 @@ import java.awt.image.BufferedImage
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
+import java.util.Comparator
 import javax.imageio.ImageIO
 import kotlin.io.extension
-import kotlin.io.deleteRecursively
 
 /**
  * Project-level service for exporting Structurizr diagrams to various formats.
@@ -44,7 +45,7 @@ class StructurizrExportService(private val project: Project) {
     companion object {
         /** Returns the service instance for the given [project]. */
         fun getInstance(project: Project): StructurizrExportService =
-            project.getService(StructurizrExportService::class.java)
+            project.service()
     }
 
     /** Nested enum representing Structurizr view types. */
@@ -260,8 +261,7 @@ class StructurizrExportService(private val project: Project) {
 
             Files.copy(exportedFile.toPath(), outputPath, StandardCopyOption.REPLACE_EXISTING)
         } finally {
-            @Suppress("DEPRECATION")
-            tempDir.toFile().deleteRecursively()
+            Files.walk(tempDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
         }
     }
 

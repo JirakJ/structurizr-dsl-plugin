@@ -4,6 +4,7 @@ package com.jakubjirak.structurizr.settings
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.util.xmlb.XmlSerializerUtil
 
@@ -73,6 +74,6 @@ class StructurizrProjectSettings : PersistentStateComponent<StructurizrProjectSe
     companion object {
         /** Returns the project-level settings service instance. */
         fun getInstance(project: Project): StructurizrProjectSettings =
-            project.getService(StructurizrProjectSettings::class.java)
+            project.service()
     }
 }

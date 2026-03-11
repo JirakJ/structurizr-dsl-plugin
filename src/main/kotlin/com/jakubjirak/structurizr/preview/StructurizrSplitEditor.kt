@@ -17,18 +17,18 @@ import java.util.concurrent.TimeUnit
  * A split editor that pairs a standard [TextEditor] with a live
  * [StructurizrPreviewFileEditor] for Structurizr DSL files.
  */
-class StructurizrSplitEditor(
+class StructurizrSplitEditor private constructor(
     private val project: Project,
     override val textEditor: TextEditor,
-    private val file: VirtualFile,
+    private val structurizrPreview: StructurizrPreviewFileEditor,
 ) : TextEditorWithPreview(
     textEditor,
-    StructurizrPreviewFileEditor(project, file),
+    structurizrPreview,
     "Structurizr Editor",
 ), TextEditor {
 
-    override val previewEditor: StructurizrPreviewFileEditor
-        get() = myPreview as StructurizrPreviewFileEditor
+    constructor(project: Project, textEditor: TextEditor, file: VirtualFile) :
+        this(project, textEditor, StructurizrPreviewFileEditor(project, file))
 
     private val scheduler = Executors.newSingleThreadScheduledExecutor()
     private var updateTask: ScheduledFuture<*>? = null
@@ -50,7 +50,7 @@ class StructurizrSplitEditor(
 
     private fun updatePreview() {
         val content = textEditor.editor.document.getText()
-        previewEditor.updatePreview(content)
+        structurizrPreview.updatePreview(content)
     }
 
     override fun getEditor(): Editor = textEditor.editor

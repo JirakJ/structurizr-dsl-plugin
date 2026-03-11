@@ -1,10 +1,10 @@
 /* Copyright 2026 Jakub Jirák. All rights reserved. Licensed under the proprietary license. See LICENSE for details. */
 package com.jakubjirak.structurizr.settings
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
 import com.intellij.util.xmlb.XmlSerializerUtil
 
 /**
@@ -71,6 +71,6 @@ class StructurizrSettings : PersistentStateComponent<StructurizrSettings> {
 
         /** Returns the application-level settings service instance. */
         fun getInstance(): StructurizrSettings =
-            ApplicationManager.getApplication().getService(StructurizrSettings::class.java)
+            service()
     }
 }

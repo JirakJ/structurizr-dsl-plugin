@@ -2,6 +2,19 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.4.4] - 2026-03-11
+
+### Fixed
+- **Binary Incompatibility** — Resolved `TextEditorWithPreview.<init>` constructor mismatch that caused `NoSuchMethodError` on IntelliJ IDEA 2023.2–2023.3
+- **Deprecated API Removal** — Replaced all 8 `getService()` calls with Kotlin `service<>()` extension
+- **Deprecated `deleteRecursively()`** — Replaced with NIO `Files.walk()` + `Files.delete()` in export and renderer services
+- **Inconsistent `SwingUtilities.invokeLater`** — Standardized to `ApplicationManager.getApplication().invokeLater`
+- **Fragile `myPreview` field access** — Stored preview editor locally via constructor delegation
+
+### Changed
+- **Minimum IDE version** bumped from 2023.2 (build 232) to 2024.3 (build 243) to match compiled API surface
+- Plugin verification targets updated to IC-2024.3 and IC-2025.1.3
+
 ## [2026.3.5] - 2026-03-06
 
 ### Fixed

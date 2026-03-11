@@ -2,6 +2,7 @@
 package com.jakubjirak.structurizr.cli
 
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -33,7 +34,7 @@ class StructurizrCliWrapper(private val project: Project) {
 
         /** Returns the service instance for the given [project]. */
         fun getInstance(project: Project): StructurizrCliWrapper =
-            project.getService(StructurizrCliWrapper::class.java)
+            project.service()
     }
 
     /**

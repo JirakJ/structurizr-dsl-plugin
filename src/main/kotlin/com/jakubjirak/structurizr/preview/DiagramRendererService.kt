@@ -2,12 +2,14 @@
 package com.jakubjirak.structurizr.preview
 
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.jakubjirak.structurizr.settings.StructurizrProjectSettings
 import com.jakubjirak.structurizr.settings.StructurizrSettings
 import java.io.File
 import java.nio.file.Files
+import java.util.Comparator
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -61,7 +63,7 @@ class DiagramRendererService(private val project: Project) {
             log.warn("Structurizr CLI failed with exit code $exitCode: $output")
             return null
         } finally {
-            tempDir.toFile().deleteRecursively()
+            Files.walk(tempDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
         }
     }
 
@@ -342,6 +344,6 @@ class DiagramRendererService(private val project: Project) {
         /** Retrieves the project-level singleton instance. */
         @JvmStatic
         fun getInstance(project: Project): DiagramRendererService =
-            project.getService(DiagramRendererService::class.java)
+            project.service()
     }
 }

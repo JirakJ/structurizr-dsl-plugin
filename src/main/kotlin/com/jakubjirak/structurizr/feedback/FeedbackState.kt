@@ -1,11 +1,11 @@
 /* Copyright 2026 Jakub Jirák. All rights reserved. Licensed under the proprietary license. See LICENSE for details. */
 package com.jakubjirak.structurizr.feedback
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
 
 /**
  * Application-level persistent state for the feedback notification system.
@@ -34,6 +34,6 @@ class FeedbackState : PersistentStateComponent<FeedbackState.State> {
     companion object {
         /** Returns the application-level service instance. */
         fun getInstance(): FeedbackState =
-            ApplicationManager.getApplication().getService(FeedbackState::class.java)
+            service()
     }
 }

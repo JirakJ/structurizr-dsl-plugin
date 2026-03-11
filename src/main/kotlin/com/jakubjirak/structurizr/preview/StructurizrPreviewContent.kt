@@ -1,6 +1,7 @@
 /* Copyright 2026 Jakub Jirák. All rights reserved. Licensed under the proprietary license. See LICENSE for details. */
 package com.jakubjirak.structurizr.preview
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
@@ -163,7 +164,7 @@ class StructurizrPreviewContent(private val project: Project) {
     private fun scheduleUpdate(file: VirtualFile) {
         scheduledUpdate?.cancel(false)
         scheduledUpdate = scheduler.schedule({
-            SwingUtilities.invokeLater { updatePreview(file) }
+            ApplicationManager.getApplication().invokeLater { updatePreview(file) }
         }, 500L, TimeUnit.MILLISECONDS)
     }
 
