@@ -2,6 +2,11 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.4.5] - 2026-03-27
+
+### Changed
+- **Version bump** — Release with freemium licensing (code: `PSTRUCTURIZRDSL`)
+
 ## [2026.4.4] - 2026-03-11
 
 ### Fixed
