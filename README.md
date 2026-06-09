@@ -5,6 +5,16 @@
 
 Full language support for [Structurizr DSL](https://docs.structurizr.com/dsl/language) — a text-based language for defining software architecture models based on the [C4 model](https://c4model.com/) by Simon Brown.
 
+## Screenshots
+
+| Syntax highlighting & live preview | Code inspections |
+|---|---|
+| ![Syntax highlighting](.github/docs/screenshots/01-syntax-highlighting.png) | ![Inspections](.github/docs/screenshots/02-code-inspections.png) |
+
+| Structure view | Settings |
+|---|---|
+| ![Structure view](.github/docs/screenshots/03-structure-view.png) | ![Settings](.github/docs/screenshots/04-settings.png) |
+
 ## Features
 
 | Feature | Description |
@@ -20,9 +30,11 @@ Full language support for [Structurizr DSL](https://docs.structurizr.com/dsl/lan
 | **Code Formatting** | Reformat code with Ctrl+Alt+L |
 | **Comment/Uncomment** | Toggle comments with Ctrl+/ |
 | **Line Markers** | Gutter icons for element definitions |
-| **7 Inspections** | Undefined references, unused elements, duplicate IDs, empty blocks, missing properties, deprecated keywords, invalid colors |
+| **10 Inspections** | Undefined references, unused elements, duplicate IDs, duplicate view keys, empty blocks, missing properties, deprecated keywords, invalid colors, invalid contexts, invalid relationships |
 | **Quick Fixes** | Create missing elements, remove unused, rename |
-| **Live Templates** | 10 templates: `ws`, `per`, `ss`, `con`, `comp`, `rel`, `dep`, `sv`, `cv`, `sty` |
+| **Color Preview** | Gutter swatches for hex colors in styles, with built-in color picker |
+| **Smart Relationship Completion** | After `->`, suggests only defined elements (source excluded) |
+| **Live Templates** | 21 templates: `ws`, `per`, `ss`, `con`, `comp`, `rel`, `dep`, `sv`, `cv`, `sty`, `grp`, `props`, `anim`, `autolay`, and more |
 | **Documentation** | Ctrl+Q hover documentation for keywords |
 | **${} Highlighting** | Variable substitution highlighting in strings |
 | **Live Diagram Preview** | Real-time C4 diagram rendering in a tool window |
@@ -53,7 +65,7 @@ Or install from: [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/29
 
 ## Compatibility
 
-- **IDE Versions:** 2023.2+ (all future versions supported)
+- **IDE Versions:** 2024.3+ (all future versions supported)
 - **JetBrains IDEs:** IntelliJ IDEA (CE + Ultimate), WebStorm, PhpStorm, PyCharm, GoLand, RubyMine, CLion, Rider, DataGrip, Android Studio, Writerside, Aqua, MPS, DataSpell, RustRover
 - **OS:** Windows, macOS, Linux
 

@@ -729,4 +729,38 @@ class StructurizrCompletionProviderTest {
             assertEquals(3, getStaticStringList("ROUTING_VALUES").size)
         }
     }
+
+    @Nested
+    @DisplayName("Relationship target completion (FR-306)")
+    inner class RelationshipTargetCompletion {
+
+        @Test
+        fun `RELATIONSHIP_TARGET_PRIORITY is positive`() {
+            assertTrue(StructurizrCompletionProvider.RELATIONSHIP_TARGET_PRIORITY > 0)
+        }
+
+        @Test
+        fun `RELATIONSHIP_TARGET_PRIORITY is 100`() {
+            assertEquals(100.0, StructurizrCompletionProvider.RELATIONSHIP_TARGET_PRIORITY)
+        }
+
+        @Test
+        fun `ARROW_TOKENS contains all three arrow types`() {
+            assertEquals(3, StructurizrCompletionProvider.ARROW_TOKENS.size)
+            assertTrue(com.jakubjirak.structurizr.language.psi.StructurizrTypes.ARROW in StructurizrCompletionProvider.ARROW_TOKENS)
+            assertTrue(com.jakubjirak.structurizr.language.psi.StructurizrTypes.ARROW_BOTH in StructurizrCompletionProvider.ARROW_TOKENS)
+            assertTrue(com.jakubjirak.structurizr.language.psi.StructurizrTypes.ARROW_LEFT in StructurizrCompletionProvider.ARROW_TOKENS)
+        }
+
+        @Test
+        fun `addRelationshipTargetCompletions method exists and returns Boolean`() {
+            val method = StructurizrCompletionProvider::class.java.getDeclaredMethod(
+                "addRelationshipTargetCompletions",
+                com.intellij.codeInsight.completion.CompletionParameters::class.java,
+                com.intellij.codeInsight.completion.CompletionResultSet::class.java
+            )
+            assertNotNull(method)
+            assertEquals(Boolean::class.javaPrimitiveType, method.returnType)
+        }
+    }
 }

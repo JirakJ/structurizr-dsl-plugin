@@ -46,6 +46,6 @@ class InvalidColorInspection : StructurizrInspectionBase() {
     }
 
     companion object {
-        private val COLOR_PROPERTIES = setOf("background", "color", "stroke")
+        private val COLOR_PROPERTIES = setOf("background", "color", "colour", "stroke")
     }
 }

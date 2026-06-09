@@ -50,8 +50,8 @@
 ### 📋 Future Releases
 
 #### Pro Features
-- [ ] **FR-306: Smart Relationship Completion** — suggest valid targets based on C4 hierarchy
-- [ ] **FR-507: Workspace-level Validation** — unique view keys, valid expressions
+- [x] ~~**FR-306: Smart Relationship Completion**~~ ✅ v2026.6.0 — relationship targets suggest defined elements only, source excluded
+- [x] ~~**FR-507: Workspace-level Validation** (unique view keys)~~ ✅ v2026.6.0 — DuplicateViewKeyInspection; valid expressions still open
 - [ ] **FR-608: Extract to !include** — refactor element definition to external file
 - [ ] **FR-701-707: Enhanced Preview** — zoom, pan, click-to-navigate, dark mode, SVG/PNG export from preview
 - [ ] **FR-803: Structurizr Cloud Sync** — push/pull workspaces
@@ -71,8 +71,10 @@
 ### 🏗️ Technical Debt
 
 - [x] ~~Migrate decompiled Java sources to Kotlin (82 hand-written files)~~ ✅ v2026.3.1
+- [x] ~~Fix decompiled lexer~~ ✅ v2026.6.0 — zzUnpacktrans decremented per repetition instead of per run; the lexer threw AIOOBE on all input and every file lexed as one BAD_CHARACTER, disabling parser/PSI entirely. Now fixed and covered by real tokenization tests.
 - [ ] Add source .bnf grammar file (currently using pre-generated parser)
 - [ ] Add source .flex lexer file (currently using pre-generated lexer)
+- [ ] Make keywords case-insensitive in the lexer (official DSL is case-insensitive; current lexer matches exact case only)
 - [x] ~~Set up GitHub Actions CI/CD pipeline~~ ✅ v2026.3.1
 - [ ] Add integration tests using CodeInsightTestFixture
 - [ ] Add UI tests using RemoteRobot

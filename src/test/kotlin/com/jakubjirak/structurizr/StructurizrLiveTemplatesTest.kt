@@ -35,8 +35,8 @@ class StructurizrLiveTemplatesTest {
         }
 
         @Test
-        fun `contains exactly 17 templates`() {
-            assertEquals(17, templates.size, "Expected 17 templates, found: ${templates.keys}")
+        fun `contains exactly 21 templates`() {
+            assertEquals(21, templates.size, "Expected 21 templates, found: ${templates.keys}")
         }
 
         @Test
@@ -54,11 +54,12 @@ class StructurizrLiveTemplatesTest {
 
         private val expectedTemplates = listOf(
             "ws", "per", "ss", "con", "comp", "rel", "dep", "sv", "cv", "sty",
-            "depenv", "depnode", "dynview", "filtview", "infnode", "inc", "cst"
+            "depenv", "depnode", "dynview", "filtview", "infnode", "inc", "cst",
+            "grp", "props", "anim", "autolay"
         )
 
         @Test
-        fun `all 17 expected template abbreviations exist`() {
+        fun `all 21 expected template abbreviations exist`() {
             expectedTemplates.forEach { name ->
                 assertTrue(templates.containsKey(name), "Template '$name' should exist")
             }

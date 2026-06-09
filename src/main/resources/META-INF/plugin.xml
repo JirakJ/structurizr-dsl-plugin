@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.jakubjirak.structurizr</id>
   <name>Structurizr DSL</name>
-  <vendor email="your@email.com" url="https://github.com/JirakJ/structurizr-plugin">Jakub Jirak</vendor>
+  <vendor email="jirak92@gmail.com" url="https://github.com/JirakJ/structurizr-dsl-plugin">Jakub Jirak</vendor>
   <description><![CDATA[<h2>Structurizr DSL — Architecture Diagrams as Code in Your IDE</h2>
 
 <p>
@@ -13,8 +13,9 @@
 <h3>Editing and Authoring</h3>
 <ul>
   <li><b>Syntax Highlighting</b> — Full colorization for keywords, strings, comments, identifiers, and variable substitutions</li>
-  <li><b>Intelligent Code Completion</b> — Context-aware suggestions for elements, relationships, views, and properties</li>
-  <li><b>10 Live Templates</b> — Quick scaffolding for workspaces, systems, containers, components, and views</li>
+  <li><b>Intelligent Code Completion</b> — Context-aware suggestions for elements, relationships, views, and properties, including smart relationship-target completion</li>
+  <li><b>21 Live Templates</b> — Quick scaffolding for workspaces, systems, containers, components, views, groups, and more</li>
+  <li><b>Color Preview</b> — Gutter swatches for hex colors in styles with a built-in color picker</li>
   <li><b>Code Folding and Formatting</b> — Collapse blocks and auto-format DSL files with configurable style</li>
 </ul>
 
@@ -23,7 +24,7 @@
   <li><b>Go to Definition</b> — Ctrl+Click to jump to element definitions</li>
   <li><b>Find Usages</b> — Alt+F7 to find all references to an element</li>
   <li><b>Structure View</b> — Hierarchical tree of workspace, model, views, and elements</li>
-  <li><b>9 Code Inspections</b> — Detects errors like undefined references, duplicate identifiers, and invalid colors with quick fixes</li>
+  <li><b>10 Code Inspections</b> — Detects errors like undefined references, duplicate identifiers, duplicate view keys, and invalid colors with quick fixes</li>
 </ul>
 
 <h3>Diagram Preview and Export</h3>
@@ -37,7 +38,7 @@
 
 <h3>Requirements</h3>
 <ul>
-  <li>JetBrains IDE 2023.2+ (IntelliJ IDEA, WebStorm, PyCharm, GoLand, CLion, and all others)</li>
+  <li>JetBrains IDE 2024.3+ (IntelliJ IDEA, WebStorm, PyCharm, GoLand, CLion, and all others)</li>
   <li>Windows, macOS, or Linux</li>
 </ul>
 
@@ -48,6 +49,17 @@
   <li><a href="https://c4model.com/">C4 Model Documentation</a></li>
 </ul>]]></description>
   <change-notes><![CDATA[
+        <h3>2026.6.0 — Productivity Release</h3>
+        <ul>
+            <li><b>Critical fix: language engine restored</b> — A lexer table-unpacking defect made every file tokenize as one bad character, silently disabling the parser, inspections, navigation, structure view, and identifier completion. All language features now actually work as advertised</li>
+            <li><b>Color Preview &amp; Picker</b> — Hex colors in element/relationship styles now show a swatch in the editor gutter; click it to change the color with the IDE color picker</li>
+            <li><b>Smart Relationship Completion</b> (FR-306) — Completing after <code>-></code> now suggests only defined elements (excluding the source), ranked above keywords</li>
+            <li><b>Duplicate View Key Inspection</b> (FR-507) — Detects views sharing the same key, which Structurizr rejects at export time</li>
+            <li><b>4 New Live Templates</b> — <code>grp</code> (group), <code>props</code> (properties), <code>anim</code> (animation), <code>autolay</code> (autoLayout) — 21 templates total</li>
+            <li><b>Fixed:</b> <code>colour</code> (British spelling) values are now validated by the invalid-color inspection</li>
+            <li><b>Performance:</b> Duplicate identifier inspection no longer rescans the file for every element</li>
+        </ul>
+
         <h3>2026.4.5 — Freemium Release</h3>
         <ul>
             <li><b>Freemium licensing</b> — Released with product-descriptor for JetBrains Marketplace freemium model (code: PSTRUCTURIZRDSL)</li>
@@ -67,7 +79,7 @@
             <li><b>Rename Refactoring</b> - Safely rename identifiers across all references in your DSL files</li>
         </ul>
     ]]></change-notes>
-  <product-descriptor code="PSTRUCTURIZRDSL" release-date="20260307" release-version="20264" optional="true"/>
+  <product-descriptor code="PSTRUCTURIZRDSL" release-date="20260609" release-version="20266" optional="true"/>
   <!-- Product and dependencies -->
   <depends>com.intellij.modules.platform</depends>
   <extensions defaultExtensionNs="com.intellij">
@@ -105,6 +117,9 @@
     <localInspection language="Structurizr" shortName="StructurizrInvalidColor" displayName="Invalid color value" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.InvalidColorInspection" />
     <localInspection language="Structurizr" shortName="StructurizrInvalidContext" displayName="Invalid element context" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.InvalidContextInspection" />
     <localInspection language="Structurizr" shortName="StructurizrInvalidRelationship" displayName="Invalid relationship" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.InvalidRelationshipInspection" />
+    <localInspection language="Structurizr" shortName="StructurizrDuplicateViewKey" displayName="Duplicate view key" groupName="Structurizr" enabledByDefault="true" level="ERROR" implementationClass="com.jakubjirak.structurizr.inspections.DuplicateViewKeyInspection" />
+    <!-- Color preview in gutter + color picker for style properties -->
+    <colorProvider implementation="com.jakubjirak.structurizr.highlighting.StructurizrColorProvider" />
     <!-- Commenter -->
     <lang.commenter language="Structurizr" implementationClass="com.jakubjirak.structurizr.language.StructurizrCommenter" />
     <!-- Brace Matcher -->

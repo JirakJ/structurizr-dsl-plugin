@@ -150,4 +150,33 @@
       <option name="STRUCTURIZR_DSL" value="true" />
     </context>
   </template>
+
+  <template name="grp" value="group &quot;$NAME$&quot; {&#10;    $END$&#10;}" description="Group block" toReformat="false" toShortenFQNames="false">
+    <variable name="NAME" expression="" defaultValue="&quot;Group&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="props" value="properties {&#10;    &quot;$KEY$&quot; &quot;$VALUE$&quot;&#10;}" description="Properties block" toReformat="false" toShortenFQNames="false">
+    <variable name="KEY" expression="" defaultValue="&quot;key&quot;" alwaysStopAt="true" />
+    <variable name="VALUE" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="anim" value="animation {&#10;    $ELEMENTS$&#10;}" description="Animation block" toReformat="false" toShortenFQNames="false">
+    <variable name="ELEMENTS" expression="" defaultValue="&quot;element&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
+
+  <template name="autolay" value="autoLayout $DIRECTION$" description="Auto layout" toReformat="false" toShortenFQNames="false">
+    <variable name="DIRECTION" expression="" defaultValue="&quot;lr&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="STRUCTURIZR_DSL" value="true" />
+    </context>
+  </template>
 </templateSet>

@@ -7,10 +7,12 @@ package com.jakubjirak.structurizr.completion
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import com.jakubjirak.structurizr.language.StructurizrIcons
+import com.jakubjirak.structurizr.language.psi.StructurizrRelationshipStatement
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 import javax.swing.Icon
 
@@ -27,6 +29,10 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
+        // FR-306: when completing a relationship target, defined elements are the only
+        // valid input — suggest them with high priority and skip the keyword noise
+        if (addRelationshipTargetCompletions(parameters, result)) return
+
         CORE_KEYWORDS.forEach { keyword ->
             result.addElement(
                 LookupElementBuilder.create(keyword)
@@ -150,6 +156,57 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
                 }
                 .withTypeText("template")
         )
+    }
+
+    /**
+     * Adds smart completions for relationship targets (FR-306).
+     *
+     * When the caret sits after an arrow (`->`, `<-`, `<->`) inside a relationship
+     * statement, only defined element identifiers are suggested — excluding the
+     * relationship's own source to avoid proposing an invalid self-reference.
+     *
+     * @return true when target completions were added and other suggestions should be suppressed
+     */
+    private fun addRelationshipTargetCompletions(
+        parameters: CompletionParameters,
+        result: CompletionResultSet
+    ): Boolean {
+        val position = parameters.position
+        if (position.node.elementType == StructurizrTypes.STRING) return false
+
+        var statement: PsiElement? = position.parent
+        while (statement != null && statement !is StructurizrRelationshipStatement) {
+            statement = statement.parent
+        }
+        if (statement !is StructurizrRelationshipStatement) return false
+
+        // Only the target side (after the arrow) is restricted to identifiers
+        val arrowBeforeCaret = generateSequence(statement.firstChild) { it.nextSibling }.any {
+            it.node.elementType in ARROW_TOKENS && it.textOffset < position.textOffset
+        }
+        if (!arrowBeforeCaret) return false
+
+        val sourceName = statement.elementReferenceList.firstOrNull()?.text
+
+        val assignments = mutableListOf<PsiElement>()
+        collectAssignments(parameters.originalFile, assignments)
+
+        var added = false
+        assignments.forEach { assignment ->
+            val name = assignment.node.findChildByType(StructurizrTypes.IDENTIFIER)?.text ?: return@forEach
+            if (name.isEmpty() || name == sourceName) return@forEach
+
+            result.addElement(
+                PrioritizedLookupElement.withPriority(
+                    LookupElementBuilder.create(name)
+                        .withIcon(getAssignmentIcon(assignment))
+                        .withTypeText(getAssignmentTypeText(assignment)),
+                    RELATIONSHIP_TARGET_PRIORITY
+                )
+            )
+            added = true
+        }
+        return added
     }
 
     private fun addIdentifierCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
@@ -301,6 +358,14 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
     }
 
     companion object {
+        /** Lookup priority for relationship target suggestions (FR-306). */
+        const val RELATIONSHIP_TARGET_PRIORITY: Double = 100.0
+
+        /** Token types that form a relationship arrow. */
+        val ARROW_TOKENS = setOf(
+            StructurizrTypes.ARROW, StructurizrTypes.ARROW_BOTH, StructurizrTypes.ARROW_LEFT
+        )
+
         /** Core Structurizr DSL keywords. */
         val CORE_KEYWORDS: List<String> = listOf(
             "workspace", "model", "views", "configuration", "archetypes"

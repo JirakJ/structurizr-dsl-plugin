@@ -148,8 +148,11 @@ implements FlexLexer {
         while (i < l) {
             int count = packed.charAt(i++);
             int value = packed.charAt(i++);
+            // JFlex stores transition values shifted by +1 so they fit in chars;
+            // shift back once per run, not once per repetition (decompiler artifact).
+            --value;
             do {
-                result[j++] = --value;
+                result[j++] = value;
             } while (--count > 0);
         }
         return j;

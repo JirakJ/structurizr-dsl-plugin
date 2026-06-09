@@ -2,6 +2,22 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.6.0] - 2026-06-09
+
+### Fixed
+- **Critical: Broken lexer disabled the whole language engine** — A code-generation defect in `zzUnpacktrans` (transition table unpacking decremented values once per repetition instead of once per run) made the lexer throw `ArrayIndexOutOfBoundsException` on any input. The editor tokenized every file as a single `BAD_CHARACTER` (pink background, phantom "comment expected" error at EOF) and the parser never produced a PSI tree — silently disabling inspections, go-to-definition, find usages, structure view, completion of identifiers, and formatting. All these features now actually work. Regression-guarded by a new tokenization test suite that lexes real DSL.
+- **`colour` values not validated** — The invalid-color inspection now also checks the British `colour` style property
+- **Duplicate identifier inspection performance** — No longer rescans the whole file for every element (O(n²) → O(n))
+- **Placeholder vendor email** in plugin metadata replaced with a real contact address
+
+### Added
+- **Color Preview & Picker** — Hex colors (`#RGB`, `#RRGGBB`, `#RRGGBBAA`) in `background`, `color`, `colour`, and `stroke` style properties show a swatch in the editor gutter; clicking it opens the IDE color picker and writes the chosen color back
+- **Smart Relationship Completion** (FR-306) — Completing after `->` suggests only defined elements (excluding the relationship source), prioritized above keyword suggestions
+- **Duplicate View Key Inspection** (FR-507) — Flags views sharing the same key, which Structurizr rejects at export/push time
+- **4 New Live Templates** — `grp` (group), `props` (properties), `anim` (animation), `autolay` (autoLayout); 21 templates total
+- **Marketplace screenshots** — Real IDE captures generated into `.github/docs/screenshots/`
+- 73 new tests (965 total), including the first tests that actually execute the lexer
+
 ## [2026.4.5] - 2026-03-27
 
 ### Changed

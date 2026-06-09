@@ -25,9 +25,9 @@ class StructurizrLineMarkerProvider : RelatedItemLineMarkerProvider() {
         element: PsiElement,
         result: MutableCollection<in RelatedItemLineMarkerInfo<*>>,
     ) {
-        val elementType = element.node.elementType
+        val elementType = element.node?.elementType ?: return
         val parent = element.parent ?: return
-        val parentType = parent.node.elementType
+        val parentType = parent.node?.elementType ?: return
 
         when {
             elementType == StructurizrTypes.PERSON && parentType == StructurizrTypes.PERSON_DEFINITION ->

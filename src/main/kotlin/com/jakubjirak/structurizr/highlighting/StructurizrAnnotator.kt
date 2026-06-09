@@ -36,7 +36,7 @@ class StructurizrAnnotator : Annotator {
      * Annotates the given [element] with semantic highlighting information.
      */
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        val type = element.node.elementType
+        val type = element.node?.elementType ?: return
 
         // Highlight ${...} substitutions inside string literals
         if (type == StructurizrTypes.STRING) {

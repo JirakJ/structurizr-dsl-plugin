@@ -224,7 +224,7 @@ class StructurizrInspectionsTest {
     }
 
     @Nested
-    @DisplayName("All 7 inspections exist")
+    @DisplayName("All 10 inspections exist")
     inner class AllInspectionsExist {
 
         @Test
@@ -236,9 +236,12 @@ class StructurizrInspectionsTest {
                 EmptyBlockInspection::class.java,
                 MissingRequiredPropertyInspection::class.java,
                 DeprecatedKeywordInspection::class.java,
-                InvalidColorInspection::class.java
+                InvalidColorInspection::class.java,
+                InvalidContextInspection::class.java,
+                InvalidRelationshipInspection::class.java,
+                DuplicateViewKeyInspection::class.java
             )
-            assertEquals(7, inspectionClasses.size)
+            assertEquals(10, inspectionClasses.size)
             inspectionClasses.forEach { assertNotNull(it) }
         }
 
@@ -251,7 +254,10 @@ class StructurizrInspectionsTest {
                 EmptyBlockInspection(),
                 MissingRequiredPropertyInspection(),
                 DeprecatedKeywordInspection(),
-                InvalidColorInspection()
+                InvalidColorInspection(),
+                InvalidContextInspection(),
+                InvalidRelationshipInspection(),
+                DuplicateViewKeyInspection()
             )
             inspections.forEach {
                 assertInstanceOf(StructurizrInspectionBase::class.java, it)
@@ -267,10 +273,13 @@ class StructurizrInspectionsTest {
                 EmptyBlockInspection(),
                 MissingRequiredPropertyInspection(),
                 DeprecatedKeywordInspection(),
-                InvalidColorInspection()
+                InvalidColorInspection(),
+                InvalidContextInspection(),
+                InvalidRelationshipInspection(),
+                DuplicateViewKeyInspection()
             )
             val names = inspections.map { it.displayName }.toSet()
-            assertEquals(7, names.size)
+            assertEquals(10, names.size)
         }
 
         @Test
@@ -282,10 +291,13 @@ class StructurizrInspectionsTest {
                 EmptyBlockInspection(),
                 MissingRequiredPropertyInspection(),
                 DeprecatedKeywordInspection(),
-                InvalidColorInspection()
+                InvalidColorInspection(),
+                InvalidContextInspection(),
+                InvalidRelationshipInspection(),
+                DuplicateViewKeyInspection()
             )
             val names = inspections.map { it.shortName }.toSet()
-            assertEquals(7, names.size)
+            assertEquals(10, names.size)
         }
 
         @Test
@@ -297,7 +309,10 @@ class StructurizrInspectionsTest {
                 EmptyBlockInspection(),
                 MissingRequiredPropertyInspection(),
                 DeprecatedKeywordInspection(),
-                InvalidColorInspection()
+                InvalidColorInspection(),
+                InvalidContextInspection(),
+                InvalidRelationshipInspection(),
+                DuplicateViewKeyInspection()
             )
             inspections.forEach {
                 assertTrue(it.shortName.startsWith("Structurizr"), "${it.shortName} does not start with 'Structurizr'")

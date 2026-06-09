@@ -22,15 +22,22 @@ class DuplicateIdentifierInspection : StructurizrInspectionBase() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         object : PsiElementVisitor() {
+
+            /** Lazily computed once per inspected file: identifier text -> assignments, in file order. */
+            private var assignmentsByName: Map<String, List<StructurizrElementAssignment>>? = null
+
             override fun visitElement(element: PsiElement) {
                 if (element !is StructurizrElementAssignment) return
 
                 val identifierElement = element.identifier ?: return
                 val identifierText = identifierElement.text
-                val file = element.containingFile
 
-                val allAssignments = PsiTreeUtil.findChildrenOfType(file, StructurizrElementAssignment::class.java)
-                val duplicates = allAssignments.filter { it.identifier?.text == identifierText }
+                val byName = assignmentsByName
+                    ?: PsiTreeUtil.findChildrenOfType(element.containingFile, StructurizrElementAssignment::class.java)
+                        .filter { it.identifier != null }
+                        .groupBy { it.identifier!!.text }
+                        .also { assignmentsByName = it }
+                val duplicates = byName[identifierText] ?: return
 
                 if (duplicates.size > 1 && element != duplicates.first()) {
                     holder.registerProblem(
