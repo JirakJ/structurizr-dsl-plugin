@@ -9,11 +9,11 @@ Full language support for [Structurizr DSL](https://docs.structurizr.com/dsl/lan
 
 | Syntax highlighting & live preview | Code inspections |
 |---|---|
-| ![Syntax highlighting](.github/docs/screenshots/01-syntax-highlighting.png) | ![Inspections](.github/docs/screenshots/02-code-inspections.png) |
+| ![Syntax highlighting](docs/screenshots/01-syntax-highlighting.png) | ![Inspections](docs/screenshots/02-code-inspections.png) |
 
 | Structure view | Settings |
 |---|---|
-| ![Structure view](.github/docs/screenshots/03-structure-view.png) | ![Settings](.github/docs/screenshots/04-settings.png) |
+| ![Structure view](docs/screenshots/03-structure-view.png) | ![Settings](docs/screenshots/04-settings.png) |
 
 ## Features
 

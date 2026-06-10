@@ -26,4 +26,4 @@ example and a review-findings.dsl with deliberate errors).
 
 - **Format:** PNG, captured at 1600×1000 logical window size
 - **Theme:** IntelliJ Light with Light editor scheme
-- **Output:** `.github/docs/screenshots/NN-name.png`
+- **Output:** `docs/screenshots/NN-name.png`

@@ -15,7 +15,7 @@ All notable changes to the Structurizr DSL Plugin are documented here.
 - **Smart Relationship Completion** (FR-306) — Completing after `->` suggests only defined elements (excluding the relationship source), prioritized above keyword suggestions
 - **Duplicate View Key Inspection** (FR-507) — Flags views sharing the same key, which Structurizr rejects at export/push time
 - **4 New Live Templates** — `grp` (group), `props` (properties), `anim` (animation), `autolay` (autoLayout); 21 templates total
-- **Marketplace screenshots** — Real IDE captures generated into `.github/docs/screenshots/`
+- **Marketplace screenshots** — Real IDE captures generated into `docs/screenshots/`
 - 73 new tests (965 total), including the first tests that actually execute the lexer
 
 ## [2026.4.5] - 2026-03-27
