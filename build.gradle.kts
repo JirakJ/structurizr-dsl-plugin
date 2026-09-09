@@ -60,6 +60,9 @@ intellijPlatform {
         ides {
             ide("IC", "2024.3")
             ide("IC", "2025.1.3")
+            // 2026.2 moved JCEF into a separate bundled plugin (see CHANGELOG 2026.6.1).
+            // Community is not published for 2026.x, so the 262 baseline is verified on Ultimate.
+            ide("IU", "2026.2.1")
         }
     }
 

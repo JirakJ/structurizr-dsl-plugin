@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
-import com.intellij.ui.jcef.JBCefApp
 import com.intellij.ui.jcef.JBCefBrowser
 import java.awt.BorderLayout
 import java.awt.Component
@@ -29,10 +28,7 @@ class StructurizrPreviewPanel(private val project: Project) : JPanel(BorderLayou
     private var browser: JBCefBrowser? = null
     private var currentDsl = ""
     private var currentViewKey: String? = null
-    private val placeholderLabel = JBLabel(
-        "<html><center><h2>Structurizr Preview</h2><p>Edit your DSL file to see the diagram</p></center></html>",
-        JBLabel.CENTER,
-    )
+    private val unavailableLabel = JBLabel(JcefSupport.UNAVAILABLE_MESSAGE, JBLabel.CENTER)
 
     init {
         background = UIManager.getColor("Editor.background") ?: JBColor.background()
@@ -40,25 +36,29 @@ class StructurizrPreviewPanel(private val project: Project) : JPanel(BorderLayou
     }
 
     private fun initBrowser() {
-        try {
-            if (JBCefApp.isSupported()) {
-                browser = JBCefBrowser().also { b ->
-                    add(b.component as Component, BorderLayout.CENTER)
-                    Disposer.register(this, b)
-                    showPlaceholder()
-                }
-            } else {
-                showFallbackPanel()
-            }
-        } catch (e: Exception) {
-            log.warn("Failed to initialize JCEF browser", e)
+        if (!JcefSupport.isAvailable()) {
             showFallbackPanel()
+            return
+        }
+        val created = JcefSupport.runGuarded { JBCefBrowser() }
+        if (created == null) {
+            showFallbackPanel()
+            return
+        }
+        browser = created.also { b ->
+            add(b.component as Component, BorderLayout.CENTER)
+            Disposer.register(this, b)
+            showPlaceholder()
         }
     }
 
+    /**
+     * Renders a plain Swing placeholder when no embedded browser is available, so the split editor
+     * still opens and the DSL text side stays fully usable.
+     */
     private fun showFallbackPanel() {
         removeAll()
-        add(placeholderLabel as Component, BorderLayout.CENTER)
+        add(unavailableLabel as Component, BorderLayout.CENTER)
         revalidate()
         repaint()
     }

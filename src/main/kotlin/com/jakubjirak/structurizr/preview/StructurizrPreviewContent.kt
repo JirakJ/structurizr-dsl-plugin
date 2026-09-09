@@ -11,6 +11,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.jcef.JBCefBrowser
 import com.jakubjirak.structurizr.language.StructurizrFileType
 import java.awt.BorderLayout
@@ -28,7 +29,12 @@ import javax.swing.*
 class StructurizrPreviewContent(private val project: Project) {
 
     private val panel = JPanel(BorderLayout())
-    private val browser = JBCefBrowser()
+
+    /**
+     * The embedded browser, or `null` when JCEF is unavailable in this IDE — see [JcefSupport].
+     * Every use is null-safe so the tool window degrades to a message instead of failing to open.
+     */
+    private val browser: JBCefBrowser? = JcefSupport.runGuarded { JBCefBrowser() }
     private val viewComboBox = JComboBox(
         arrayOf("System Landscape", "System Context", "Container", "Component", "Deployment", "Dynamic")
     )
@@ -40,15 +46,22 @@ class StructurizrPreviewContent(private val project: Project) {
     val component: JComponent get() = panel
 
     init {
-        val toolbar = createToolbar()
-        panel.add(toolbar as Component, BorderLayout.NORTH)
-        panel.add(browser.component as Component, BorderLayout.CENTER)
-        showWelcomeContent()
-        setupFileListener()
-        setupDocumentListener()
-        viewComboBox.addActionListener { currentFile?.let { scheduleUpdate(it) } }
-        updateFromCurrentEditor()
+        val currentBrowser = browser
+        if (currentBrowser == null) {
+            panel.add(createUnavailableLabel() as Component, BorderLayout.CENTER)
+        } else {
+            val toolbar = createToolbar()
+            panel.add(toolbar as Component, BorderLayout.NORTH)
+            panel.add(currentBrowser.component as Component, BorderLayout.CENTER)
+            showWelcomeContent()
+            setupFileListener()
+            setupDocumentListener()
+            viewComboBox.addActionListener { currentFile?.let { scheduleUpdate(it) } }
+            updateFromCurrentEditor()
+        }
     }
+
+    private fun createUnavailableLabel(): JBLabel = JBLabel(JcefSupport.UNAVAILABLE_MESSAGE, JBLabel.CENTER)
 
     private fun createToolbar(): JPanel = JPanel().apply {
         layout = BoxLayout(this, BoxLayout.X_AXIS)
@@ -64,15 +77,15 @@ class StructurizrPreviewContent(private val project: Project) {
 
         add(JButton("+").also { btn ->
             btn.toolTipText = "Zoom In"
-            btn.addActionListener { browser.zoomLevel = (browser.zoomLevel + 0.1).coerceAtMost(3.0) }
+            btn.addActionListener { browser?.let { b -> b.zoomLevel = (b.zoomLevel + 0.1).coerceAtMost(3.0) } }
         })
         add(JButton("-").also { btn ->
             btn.toolTipText = "Zoom Out"
-            btn.addActionListener { browser.zoomLevel = (browser.zoomLevel - 0.1).coerceAtLeast(0.25) }
+            btn.addActionListener { browser?.let { b -> b.zoomLevel = (b.zoomLevel - 0.1).coerceAtLeast(0.25) } }
         })
         add(JButton("100%").also { btn ->
             btn.toolTipText = "Reset Zoom"
-            btn.addActionListener { browser.zoomLevel = 1.0 }
+            btn.addActionListener { browser?.zoomLevel = 1.0 }
         })
         add(Box.createHorizontalGlue())
     }
@@ -117,7 +130,7 @@ class StructurizrPreviewContent(private val project: Project) {
             </body>
             </html>
         """.trimIndent()
-        browser.loadHTML(html)
+        browser?.loadHTML(html)
     }
 
     private fun setupFileListener() {
@@ -215,7 +228,7 @@ class StructurizrPreviewContent(private val project: Project) {
             </body>
             </html>
         """.trimIndent()
-        browser.loadHTML(html)
+        browser?.loadHTML(html)
     }
 
     private fun showError(message: String) {
@@ -252,6 +265,6 @@ class StructurizrPreviewContent(private val project: Project) {
             </body>
             </html>
         """.trimIndent()
-        browser.loadHTML(html)
+        browser?.loadHTML(html)
     }
 }

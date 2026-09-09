@@ -2,6 +2,16 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.6.1] - 2026-09-09
+
+### Fixed
+- **Critical: `.dsl` files could not be opened on IntelliJ 2026.2** ([docs#11](https://github.com/JirakJ/jetbrains-plugins-docs/issues/11)) — IntelliJ 2026.2 (build 262) extracted JCEF from the core platform into the separate bundled plugin `com.intellij.modules.jcef`. The plugin only declared `com.intellij.modules.platform`, so its classloader could no longer resolve `com.intellij.ui.jcef.JBCefApp`. The preview panel's guard caught `Exception`, but a missing class arrives as `NoClassDefFoundError` — an `Error` — so it escaped, `StructurizrSplitEditorProvider.createEditor` threw, and because that provider hides the default editor the file ended up with no editor at all: the tab blinked and closed instantly. The plugin now declares the JCEF module as an **optional** dependency, which restores the preview on 2026.2+ while keeping the plugin loadable on 2024.3–2026.1, where that module id does not exist and JCEF still comes from the core classloader.
+- **Editing no longer depends on the diagram preview** — all JCEF access goes through a single guarded entry point (`JcefSupport`) that treats `LinkageError` as "no browser available". When JCEF is missing or broken, the preview pane shows an explanatory placeholder and the text editor, inspections, completion and navigation are unaffected. `StructurizrSplitEditorProvider` additionally falls back to the plain text editor if the split editor cannot be constructed at all.
+- **Preview tool window could crash the same way** — `StructurizrPreviewContent` created a `JBCefBrowser` in a field initializer with no guard whatsoever; it is now null-safe and degrades to the same placeholder.
+
+### Added
+- 16 tests (981 total): regression coverage for `Error`-vs-`Exception` handling around JCEF, and descriptor tests asserting that the optional `com.intellij.modules.jcef` dependency and its config file stay in place.
+
 ## [2026.6.0] - 2026-06-09
 
 ### Fixed
