@@ -49,6 +49,10 @@
   <li><a href="https://c4model.com/">C4 Model Documentation</a></li>
 </ul>]]></description>
   <change-notes><![CDATA[
+        <h3>2026.6.2 — Stability Fix</h3>
+        <ul>
+            <li><b>Fixed NullPointerException when opening a .dsl file</b> — semantic highlighting walked the PSI tree past the file into its directory, which has no syntax node, and threw <code>Cannot invoke "ASTNode.getElementType()"</code>. It happened for any identifier outside a <code>workspace { }</code> block (e.g. included fragments or a file mid-edit) and showed an IDE error on every open. The same unbounded walk is fixed everywhere else it occurred (completion, inspections, quick fixes), so none of them can hit this error either</li>
+        </ul>
         <h3>2026.6.1 — Compatibility Fix</h3>
         <ul>
             <li><b>Critical fix: .dsl files would not open on IntelliJ 2026.2</b> — IntelliJ 2026.2 moved JCEF out of the core platform into a separate bundled plugin, so the diagram preview could no longer resolve <code>JBCefApp</code>. The resulting <code>NoClassDefFoundError</code> took down the whole split editor: the tab flashed open and closed again, leaving no way to edit a <code>.dsl</code> file. The plugin now declares the JCEF module and the preview degrades to a message instead of failing</li>

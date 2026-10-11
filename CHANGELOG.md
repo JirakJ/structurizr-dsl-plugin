@@ -2,6 +2,15 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.6.2] - 2026-10-11
+
+### Fixed
+- **`NullPointerException` in `StructurizrAnnotator` when opening a `.dsl` file** ([docs#12](https://github.com/JirakJ/jetbrains-plugins-docs/issues/12)) — `isInVariableContext` walked `PsiElement.parent` until it reached a block boundary or `null`. For an identifier with no enclosing `workspace`/`model`/`views` block (an `!include`d fragment, or a file whose parse is momentarily broken while typing) the walk passed the `PsiFile` and reached its `PsiDirectory`, whose `getNode()` is `null`, so `parent.node.elementType` threw. The IDE reported it on every open, and the failed annotator pass left highlighting incomplete.
+- **Every upward PSI walk is now bounded at the file** — the same unbounded `x = x.parent` pattern also lived in style and relationship-target completion, `InvalidContextInspection`, `InvalidRelationshipInspection` and `RemoveUnusedElementQuickFix`. All of them now use the platform's `parents(withSelf = …)`, which stops at the `PsiFile`, and every `.node.elementType` read in the plugin uses the null-safe `PsiElement.elementType` extension instead.
+
+### Added
+- 4 regression tests (985 total): the reported tree (identifier → file → directory with no AST node) run through the annotator, plus a source guard that fails the build if `.node.elementType` or a hand-rolled `x = x.parent` loop reappears in `src/main`.
+
 ## [2026.6.1] - 2026-09-09
 
 ### Fixed

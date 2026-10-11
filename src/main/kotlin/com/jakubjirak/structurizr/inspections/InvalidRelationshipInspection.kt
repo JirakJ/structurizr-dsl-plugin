@@ -10,6 +10,8 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.elementType
+import com.intellij.psi.util.parents
 import com.jakubjirak.structurizr.language.psi.StructurizrRelationshipStatement
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 
@@ -102,12 +104,7 @@ class InvalidRelationshipInspection : StructurizrInspectionBase() {
         private val BUILT_IN_IDENTIFIERS = setOf("this", "source", "destination")
 
         private fun isInsideElementScope(element: PsiElement): Boolean {
-            var parent = element.parent
-            while (parent != null) {
-                if (parent.node?.elementType in ELEMENT_SCOPE_TYPES) return true
-                parent = parent.parent
-            }
-            return false
+            return element.parents(withSelf = false).any { it.elementType in ELEMENT_SCOPE_TYPES }
         }
 
         private fun getRootIdentifier(text: String): String {

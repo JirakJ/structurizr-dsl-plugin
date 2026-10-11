@@ -8,6 +8,7 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.elementType
 import com.jakubjirak.structurizr.language.StructurizrIcons
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 import javax.swing.Icon
@@ -25,9 +26,9 @@ class StructurizrLineMarkerProvider : RelatedItemLineMarkerProvider() {
         element: PsiElement,
         result: MutableCollection<in RelatedItemLineMarkerInfo<*>>,
     ) {
-        val elementType = element.node?.elementType ?: return
+        val elementType = element.elementType ?: return
         val parent = element.parent ?: return
-        val parentType = parent.node?.elementType ?: return
+        val parentType = parent.elementType ?: return
 
         when {
             elementType == StructurizrTypes.PERSON && parentType == StructurizrTypes.PERSON_DEFINITION ->

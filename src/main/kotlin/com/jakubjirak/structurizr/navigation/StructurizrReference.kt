@@ -7,6 +7,7 @@ package com.jakubjirak.structurizr.navigation
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceBase
+import com.intellij.psi.util.elementType
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 
 /**
@@ -38,7 +39,7 @@ class StructurizrReference(
     companion object {
         private fun collectAssignments(element: PsiElement, result: MutableList<PsiElement>) {
             for (child in element.children) {
-                if (child.node.elementType == StructurizrTypes.ELEMENT_ASSIGNMENT) {
+                if (child.elementType == StructurizrTypes.ELEMENT_ASSIGNMENT) {
                     result.add(child)
                 }
                 collectAssignments(child, result)

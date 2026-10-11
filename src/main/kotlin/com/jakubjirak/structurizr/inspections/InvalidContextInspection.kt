@@ -10,6 +10,8 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.elementType
+import com.intellij.psi.util.parents
 import com.jakubjirak.structurizr.language.psi.StructurizrComponentDefinition
 import com.jakubjirak.structurizr.language.psi.StructurizrContainerDefinition
 import com.jakubjirak.structurizr.language.psi.StructurizrContainerInstanceDefinition
@@ -57,7 +59,7 @@ class InvalidContextInspection : StructurizrInspectionBase() {
 
         private fun checkContainerContext(element: PsiElement, holder: ProblemsHolder) {
             val parent = findMeaningfulParent(element) ?: return
-            val parentType = parent.node.elementType
+            val parentType = parent.elementType
 
             if (parentType == StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION ||
                 parentType == StructurizrTypes.ELEMENT_ASSIGNMENT
@@ -77,7 +79,7 @@ class InvalidContextInspection : StructurizrInspectionBase() {
 
         private fun checkComponentContext(element: PsiElement, holder: ProblemsHolder) {
             val parent = findMeaningfulParent(element) ?: return
-            val parentType = parent.node.elementType
+            val parentType = parent.elementType
 
             if (parentType == StructurizrTypes.CONTAINER_DEFINITION ||
                 parentType == StructurizrTypes.ELEMENT_ASSIGNMENT
@@ -131,21 +133,11 @@ class InvalidContextInspection : StructurizrInspectionBase() {
         }
 
         private fun findMeaningfulParent(element: PsiElement): PsiElement? {
-            var parent = element.parent
-            while (parent != null) {
-                if (parent.node.elementType in MEANINGFUL_PARENT_TYPES) return parent
-                parent = parent.parent
-            }
-            return null
+            return element.parents(withSelf = false).firstOrNull { it.elementType in MEANINGFUL_PARENT_TYPES }
         }
 
         private fun isAncestorOfType(element: PsiElement, type: IElementType): Boolean {
-            var parent = element.parent
-            while (parent != null) {
-                if (parent.node?.elementType == type) return true
-                parent = parent.parent
-            }
-            return false
+            return element.parents(withSelf = false).any { it.elementType == type }
         }
     }
 }

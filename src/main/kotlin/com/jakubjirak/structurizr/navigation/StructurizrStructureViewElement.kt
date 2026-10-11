@@ -12,6 +12,7 @@ import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.elementType
 import com.jakubjirak.structurizr.language.StructurizrIcons
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 import javax.swing.Icon
@@ -68,7 +69,7 @@ class StructurizrStructureViewElement(
 
         private fun extractIdentifierFromAssignment(assignment: PsiElement): String? {
             for (child in assignment.children) {
-                if (child.node.elementType == StructurizrTypes.IDENTIFIER) {
+                if (child.elementType == StructurizrTypes.IDENTIFIER) {
                     return child.text
                 }
             }
@@ -77,7 +78,7 @@ class StructurizrStructureViewElement(
 
         private fun extractDefinitionType(assignment: PsiElement): String? {
             for (child in assignment.children) {
-                when (child.node.elementType) {
+                when (child.elementType) {
                     StructurizrTypes.PERSON_DEFINITION -> return "person"
                     StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION -> return "softwareSystem"
                     StructurizrTypes.CONTAINER_DEFINITION -> return "container"
@@ -98,7 +99,7 @@ class StructurizrStructureViewElement(
                 }
             }
 
-        private fun getElementTypeName(type: IElementType): String = when (type) {
+        private fun getElementTypeName(type: IElementType?): String = when (type) {
             StructurizrTypes.WORKSPACE_BLOCK -> "workspace"
             StructurizrTypes.MODEL_BLOCK -> "model"
             StructurizrTypes.VIEWS_BLOCK -> "views"
@@ -127,7 +128,7 @@ class StructurizrStructureViewElement(
 
         private fun getIconForAssignment(assignment: PsiElement): Icon {
             for (child in assignment.children) {
-                when (child.node.elementType) {
+                when (child.elementType) {
                     StructurizrTypes.PERSON_DEFINITION -> return StructurizrIcons.PERSON
                     StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION -> return StructurizrIcons.SOFTWARE_SYSTEM
                     StructurizrTypes.CONTAINER_DEFINITION -> return StructurizrIcons.CONTAINER
@@ -161,7 +162,7 @@ class StructurizrStructureViewElement(
         override fun getPresentableText(): String {
             if (element is PsiFile) return element.name
 
-            val type = element.node.elementType
+            val type = element.elementType
             if (type == StructurizrTypes.ELEMENT_ASSIGNMENT) {
                 val name = extractIdentifierFromAssignment(element)
                 val defType = extractDefinitionType(element)
@@ -180,7 +181,7 @@ class StructurizrStructureViewElement(
         override fun getIcon(unused: Boolean): Icon {
             if (element is PsiFile) return StructurizrIcons.FILE
 
-            val type = element.node.elementType
+            val type = element.elementType
             return when (type) {
                 StructurizrTypes.WORKSPACE_BLOCK -> StructurizrIcons.WORKSPACE
                 StructurizrTypes.MODEL_BLOCK -> StructurizrIcons.MODEL
@@ -207,7 +208,7 @@ class StructurizrStructureViewElement(
     override fun getChildren(): Array<TreeElement> {
         val children = mutableListOf<TreeElement>()
         for (child in element.children) {
-            val childType = child.node.elementType
+            val childType = child.elementType
             if (childType in STRUCTURE_TYPES) {
                 children.add(StructurizrStructureViewElement(child))
             } else {
@@ -219,7 +220,7 @@ class StructurizrStructureViewElement(
 
     private fun collectStructureChildren(parent: PsiElement, result: MutableList<TreeElement>) {
         for (child in parent.children) {
-            if (child.node.elementType in STRUCTURE_TYPES) {
+            if (child.elementType in STRUCTURE_TYPES) {
                 result.add(StructurizrStructureViewElement(child))
             }
         }
