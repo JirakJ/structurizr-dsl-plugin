@@ -14,8 +14,8 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
-import com.jakubjirak.structurizr.language.ancestorsInFile
-import com.jakubjirak.structurizr.language.elementTypeOrNull
+import com.intellij.psi.util.elementType
+import com.intellij.psi.util.parents
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 import java.awt.Color
 import java.util.regex.Pattern
@@ -38,7 +38,7 @@ class StructurizrAnnotator : Annotator {
      * Annotates the given [element] with semantic highlighting information.
      */
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        val type = element.node?.elementType ?: return
+        val type = element.elementType ?: return
 
         // Highlight ${...} substitutions inside string literals
         if (type == StructurizrTypes.STRING) {
@@ -59,7 +59,7 @@ class StructurizrAnnotator : Annotator {
             val parent = element.parent
 
             // 1. Definition-site identifier (before = in element assignment)
-            if (parent?.elementTypeOrNull == StructurizrTypes.ELEMENT_ASSIGNMENT) {
+            if (parent?.elementType == StructurizrTypes.ELEMENT_ASSIGNMENT) {
                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .range(element.textRange)
                     .textAttributes(DEFINITION_IDENTIFIER)
@@ -109,7 +109,7 @@ class StructurizrAnnotator : Annotator {
         // Highlight deprecated !ref directive
         if (type == StructurizrTypes.REF) {
             val parent = element.parent
-            if (parent?.elementTypeOrNull == StructurizrTypes.REF_STATEMENT) {
+            if (parent?.elementType == StructurizrTypes.REF_STATEMENT) {
                 val strikethrough = TextAttributes().apply {
                     effectType = EffectType.STRIKEOUT
                     effectColor = Color.GRAY
@@ -125,7 +125,7 @@ class StructurizrAnnotator : Annotator {
         // Highlight deprecated !constant directive
         if (type == StructurizrTypes.DIRECTIVE_CONSTANT) {
             val parent = element.parent
-            if (parent?.elementTypeOrNull == StructurizrTypes.CONSTANT_DIRECTIVE) {
+            if (parent?.elementType == StructurizrTypes.CONSTANT_DIRECTIVE) {
                 val strikethrough = TextAttributes().apply {
                     effectType = EffectType.STRIKEOUT
                     effectColor = Color.GRAY
@@ -148,8 +148,8 @@ class StructurizrAnnotator : Annotator {
      * and instance definitions (special ACE rule).
      */
     private fun isInVariableContext(element: PsiElement): Boolean {
-        for (parent in element.ancestorsInFile()) {
-            when (parent.elementTypeOrNull) {
+        for (parent in element.parents(withSelf = false)) {
+            when (parent.elementType) {
                 // Contexts where identifiers are red (ACE variable token)
                 StructurizrTypes.RELATIONSHIP_STATEMENT,
                 StructurizrTypes.RELATIONSHIP_IN_DYNAMIC_VIEW,

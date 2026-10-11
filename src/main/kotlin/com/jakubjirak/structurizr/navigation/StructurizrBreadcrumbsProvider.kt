@@ -7,6 +7,7 @@ package com.jakubjirak.structurizr.navigation
 import com.intellij.lang.Language
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.elementType
 import com.intellij.ui.breadcrumbs.BreadcrumbsProvider
 import com.jakubjirak.structurizr.language.StructurizrLanguage
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
@@ -47,7 +48,7 @@ class StructurizrBreadcrumbsProvider : BreadcrumbsProvider {
             StructurizrTypes.IMAGE_VIEW,
         )
 
-        private fun getTypeName(type: IElementType): String = when (type) {
+        private fun getTypeName(type: IElementType?): String = when (type) {
             StructurizrTypes.WORKSPACE_BLOCK -> "workspace"
             StructurizrTypes.MODEL_BLOCK -> "model"
             StructurizrTypes.VIEWS_BLOCK -> "views"
@@ -75,7 +76,7 @@ class StructurizrBreadcrumbsProvider : BreadcrumbsProvider {
             else -> type.toString()
         }
 
-        private fun extractName(element: PsiElement, type: IElementType): String? {
+        private fun extractName(element: PsiElement, type: IElementType?): String? {
             if (type == StructurizrTypes.ELEMENT_ASSIGNMENT) {
                 element.node.findChildByType(StructurizrTypes.IDENTIFIER)?.let { return it.text }
             }
@@ -94,11 +95,11 @@ class StructurizrBreadcrumbsProvider : BreadcrumbsProvider {
 
     /** Determines whether the given [element] should appear in the breadcrumb bar. */
     override fun acceptElement(element: PsiElement): Boolean =
-        element.node.elementType in ACCEPTED_TYPES
+        element.elementType in ACCEPTED_TYPES
 
     /** Returns the display text for the given [element] in the breadcrumb bar. */
     override fun getElementInfo(element: PsiElement): String {
-        val type = element.node.elementType
+        val type = element.elementType
         val typeName = getTypeName(type)
         val name = extractName(element, type)
         return name?.let { "$typeName: $it" } ?: typeName
@@ -106,7 +107,7 @@ class StructurizrBreadcrumbsProvider : BreadcrumbsProvider {
 
     /** Returns the tooltip text for the given [element] in the breadcrumb bar. */
     override fun getElementTooltip(element: PsiElement): String {
-        val type = element.node.elementType
+        val type = element.elementType
         return "Structurizr ${getTypeName(type)}"
     }
 }

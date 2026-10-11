@@ -51,7 +51,7 @@
   <change-notes><![CDATA[
         <h3>2026.6.2 — Stability Fix</h3>
         <ul>
-            <li><b>Fixed NullPointerException when opening a .dsl file</b> — semantic highlighting walked the PSI tree past the file into its directory, which has no syntax node, and threw <code>Cannot invoke "ASTNode.getElementType()"</code>. It happened for any identifier outside a <code>workspace { }</code> block (e.g. included fragments or a file mid-edit) and showed an IDE error on every open. The same unbounded walk is fixed in style completion and the invalid-context inspection</li>
+            <li><b>Fixed NullPointerException when opening a .dsl file</b> — semantic highlighting walked the PSI tree past the file into its directory, which has no syntax node, and threw <code>Cannot invoke "ASTNode.getElementType()"</code>. It happened for any identifier outside a <code>workspace { }</code> block (e.g. included fragments or a file mid-edit) and showed an IDE error on every open. The same unbounded walk is fixed everywhere else it occurred (completion, inspections, quick fixes), so none of them can hit this error either</li>
         </ul>
         <h3>2026.6.1 — Compatibility Fix</h3>
         <ul>

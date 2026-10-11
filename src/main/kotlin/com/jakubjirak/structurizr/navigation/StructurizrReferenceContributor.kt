@@ -11,6 +11,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.psi.PsiReferenceRegistrar
+import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 
@@ -48,12 +49,12 @@ class StructurizrReferenceContributor : PsiReferenceContributor() {
                     element: PsiElement,
                     context: ProcessingContext,
                 ): Array<PsiReference> {
-                    if (element.node.elementType != StructurizrTypes.IDENTIFIER) {
+                    if (element.elementType != StructurizrTypes.IDENTIFIER) {
                         return PsiReference.EMPTY_ARRAY
                     }
 
                     val parent = element.parent ?: return PsiReference.EMPTY_ARRAY
-                    if (parent.node.elementType !in REFERENCE_PARENT_TYPES) {
+                    if (parent.elementType !in REFERENCE_PARENT_TYPES) {
                         return PsiReference.EMPTY_ARRAY
                     }
 

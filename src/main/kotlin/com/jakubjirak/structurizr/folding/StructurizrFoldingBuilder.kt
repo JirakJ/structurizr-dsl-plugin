@@ -7,6 +7,7 @@ import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.elementType
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 
 /**
@@ -47,7 +48,7 @@ class StructurizrFoldingBuilder : FoldingBuilderEx() {
     private fun findOpenBrace(element: PsiElement): Int {
         var child = element.firstChild
         while (child != null) {
-            if (child.node.elementType == StructurizrTypes.LBRACE) return child.textOffset
+            if (child.elementType == StructurizrTypes.LBRACE) return child.textOffset
             child = child.nextSibling
         }
         return -1
@@ -56,7 +57,7 @@ class StructurizrFoldingBuilder : FoldingBuilderEx() {
     private fun findCloseBrace(element: PsiElement): Int {
         var child = element.lastChild
         while (child != null) {
-            if (child.node.elementType == StructurizrTypes.RBRACE) return child.textOffset
+            if (child.elementType == StructurizrTypes.RBRACE) return child.textOffset
             child = child.prevSibling
         }
         return -1

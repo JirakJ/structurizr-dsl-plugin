@@ -8,6 +8,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parents
 import com.jakubjirak.structurizr.language.psi.StructurizrComponentDefinition
 import com.jakubjirak.structurizr.language.psi.StructurizrContainerDefinition
 import com.jakubjirak.structurizr.language.psi.StructurizrDeploymentNodeDefinition
@@ -31,20 +32,13 @@ class RemoveUnusedElementQuickFix(private val elementName: String) : LocalQuickF
         findParentDefinition(element)?.delete()
     }
 
-    private fun findParentDefinition(element: PsiElement): PsiElement? {
-        var current: PsiElement? = element
-        while (current != null) {
-            if (current is StructurizrPersonDefinition ||
+    private fun findParentDefinition(element: PsiElement): PsiElement? =
+        element.parents(withSelf = true).firstOrNull { current ->
+            current is StructurizrPersonDefinition ||
                 current is StructurizrSoftwareSystemDefinition ||
                 current is StructurizrContainerDefinition ||
                 current is StructurizrComponentDefinition ||
                 current is StructurizrDeploymentNodeDefinition ||
                 current is StructurizrInfrastructureNodeDefinition
-            ) {
-                return current
-            }
-            current = current.parent
         }
-        return null
-    }
 }

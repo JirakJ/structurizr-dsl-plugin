@@ -10,11 +10,11 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.elementType
+import com.intellij.psi.util.parents
 import com.intellij.util.ProcessingContext
 import com.jakubjirak.structurizr.language.StructurizrIcons
 import com.jakubjirak.structurizr.language.psi.StructurizrRelationshipStatement
-import com.jakubjirak.structurizr.language.ancestorsInFile
-import com.jakubjirak.structurizr.language.elementTypeOrNull
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 import javax.swing.Icon
 
@@ -174,17 +174,15 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
         result: CompletionResultSet
     ): Boolean {
         val position = parameters.position
-        if (position.node.elementType == StructurizrTypes.STRING) return false
+        if (position.elementType == StructurizrTypes.STRING) return false
 
-        var statement: PsiElement? = position.parent
-        while (statement != null && statement !is StructurizrRelationshipStatement) {
-            statement = statement.parent
-        }
-        if (statement !is StructurizrRelationshipStatement) return false
+        val statement = position.parents(withSelf = false)
+            .filterIsInstance<StructurizrRelationshipStatement>()
+            .firstOrNull() ?: return false
 
         // Only the target side (after the arrow) is restricted to identifiers
         val arrowBeforeCaret = generateSequence(statement.firstChild) { it.nextSibling }.any {
-            it.node.elementType in ARROW_TOKENS && it.textOffset < position.textOffset
+            it.elementType in ARROW_TOKENS && it.textOffset < position.textOffset
         }
         if (!arrowBeforeCaret) return false
 
@@ -235,7 +233,7 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
     private fun addTagCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
         val position = parameters.position
         var inTagsContext = position.parent?.let { parent ->
-            val parentType = parent.elementTypeOrNull
+            val parentType = parent.elementType
             parentType == StructurizrTypes.TAGS_STATEMENT || parentType == StructurizrTypes.TAGS_STRING
         } ?: false
 
@@ -244,7 +242,7 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
             while (prev != null && prev.text.trim().isEmpty()) {
                 prev = prev.prevSibling
             }
-            if (prev?.node?.elementType == StructurizrTypes.TAGS) {
+            if (prev?.elementType == StructurizrTypes.TAGS) {
                 inTagsContext = true
             }
         }
@@ -273,8 +271,8 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
         var afterRoutingKeyword = false
 
         // Walk up to find if we're inside an element style or relationship style block
-        for (current in position.ancestorsInFile()) {
-            when (current.elementTypeOrNull) {
+        for (current in position.parents(withSelf = false)) {
+            when (current.elementType) {
                 StructurizrTypes.ELEMENT_STYLE -> {
                     inElementStyle = true
                     break
@@ -292,7 +290,7 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
             prev = prev.prevSibling
         }
         prev?.let {
-            when (it.node.elementType) {
+            when (it.elementType) {
                 StructurizrTypes.SHAPE -> afterShapeKeyword = true
                 StructurizrTypes.BORDER -> afterBorderKeyword = true
                 StructurizrTypes.ROUTING -> afterRoutingKeyword = true
@@ -457,7 +455,7 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
 
         private fun collectAssignments(element: PsiElement, result: MutableList<PsiElement>) {
             element.children.forEach { child ->
-                if (child.node.elementType == StructurizrTypes.ELEMENT_ASSIGNMENT) {
+                if (child.elementType == StructurizrTypes.ELEMENT_ASSIGNMENT) {
                     result.add(child)
                 }
                 collectAssignments(child, result)
@@ -466,7 +464,7 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
 
         private fun getAssignmentTypeText(assignment: PsiElement): String {
             assignment.children.forEach { child ->
-                when (child.node.elementType) {
+                when (child.elementType) {
                     StructurizrTypes.PERSON_DEFINITION -> return "Person"
                     StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION -> return "Software System"
                     StructurizrTypes.CONTAINER_DEFINITION -> return "Container"
@@ -480,7 +478,7 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
 
         private fun getAssignmentIcon(assignment: PsiElement): Icon {
             assignment.children.forEach { child ->
-                when (child.node.elementType) {
+                when (child.elementType) {
                     StructurizrTypes.PERSON_DEFINITION -> return StructurizrIcons.PERSON
                     StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION -> return StructurizrIcons.SOFTWARE_SYSTEM
                     StructurizrTypes.CONTAINER_DEFINITION -> return StructurizrIcons.CONTAINER
@@ -494,7 +492,7 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
 
         private fun collectTags(element: PsiElement, tags: MutableSet<String>) {
             element.children.forEach { child ->
-                val type = child.node.elementType
+                val type = child.elementType
                 if (type == StructurizrTypes.TAGS_STATEMENT || type == StructurizrTypes.TAGS_STRING) {
                     var text = child.text
                     if (text.startsWith("tags")) {

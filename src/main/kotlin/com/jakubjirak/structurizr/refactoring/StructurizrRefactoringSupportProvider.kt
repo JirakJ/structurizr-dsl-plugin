@@ -3,6 +3,7 @@ package com.jakubjirak.structurizr.refactoring
 
 import com.intellij.lang.refactoring.RefactoringSupportProvider
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.elementType
 import com.jakubjirak.structurizr.language.psi.StructurizrElementAssignment
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 
@@ -15,7 +16,7 @@ class StructurizrRefactoringSupportProvider : RefactoringSupportProvider() {
 
     /** Returns whether in-place rename is available for the given [element]. */
     override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
-        if (element.node?.elementType == StructurizrTypes.IDENTIFIER) {
+        if (element.elementType == StructurizrTypes.IDENTIFIER) {
             return element.parent is StructurizrElementAssignment
         }
         return false

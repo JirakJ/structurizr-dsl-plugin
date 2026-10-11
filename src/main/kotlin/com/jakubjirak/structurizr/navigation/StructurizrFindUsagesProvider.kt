@@ -9,6 +9,7 @@ import com.intellij.lang.cacheBuilder.WordsScanner
 import com.intellij.lang.findUsages.FindUsagesProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.elementType
 import com.jakubjirak.structurizr.language.lexer.StructurizrLexerAdapter
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 
@@ -30,9 +31,9 @@ class StructurizrFindUsagesProvider : FindUsagesProvider {
 
     /** Returns `true` if Find Usages can be invoked on the given [psiElement]. */
     override fun canFindUsagesFor(psiElement: PsiElement): Boolean {
-        if (psiElement.node.elementType != StructurizrTypes.IDENTIFIER) return false
+        if (psiElement.elementType != StructurizrTypes.IDENTIFIER) return false
         val parent = psiElement.parent ?: return false
-        return parent.node.elementType == StructurizrTypes.ELEMENT_ASSIGNMENT
+        return parent.elementType == StructurizrTypes.ELEMENT_ASSIGNMENT
     }
 
     /** Returns the help topic ID for the given [psiElement], or `null`. */
@@ -41,10 +42,10 @@ class StructurizrFindUsagesProvider : FindUsagesProvider {
     /** Returns a human-readable type description for the given [element]. */
     override fun getType(element: PsiElement): String {
         val parent = element.parent ?: return "element"
-        if (parent.node.elementType != StructurizrTypes.ELEMENT_ASSIGNMENT) return "element"
+        if (parent.elementType != StructurizrTypes.ELEMENT_ASSIGNMENT) return "element"
 
         for (child in parent.children) {
-            val childType = child.node.elementType
+            val childType = child.elementType
             when (childType) {
                 StructurizrTypes.PERSON_DEFINITION -> return "person"
                 StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION -> return "software system"
@@ -59,7 +60,7 @@ class StructurizrFindUsagesProvider : FindUsagesProvider {
 
     /** Returns a descriptive name for the given [element]. */
     override fun getDescriptiveName(element: PsiElement): String {
-        if (element.node.elementType == StructurizrTypes.IDENTIFIER) {
+        if (element.elementType == StructurizrTypes.IDENTIFIER) {
             return element.text ?: ""
         }
         return element.text
