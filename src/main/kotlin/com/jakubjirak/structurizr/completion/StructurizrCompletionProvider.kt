@@ -13,6 +13,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import com.jakubjirak.structurizr.language.StructurizrIcons
 import com.jakubjirak.structurizr.language.psi.StructurizrRelationshipStatement
+import com.jakubjirak.structurizr.language.ancestorsInFile
+import com.jakubjirak.structurizr.language.elementTypeOrNull
 import com.jakubjirak.structurizr.language.psi.StructurizrTypes
 import javax.swing.Icon
 
@@ -233,7 +235,7 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
     private fun addTagCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
         val position = parameters.position
         var inTagsContext = position.parent?.let { parent ->
-            val parentType = parent.node.elementType
+            val parentType = parent.elementTypeOrNull
             parentType == StructurizrTypes.TAGS_STATEMENT || parentType == StructurizrTypes.TAGS_STRING
         } ?: false
 
@@ -271,9 +273,8 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
         var afterRoutingKeyword = false
 
         // Walk up to find if we're inside an element style or relationship style block
-        var current: PsiElement? = position.parent
-        while (current != null) {
-            when (current.node.elementType) {
+        for (current in position.ancestorsInFile()) {
+            when (current.elementTypeOrNull) {
                 StructurizrTypes.ELEMENT_STYLE -> {
                     inElementStyle = true
                     break
@@ -283,7 +284,6 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
                     break
                 }
             }
-            current = current.parent
         }
 
         // Check if previous non-whitespace sibling is a shape/border/routing keyword
