@@ -35,7 +35,6 @@ import javax.swing.DefaultComboBoxModel
 import javax.swing.Icon
 import javax.swing.JLabel
 import javax.swing.JPanel
-import javax.swing.SwingUtilities
 
 /** What the preview should render: the DSL text and the file it came from (for `!include`). */
 data class PreviewSource(val text: String, val file: VirtualFile?)
@@ -70,8 +69,8 @@ class StructurizrPreviewPanel(
     @Volatile
     private var disposed = false
 
-    /** The page most recently asked for (EDT only); re-applied once the native browser exists. */
-    private var latestPage: String? = null
+    /** Keeps pages away from the browser until its native side exists (EDT only). */
+    private val pages = PageLoadGate { html -> browser?.loadHTML(html) }
 
     init {
         val created = if (JcefSupport.isAvailable()) JcefSupport.runGuarded { JBCefBrowser() } else null
@@ -80,7 +79,7 @@ class StructurizrPreviewPanel(
         } else {
             browser = created
             Disposer.register(this, created)
-            reloadLatestPageWhenCreated(created)
+            openGateWhenCreated(created)
             add(createToolbar() as Component, BorderLayout.NORTH)
             add(created.component as Component, BorderLayout.CENTER)
             showMessage("Structurizr Preview", "Open a <code>.dsl</code> file to see its diagrams.")
@@ -170,29 +169,21 @@ class StructurizrPreviewPanel(
         show(page(result.svg))
     }
 
-    /** Loads [html] and remembers it as the page the preview should be showing. */
-    private fun show(html: String) {
-        latestPage = html
-        browser?.loadHTML(html)
-    }
+    private fun show(html: String) = pages.show(html)
 
     /**
-     * Until the native browser is created, JCEF keeps a single deferred load and replays it from
-     * `onAfterCreated` through `SwingUtilities.invokeLater`. A render that finished in between was loaded
-     * directly and then overwritten by that stale replay, so the preview kept showing its "Open a .dsl
-     * file" placeholder until Refresh (docs#13). Re-posting once more puts this reload behind the
-     * replay whatever order the life-span handlers run in, so the page that is current then wins.
+     * Opens [pages] once the native browser exists (see [PageLoadGate] for why loads wait). If the
+     * handler cannot be registered, pages are loaded straight away as before rather than never.
      */
-    private fun reloadLatestPageWhenCreated(browser: JBCefBrowser) {
-        browser.jbCefClient.addLifeSpanHandler(object : CefLifeSpanHandlerAdapter() {
-            override fun onAfterCreated(cefBrowser: CefBrowser?) {
-                SwingUtilities.invokeLater {
-                    SwingUtilities.invokeLater {
-                        if (!disposed) latestPage?.let { this@StructurizrPreviewPanel.browser?.loadHTML(it) }
-                    }
+    private fun openGateWhenCreated(browser: JBCefBrowser) {
+        val registered = JcefSupport.runGuarded {
+            browser.jbCefClient.addLifeSpanHandler(object : CefLifeSpanHandlerAdapter() {
+                override fun onAfterCreated(cefBrowser: CefBrowser?) {
+                    ApplicationManager.getApplication().invokeLater({ pages.browserCreated() }, ModalityState.any()) { disposed }
                 }
-            }
-        }, browser.cefBrowser)
+            }, browser.cefBrowser)
+        }
+        if (registered == null) pages.browserCreated()
     }
 
     private fun page(body: String): String {
