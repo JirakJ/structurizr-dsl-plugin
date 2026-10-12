@@ -26,10 +26,14 @@ dependencies {
         instrumentationTools()
         pluginVerifier()
         zipSigner()
+        testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
     }
 
     testImplementation(libs.junit.api)
     testRuntimeOnly(libs.junit.engine)
+    // Platform PSI tests (ParsingTestCase) are JUnit 4 and run through the vintage engine.
+    testImplementation(libs.junit4)
+    testRuntimeOnly(libs.junit.vintage)
 }
 
 // Exclude IDE-provided libraries from plugin distribution
