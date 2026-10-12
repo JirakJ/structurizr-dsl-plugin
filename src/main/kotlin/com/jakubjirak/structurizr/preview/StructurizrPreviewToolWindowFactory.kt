@@ -15,7 +15,10 @@ class StructurizrPreviewToolWindowFactory : ToolWindowFactory, DumbAware {
     /** Creates and registers the preview panel inside the given [toolWindow]. */
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val previewContent = StructurizrPreviewContent(project)
-        val content = ContentFactory.getInstance().createContent(previewContent.component, "Preview", false)
+        // Empty display name: a single, unnamed content shows no tab, so the header reads just
+        // "Structurizr Preview" instead of offering a "Preview" tab that looks like a button.
+        val content = ContentFactory.getInstance().createContent(previewContent.component, "", false)
+        content.setDisposer(previewContent)
         toolWindow.contentManager.addContent(content)
     }
 

@@ -27,8 +27,8 @@ class ClipboardExportService(private val project: Project) {
     /** Copies the diagram as SVG to the clipboard. */
     fun copyAsSvg(dslFile: VirtualFile, viewKey: String? = null): Boolean = try {
         val rendererService = DiagramRendererService.Companion.getInstance(project)
-        val dslContent = String(dslFile.contentsToByteArray(), Charsets.UTF_8)
-        val svgContent = rendererService.renderToSvg(dslContent, viewKey)
+        val dslContent = DiagramRendererService.currentText(dslFile)
+        val svgContent = rendererService.renderToSvg(dslContent, viewKey, dslFile)
         if (svgContent != null) {
             val clipboard = Toolkit.getDefaultToolkit().systemClipboard
             clipboard.setContents(SvgTransferable(svgContent), null)
@@ -45,7 +45,7 @@ class ClipboardExportService(private val project: Project) {
 
     /** Copies the diagram as PlantUML to the clipboard. */
     fun copyAsPlantUml(dslFile: VirtualFile, viewKey: String? = null): Boolean = try {
-        val dslContent = String(dslFile.contentsToByteArray(), Charsets.UTF_8)
+        val dslContent = DiagramRendererService.currentText(dslFile)
         @Suppress("UNUSED_VARIABLE")
         val exportService = StructurizrExportService.Companion.getInstance(project)
         val plantUml = convertToPlantUml(dslContent, viewKey)
@@ -60,7 +60,7 @@ class ClipboardExportService(private val project: Project) {
 
     /** Copies the diagram as Mermaid to the clipboard. */
     fun copyAsMermaid(dslFile: VirtualFile): Boolean = try {
-        val dslContent = String(dslFile.contentsToByteArray(), Charsets.UTF_8)
+        val dslContent = DiagramRendererService.currentText(dslFile)
         val mermaid = convertToMermaid(dslContent)
         val clipboard = Toolkit.getDefaultToolkit().systemClipboard
         clipboard.setContents(StringSelection(mermaid), null)
@@ -74,8 +74,8 @@ class ClipboardExportService(private val project: Project) {
     /** Copies the diagram as a raster image to the clipboard. */
     fun copyAsImage(dslFile: VirtualFile, viewKey: String? = null): Boolean = try {
         val rendererService = DiagramRendererService.Companion.getInstance(project)
-        val dslContent = String(dslFile.contentsToByteArray(), Charsets.UTF_8)
-        val svgContent = rendererService.renderToSvg(dslContent, viewKey)
+        val dslContent = DiagramRendererService.currentText(dslFile)
+        val svgContent = rendererService.renderToSvg(dslContent, viewKey, dslFile)
         if (svgContent != null) {
             val image = createImageFromSvg(svgContent)
             val clipboard = Toolkit.getDefaultToolkit().systemClipboard
