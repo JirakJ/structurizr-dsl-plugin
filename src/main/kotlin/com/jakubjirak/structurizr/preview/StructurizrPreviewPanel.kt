@@ -26,6 +26,8 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jakubjirak.structurizr.preview.dsl.PreviewResult
 import com.jakubjirak.structurizr.preview.dsl.ViewOption
+import org.cef.browser.CefBrowser
+import org.cef.handler.CefLifeSpanHandlerAdapter
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Component
@@ -33,6 +35,7 @@ import javax.swing.DefaultComboBoxModel
 import javax.swing.Icon
 import javax.swing.JLabel
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 /** What the preview should render: the DSL text and the file it came from (for `!include`). */
 data class PreviewSource(val text: String, val file: VirtualFile?)
@@ -67,6 +70,9 @@ class StructurizrPreviewPanel(
     @Volatile
     private var disposed = false
 
+    /** The page most recently asked for (EDT only); re-applied once the native browser exists. */
+    private var latestPage: String? = null
+
     init {
         val created = if (JcefSupport.isAvailable()) JcefSupport.runGuarded { JBCefBrowser() } else null
         if (created == null) {
@@ -74,6 +80,7 @@ class StructurizrPreviewPanel(
         } else {
             browser = created
             Disposer.register(this, created)
+            reloadLatestPageWhenCreated(created)
             add(createToolbar() as Component, BorderLayout.NORTH)
             add(created.component as Component, BorderLayout.CENTER)
             showMessage("Structurizr Preview", "Open a <code>.dsl</code> file to see its diagrams.")
@@ -160,7 +167,32 @@ class StructurizrPreviewPanel(
         } finally {
             updatingSelector = false
         }
-        browser?.loadHTML(page(result.svg))
+        show(page(result.svg))
+    }
+
+    /** Loads [html] and remembers it as the page the preview should be showing. */
+    private fun show(html: String) {
+        latestPage = html
+        browser?.loadHTML(html)
+    }
+
+    /**
+     * Until the native browser is created, JCEF keeps a single deferred load and replays it from
+     * `onAfterCreated` through `SwingUtilities.invokeLater`. A render that finished in between was loaded
+     * directly and then overwritten by that stale replay, so the preview kept showing its "Open a .dsl
+     * file" placeholder until Refresh (docs#13). Re-posting once more puts this reload behind the
+     * replay whatever order the life-span handlers run in, so the page that is current then wins.
+     */
+    private fun reloadLatestPageWhenCreated(browser: JBCefBrowser) {
+        browser.jbCefClient.addLifeSpanHandler(object : CefLifeSpanHandlerAdapter() {
+            override fun onAfterCreated(cefBrowser: CefBrowser?) {
+                SwingUtilities.invokeLater {
+                    SwingUtilities.invokeLater {
+                        if (!disposed) latestPage?.let { this@StructurizrPreviewPanel.browser?.loadHTML(it) }
+                    }
+                }
+            }
+        }, browser.cefBrowser)
     }
 
     private fun page(body: String): String {
@@ -178,7 +210,7 @@ class StructurizrPreviewPanel(
     private fun showMessage(title: String, html: String) {
         val bg = hex(UIUtil.getPanelBackground())
         val fg = hex(UIUtil.getLabelForeground())
-        browser?.loadHTML(
+        show(
             """<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
             body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;justify-content:center;
                  align-items:center;height:100vh;margin:0;background:$bg;color:$fg}
