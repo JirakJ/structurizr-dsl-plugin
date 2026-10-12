@@ -2,6 +2,19 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.6.3] - 2026-10-12
+
+### Fixed
+- **Preview ignored the selected view** ([docs#13](https://github.com/JirakJ/jetbrains-plugins-docs/issues/13)) — the built-in renderer drew a grid of every element in the file whichever view was picked, and with a Structurizr CLI configured it silently failed (it exported PlantUML but looked for an SVG). The preview now has its own lenient workspace reader and draws the selected view the way Structurizr does: `include *` gives each view type its default content (landscape: people and systems; system context: the system and what it talks to; container/component view: the members of the scope inside a boundary plus their neighbours), explicit `include`/`exclude` identifiers are honoured, relationships of nested elements are lifted to what is on the diagram, deployment views group instances by deployment node, dynamic views number their steps, filtered views filter by tag. `!include` is resolved relative to the file. The same renderer now backs the SVG/PNG export and *Copy as SVG*, so they honour the view key too.
+- **The view selector listed six fixed view types instead of the workspace's views** — it now lists exactly the views defined in `views { }` (key, type and scope), keeps the selection across edits, and offers Structurizr-style default views only when the workspace defines none.
+- **Refresh threw `Read access is allowed from inside read-action only`** — the preview read the document on the EDT outside a read action. Documents are now read in a non-blocking read action on a background thread and only the result is applied on the EDT; the *Refresh Structurizr Preview* action (Ctrl+Shift+R), which previously did nothing, now refreshes every open preview.
+- **Structure view lost the `views` block for many valid workspaces** — the editor parser had no error recovery: the first statement its grammar did not model (lower-case `autolayout`, `name`/`description` on the workspace, `x = deploymentEnvironment`, `"""` text blocks, `deployment * <env>`, an identifier as the deployment environment, `filtered` views without a block, extra arguments on a view header) ended the parse of the whole rest of the file. Unknown statements are now skipped one at a time and marked with a weak warning (so a typo such as `softwareSytem` is still visible), keywords are case-insensitive as in Structurizr wherever a keyword starts a statement (mixed-case identifiers such as `Users` keep working), and `!include` fragments without a `workspace` parse instead of being swallowed. The Structure view shows each view with its scope and key (`systemContext svf: context`) and element identifiers inline.
+- **"Preview" button in the tool window header** — it was the name of the window's only tab; the tab is now unnamed, so the header reads just *Structurizr Preview*. The toolbar uses standard icon actions and the view selector takes the remaining width, so long view names no longer push Refresh and zoom out of sight; the diagram fits the window by default.
+
+### Added
+- 42 tests (1027 total): PSI recovery tests over real workspaces (every view kind, the reporter's model shape, fragments), Structure view output for the issue's workspace, lexer tests for case-insensitive keywords versus mixed-case identifiers, and preview engine tests for view selection, default views, deployment/dynamic/filtered views, nested `!include`, `!element` blocks and malformed input.
+- Export and *Copy as SVG* render the editor's current (possibly unsaved) text, so they match what the preview shows.
+
 ## [2026.6.2] - 2026-10-11
 
 ### Fixed

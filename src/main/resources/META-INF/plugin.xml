@@ -49,6 +49,14 @@
   <li><a href="https://c4model.com/">C4 Model Documentation</a></li>
 </ul>]]></description>
   <change-notes><![CDATA[
+        <h3>2026.6.3 — Preview &amp; Structure View Fixes</h3>
+        <ul>
+            <li><b>The preview shows the view you select</b> — instead of a grid of every element, each view is drawn with its real content: people and systems for a landscape, the system and its neighbours for a context view, the containers or components of the scope inside a boundary, deployment nodes and instances, numbered dynamic steps, filtered views. <code>include</code>/<code>exclude</code> and <code>!include</code> are honoured, and SVG/PNG export uses the same renderer</li>
+            <li><b>The view selector lists the views of your workspace</b> — by key, type and scope, and keeps your choice while you edit</li>
+            <li><b>Fixed: Refresh threw "Read access is allowed from inside read-action only"</b>; the Refresh Structurizr Preview action now works too</li>
+            <li><b>Fixed: the Structure view lost the views of many workspaces</b> — one statement the editor grammar did not know (lower-case <code>autolayout</code>, workspace <code>name</code>, <code>x = deploymentEnvironment</code>, text blocks, ...) broke parsing of the rest of the file. Keywords are now case-insensitive and unknown statements are skipped one at a time</li>
+            <li><b>Cleaner tool window</b> — no more confusing "Preview" tab button; compact toolbar; the diagram fits the window</li>
+        </ul>
         <h3>2026.6.2 — Stability Fix</h3>
         <ul>
             <li><b>Fixed NullPointerException when opening a .dsl file</b> — semantic highlighting walked the PSI tree past the file into its directory, which has no syntax node, and threw <code>Cannot invoke "ASTNode.getElementType()"</code>. It happened for any identifier outside a <code>workspace { }</code> block (e.g. included fragments or a file mid-edit) and showed an IDE error on every open. The same unbounded walk is fixed everywhere else it occurred (completion, inspections, quick fixes), so none of them can hit this error either</li>
