@@ -131,7 +131,7 @@ class StructurizrExportService(private val project: Project) {
                     indicator.isIndeterminate = false
                     indicator.text = "Analyzing DSL file..."
 
-                    val dslContent = String(dslFile.contentsToByteArray(), Charsets.UTF_8)
+                    val dslContent = DiagramRendererService.currentText(dslFile)
                     val views = extractViews(dslContent)
 
                     if (views.isEmpty()) {
@@ -165,8 +165,8 @@ class StructurizrExportService(private val project: Project) {
             exportWithCli(dslFile, outputPath, ExportFormat.SVG, viewKey, indicator)
         } else {
             val rendererService = DiagramRendererService.Companion.getInstance(project)
-            val dslContent = String(dslFile.contentsToByteArray(), Charsets.UTF_8)
-            val svgContent = rendererService.renderToSvg(dslContent, viewKey)
+            val dslContent = DiagramRendererService.currentText(dslFile)
+            val svgContent = rendererService.renderToSvg(dslContent, viewKey, dslFile)
                 ?: throw Exception("Failed to render SVG")
             indicator.fraction = 0.8
             Files.writeString(outputPath, svgContent)
@@ -181,8 +181,8 @@ class StructurizrExportService(private val project: Project) {
             exportWithCli(dslFile, outputPath, ExportFormat.PNG, viewKey, indicator)
         } else {
             val rendererService = DiagramRendererService.Companion.getInstance(project)
-            val dslContent = String(dslFile.contentsToByteArray(), Charsets.UTF_8)
-            val svgContent = rendererService.renderToSvg(dslContent, viewKey)
+            val dslContent = DiagramRendererService.currentText(dslFile)
+            val svgContent = rendererService.renderToSvg(dslContent, viewKey, dslFile)
                 ?: throw Exception("Failed to render diagram")
             indicator.fraction = 0.6
             indicator.text = "Converting to PNG..."
@@ -197,7 +197,7 @@ class StructurizrExportService(private val project: Project) {
         if (cliService.isCliAvailable()) {
             exportWithCli(dslFile, outputPath, ExportFormat.PLANTUML_C4, viewKey, indicator)
         } else {
-            val dslContent = String(dslFile.contentsToByteArray(), Charsets.UTF_8)
+            val dslContent = DiagramRendererService.currentText(dslFile)
             val plantUml = convertToPlantUml(dslContent, viewKey)
             indicator.fraction = 0.8
             Files.writeString(outputPath, plantUml)
@@ -211,7 +211,7 @@ class StructurizrExportService(private val project: Project) {
         if (cliService.isCliAvailable()) {
             exportWithCli(dslFile, outputPath, ExportFormat.MERMAID, viewKey, indicator)
         } else {
-            val dslContent = String(dslFile.contentsToByteArray(), Charsets.UTF_8)
+            val dslContent = DiagramRendererService.currentText(dslFile)
             val mermaid = convertToMermaid(dslContent)
             indicator.fraction = 0.8
             Files.writeString(outputPath, mermaid)

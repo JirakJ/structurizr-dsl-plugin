@@ -12,6 +12,8 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.markup.EffectType
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
+import com.jakubjirak.structurizr.language.parser.StructurizrParserRecovery
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.elementType
@@ -39,6 +41,17 @@ class StructurizrAnnotator : Annotator {
      */
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         val type = element.elementType ?: return
+
+        if (type == StructurizrParserRecovery.UNKNOWN_STATEMENT) {
+            // Only the first line: a skipped block statement would otherwise underline its whole body.
+            val lineEnd = element.text.indexOf('\n').let { if (it < 0) element.textLength else it }
+            val firstLine = element.text.substring(0, lineEnd).trim().take(60)
+            holder.newAnnotation(HighlightSeverity.WEAK_WARNING, UNKNOWN_STATEMENT_MESSAGE)
+                .range(TextRange.from(element.textRange.startOffset, lineEnd))
+                .tooltip("$UNKNOWN_STATEMENT_MESSAGE: <code>${StringUtil.escapeXmlEntities(firstLine)}</code>")
+                .create()
+            return
+        }
 
         // Highlight ${...} substitutions inside string literals
         if (type == StructurizrTypes.STRING) {
@@ -176,6 +189,10 @@ class StructurizrAnnotator : Annotator {
     }
 
     companion object {
+        /** Shown on statements the editor grammar skipped (they may still be valid Structurizr DSL). */
+        const val UNKNOWN_STATEMENT_MESSAGE =
+            "Statement not recognised by the editor; it is skipped by navigation and inspections (it may still be valid Structurizr DSL)"
+
         /** Highlighting key for `${...}` variable references inside strings. */
         @JvmField
         val VARIABLE_REFERENCE: TextAttributesKey = TextAttributesKey.createTextAttributesKey(

@@ -9,9 +9,6 @@ import com.intellij.openapi.fileEditor.TextEditorWithPreview
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.Navigatable
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
 
 /**
  * A split editor that pairs a standard [TextEditor] with a live
@@ -30,27 +27,13 @@ class StructurizrSplitEditor private constructor(
     constructor(project: Project, textEditor: TextEditor, file: VirtualFile) :
         this(project, textEditor, StructurizrPreviewFileEditor(project, file))
 
-    private val scheduler = Executors.newSingleThreadScheduledExecutor()
-    private var updateTask: ScheduledFuture<*>? = null
-    private val updateDelayMs = 500L
-
     init {
         textEditor.editor.document.addDocumentListener(object : DocumentListener {
             override fun documentChanged(event: DocumentEvent) {
-                schedulePreviewUpdate()
+                structurizrPreview.scheduleRefresh()
             }
         }, this)
-        updatePreview()
-    }
-
-    private fun schedulePreviewUpdate() {
-        updateTask?.cancel(false)
-        updateTask = scheduler.schedule(::updatePreview, updateDelayMs, TimeUnit.MILLISECONDS)
-    }
-
-    private fun updatePreview() {
-        val content = textEditor.editor.document.getText()
-        structurizrPreview.updatePreview(content)
+        structurizrPreview.refreshNow()
     }
 
     override fun getEditor(): Editor = textEditor.editor
@@ -60,10 +43,5 @@ class StructurizrSplitEditor private constructor(
 
     override fun navigateTo(navigatable: Navigatable) {
         textEditor.navigateTo(navigatable)
-    }
-
-    override fun dispose() {
-        scheduler.shutdown()
-        super.dispose()
     }
 }

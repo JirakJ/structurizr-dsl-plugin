@@ -93,6 +93,9 @@ implements ParserDefinition {
 
     @NotNull
     public PsiElement createElement(@NotNull ASTNode node) {
+        if (node.getElementType() == StructurizrParserRecovery.UNKNOWN_STATEMENT) {
+            return new com.intellij.extapi.psi.ASTWrapperPsiElement(node);
+        }
         PsiElement psiElement = StructurizrTypes.Factory.createElement(node);
         return psiElement;
     }

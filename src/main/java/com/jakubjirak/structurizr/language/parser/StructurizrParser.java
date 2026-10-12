@@ -227,7 +227,8 @@ LightPsiParser {
         if (!result_) {
             result_ = StructurizrParser.font_statement(builder_, level_ + 1);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean component_definition(PsiBuilder builder_, int level_) {
@@ -365,7 +366,7 @@ LightPsiParser {
         result_ = result_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.element_reference(builder_, level_ + 1));
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.component_view_2(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.component_view_3(builder_, level_ + 1)) && result_;
-        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.LBRACE)) && result_;
+        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParserRecovery.openBlock(builder_)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.component_view_5(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.RBRACE) && result_;
         GeneratedParserUtilBase.exit_section_((PsiBuilder)builder_, (int)level_, (PsiBuilder.Marker)marker_, (boolean)result_, (boolean)pinned_, null);
@@ -446,7 +447,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean constant_directive(PsiBuilder builder_, int level_) {
@@ -495,7 +497,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean container_definition(PsiBuilder builder_, int level_) {
@@ -739,7 +742,7 @@ LightPsiParser {
         result_ = result_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.element_reference(builder_, level_ + 1));
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.container_view_2(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.container_view_3(builder_, level_ + 1)) && result_;
-        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.LBRACE)) && result_;
+        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParserRecovery.openBlock(builder_)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.container_view_5(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.RBRACE) && result_;
         GeneratedParserUtilBase.exit_section_((PsiBuilder)builder_, (int)level_, (PsiBuilder.Marker)marker_, (boolean)result_, (boolean)pinned_, null);
@@ -785,7 +788,7 @@ LightPsiParser {
         boolean pinned_ = result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.CUSTOM);
         result_ = result_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.custom_view_1(builder_, level_ + 1));
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.custom_view_2(builder_, level_ + 1)) && result_;
-        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.LBRACE)) && result_;
+        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParserRecovery.openBlock(builder_)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.custom_view_4(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.RBRACE) && result_;
         GeneratedParserUtilBase.exit_section_((PsiBuilder)builder_, (int)level_, (PsiBuilder.Marker)marker_, (boolean)result_, (boolean)pinned_, null);
@@ -852,7 +855,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean deployment_environment_block(PsiBuilder builder_, int level_) {
@@ -956,7 +960,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean deployment_node_definition(PsiBuilder builder_, int level_) {
@@ -1109,11 +1114,13 @@ LightPsiParser {
         }
         PsiBuilder.Marker marker_ = GeneratedParserUtilBase.enter_section_((PsiBuilder)builder_, (int)level_, (int)0, (IElementType)StructurizrTypes.DEPLOYMENT_VIEW, null);
         boolean pinned_ = result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.DEPLOYMENT);
-        result_ = result_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.element_reference(builder_, level_ + 1));
-        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.STRING)) && result_;
+        // "deployment * <environment>" shows every software system deployed in the environment.
+        result_ = result_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)(StructurizrParser.element_reference(builder_, level_ + 1) || GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.STAR)));
+        // The environment may be given by name ("Live") or by the identifier it was assigned to (live).
+        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)(GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.STRING) || GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.IDENTIFIER))) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.deployment_view_3(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.deployment_view_4(builder_, level_ + 1)) && result_;
-        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.LBRACE)) && result_;
+        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParserRecovery.openBlock(builder_)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.deployment_view_6(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.RBRACE) && result_;
         GeneratedParserUtilBase.exit_section_((PsiBuilder)builder_, (int)level_, (PsiBuilder.Marker)marker_, (boolean)result_, (boolean)pinned_, null);
@@ -1239,7 +1246,7 @@ LightPsiParser {
         result_ = result_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.dynamic_view_1(builder_, level_ + 1));
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.dynamic_view_2(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.dynamic_view_3(builder_, level_ + 1)) && result_;
-        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.LBRACE)) && result_;
+        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParserRecovery.openBlock(builder_)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.dynamic_view_5(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.RBRACE) && result_;
         GeneratedParserUtilBase.exit_section_((PsiBuilder)builder_, (int)level_, (PsiBuilder.Marker)marker_, (boolean)result_, (boolean)pinned_, null);
@@ -1307,7 +1314,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean element_assignment(PsiBuilder builder_, int level_) {
@@ -1352,7 +1360,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean element_reference(PsiBuilder builder_, int level_) {
@@ -1438,7 +1447,7 @@ LightPsiParser {
         }
         do {
             pos_ = GeneratedParserUtilBase.current_position_((PsiBuilder)builder_);
-        } while (StructurizrParser.style_property(builder_, level_ + 1) && GeneratedParserUtilBase.empty_element_parsed_guard_((PsiBuilder)builder_, (String)"element_style_3", (int)pos_));
+        } while ((StructurizrParser.style_property(builder_, level_ + 1) || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1)) && GeneratedParserUtilBase.empty_element_parsed_guard_((PsiBuilder)builder_, (String)"element_style_3", (int)pos_));
         return true;
     }
 
@@ -1586,9 +1595,12 @@ LightPsiParser {
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.filtered_view_3(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.filtered_view_4(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.filtered_view_5(builder_, level_ + 1)) && result_;
-        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.LBRACE)) && result_;
-        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.filtered_view_7(builder_, level_ + 1)) && result_;
-        result_ = pinned_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.RBRACE) && result_;
+        // Structurizr's filtered views take no block; an (older) block form is still accepted.
+        if (GeneratedParserUtilBase.nextTokenIs((PsiBuilder)builder_, (IElementType)StructurizrTypes.LBRACE)) {
+            result_ = pinned_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.LBRACE) && result_;
+            result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.filtered_view_7(builder_, level_ + 1)) && result_;
+            result_ = pinned_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.RBRACE) && result_;
+        }
         GeneratedParserUtilBase.exit_section_((PsiBuilder)builder_, (int)level_, (PsiBuilder.Marker)marker_, (boolean)result_, (boolean)pinned_, null);
         return result_ || pinned_;
     }
@@ -1727,7 +1739,8 @@ LightPsiParser {
         if (!result_) {
             result_ = StructurizrParser.properties_block(builder_, level_ + 1);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean image_kroki(PsiBuilder builder_, int level_) {
@@ -1775,7 +1788,7 @@ LightPsiParser {
         boolean pinned_ = result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.IMAGE);
         result_ = result_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.image_view_1(builder_, level_ + 1));
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.image_view_2(builder_, level_ + 1)) && result_;
-        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.LBRACE)) && result_;
+        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParserRecovery.openBlock(builder_)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.image_view_4(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.RBRACE) && result_;
         GeneratedParserUtilBase.exit_section_((PsiBuilder)builder_, (int)level_, (PsiBuilder.Marker)marker_, (boolean)result_, (boolean)pinned_, null);
@@ -2063,6 +2076,10 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
+        if (!result_) {
+            // A fragment pulled in with !include has model content at the top level, without a workspace.
+            result_ = StructurizrParser.model_content(builder_, level_ + 1);
+        }
         GeneratedParserUtilBase.exit_section_((PsiBuilder)builder_, (PsiBuilder.Marker)marker_, null, (boolean)result_);
         return result_;
     }
@@ -2156,7 +2173,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     static boolean model_group_content(PsiBuilder builder_, int level_) {
@@ -2176,7 +2194,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean node_separation(PsiBuilder builder_, int level_) {
@@ -2570,7 +2589,7 @@ LightPsiParser {
         }
         do {
             pos_ = GeneratedParserUtilBase.current_position_((PsiBuilder)builder_);
-        } while (StructurizrParser.style_property(builder_, level_ + 1) && GeneratedParserUtilBase.empty_element_parsed_guard_((PsiBuilder)builder_, (String)"relationship_style_3", (int)pos_));
+        } while ((StructurizrParser.style_property(builder_, level_ + 1) || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1)) && GeneratedParserUtilBase.empty_element_parsed_guard_((PsiBuilder)builder_, (String)"relationship_style_3", (int)pos_));
         return true;
     }
 
@@ -2691,7 +2710,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean software_system_definition(PsiBuilder builder_, int level_) {
@@ -3059,7 +3079,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean system_context_view(PsiBuilder builder_, int level_) {
@@ -3075,7 +3096,7 @@ LightPsiParser {
         result_ = result_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.element_reference(builder_, level_ + 1));
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.system_context_view_2(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.system_context_view_3(builder_, level_ + 1)) && result_;
-        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.LBRACE)) && result_;
+        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParserRecovery.openBlock(builder_)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.system_context_view_5(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.RBRACE) && result_;
         GeneratedParserUtilBase.exit_section_((PsiBuilder)builder_, (int)level_, (PsiBuilder.Marker)marker_, (boolean)result_, (boolean)pinned_, null);
@@ -3121,7 +3142,7 @@ LightPsiParser {
         boolean pinned_ = result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.SYSTEM_LANDSCAPE);
         result_ = result_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.system_landscape_view_1(builder_, level_ + 1));
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.system_landscape_view_2(builder_, level_ + 1)) && result_;
-        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.LBRACE)) && result_;
+        result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParserRecovery.openBlock(builder_)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.report_error_((PsiBuilder)builder_, (boolean)StructurizrParser.system_landscape_view_4(builder_, level_ + 1)) && result_;
         result_ = pinned_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.RBRACE) && result_;
         GeneratedParserUtilBase.exit_section_((PsiBuilder)builder_, (int)level_, (PsiBuilder.Marker)marker_, (boolean)result_, (boolean)pinned_, null);
@@ -3244,7 +3265,8 @@ LightPsiParser {
         boolean result_ = StructurizrParser.terminology_item(builder_, level_ + 1);
         result_ = result_ && GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.STRING);
         GeneratedParserUtilBase.exit_section_((PsiBuilder)builder_, (PsiBuilder.Marker)marker_, null, (boolean)result_);
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean terminology_item(PsiBuilder builder_, int level_) {
@@ -3454,7 +3476,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean view_description(PsiBuilder builder_, int level_) {
@@ -3563,7 +3586,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean visibility_statement(PsiBuilder builder_, int level_) {
@@ -3591,6 +3615,11 @@ LightPsiParser {
     public static boolean workspace_block(PsiBuilder builder_, int level_) {
         boolean result_;
         if (!GeneratedParserUtilBase.recursion_guard_((PsiBuilder)builder_, (int)level_, (String)"workspace_block")) {
+            return false;
+        }
+        // Without this guard the recovery below ran for any top-level token and swallowed whole
+        // !include fragments (model content without a workspace) as unparsed text.
+        if (!GeneratedParserUtilBase.nextTokenIs((PsiBuilder)builder_, (IElementType)StructurizrTypes.WORKSPACE)) {
             return false;
         }
         PsiBuilder.Marker marker_ = GeneratedParserUtilBase.enter_section_((PsiBuilder)builder_, (int)level_, (int)0, (IElementType)StructurizrTypes.WORKSPACE_BLOCK, (String)"<workspace block>");
@@ -3673,7 +3702,8 @@ LightPsiParser {
         if (!result_) {
             result_ = GeneratedParserUtilBase.consumeToken((PsiBuilder)builder_, (IElementType)StructurizrTypes.BLOCK_COMMENT);
         }
-        return result_;
+        // Unknown statements are skipped instead of ending the block (see StructurizrParserRecovery).
+        return result_ || StructurizrParserRecovery.unknownStatement(builder_, level_ + 1);
     }
 
     public static boolean workspace_description(PsiBuilder builder_, int level_) {

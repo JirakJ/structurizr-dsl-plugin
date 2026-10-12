@@ -99,6 +99,49 @@ class StructurizrStructureViewElement(
                 }
             }
 
+        private val DEFINITION_TYPES: Set<IElementType> = setOf(
+            StructurizrTypes.PERSON_DEFINITION,
+            StructurizrTypes.SOFTWARE_SYSTEM_DEFINITION,
+            StructurizrTypes.CONTAINER_DEFINITION,
+            StructurizrTypes.COMPONENT_DEFINITION,
+            StructurizrTypes.DEPLOYMENT_NODE_DEFINITION,
+            StructurizrTypes.INFRASTRUCTURE_NODE_DEFINITION,
+        )
+
+        /** The `id =` part of a definition, when it is a plain leaf child (not a definition of its own). */
+        private fun ownAssignment(element: PsiElement): PsiElement? {
+            if (element.elementType !in DEFINITION_TYPES) return null
+            return element.children.firstOrNull { child ->
+                child.elementType == StructurizrTypes.ELEMENT_ASSIGNMENT &&
+                    child.children.none { it.elementType in STRUCTURE_TYPES }
+            }
+        }
+
+        private fun unquote(text: String): String =
+            if (text.length >= 2 && text.startsWith("\"") && text.endsWith("\"")) text.substring(1, text.length - 1) else text
+
+        /** `systemContext svf: context` — the view type, what it is scoped to and its key. */
+        private fun viewText(view: PsiElement, typeName: String): String {
+            val node = view.node
+            val scope = node.findChildByType(StructurizrTypes.ELEMENT_REFERENCE)?.text
+                ?: node.findChildByType(StructurizrTypes.STAR)?.text
+            // A deployment view names its environment by string or identifier right after the scope.
+            val environment = if (view.elementType == StructurizrTypes.DEPLOYMENT_VIEW) {
+                node.getChildren(null).firstOrNull { it.elementType == StructurizrTypes.STRING || it.elementType == StructurizrTypes.IDENTIFIER }?.text?.let(::unquote)
+            } else null
+            // Only views whose first string *is* the key may fall back to it; for deployment and filtered
+            // views the first string is the environment or the base view.
+            val key = node.findChildByType(StructurizrTypes.VIEW_KEY)?.text?.let(::unquote)
+                ?: node.takeIf { view.elementType in STRING_KEYED_VIEWS }?.findChildByType(StructurizrTypes.STRING)?.text?.let(::unquote)
+            val head = listOfNotNull(typeName, scope, environment).joinToString(" ")
+            return key?.takeIf { it.isNotBlank() }?.let { "$head: $it" } ?: head
+        }
+
+        private val STRING_KEYED_VIEWS: Set<IElementType> = setOf(
+            StructurizrTypes.SYSTEM_LANDSCAPE_VIEW,
+            StructurizrTypes.CUSTOM_VIEW,
+        )
+
         private fun getElementTypeName(type: IElementType?): String = when (type) {
             StructurizrTypes.WORKSPACE_BLOCK -> "workspace"
             StructurizrTypes.MODEL_BLOCK -> "model"
@@ -171,9 +214,14 @@ class StructurizrStructureViewElement(
                 }
             }
 
-            val nameFromString = extractFirstString(element)
             val typeName = getElementTypeName(type)
-            return nameFromString?.let { "$typeName: $it" } ?: typeName
+            if (type in VIEW_TYPES) return viewText(element, typeName)
+
+            val nameFromString = extractFirstString(element)
+            val base = nameFromString?.let { "$typeName: $it" } ?: typeName
+            // `dev = person "..."`: show the identifier on the element itself instead of as a child node.
+            val identifier = ownAssignment(element)?.let { extractIdentifierFromAssignment(it) }
+            return identifier?.let { "$base ($it)" } ?: base
         }
 
         override fun getLocationString(): String? = null
@@ -207,7 +255,9 @@ class StructurizrStructureViewElement(
     /** Returns the child elements to display under this node in the structure tree. */
     override fun getChildren(): Array<TreeElement> {
         val children = mutableListOf<TreeElement>()
+        val shownInline = ownAssignment(element)
         for (child in element.children) {
+            if (child === shownInline) continue
             val childType = child.elementType
             if (childType in STRUCTURE_TYPES) {
                 children.add(StructurizrStructureViewElement(child))

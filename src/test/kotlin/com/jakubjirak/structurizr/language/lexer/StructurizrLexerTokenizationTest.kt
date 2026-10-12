@@ -100,9 +100,31 @@ class StructurizrLexerTokenizationTest {
         }
 
         @Test
-        fun `differently-cased keywords lex as identifiers`() {
-            assertEquals(StructurizrTypes.IDENTIFIER, lexTypes("SOFTWARESYSTEM").first())
-            assertEquals(StructurizrTypes.IDENTIFIER, lexTypes("Workspace").first())
+        fun `keywords are case-insensitive like in Structurizr`() {
+            assertEquals(StructurizrTypes.SOFTWARE_SYSTEM, lexTypes("SOFTWARESYSTEM").first())
+            assertEquals(StructurizrTypes.WORKSPACE, lexTypes("Workspace").first())
+            assertEquals(StructurizrTypes.AUTO_LAYOUT, lexTypes("autolayout").first())
+        }
+
+        @Test
+        fun `a keyword-like word stays an identifier when assigned or used after an arrow`() {
+            assertEquals(StructurizrTypes.IDENTIFIER, lexTypes("Container = softwareSystem").first())
+            assertEquals(StructurizrTypes.IDENTIFIER, lexTypes("u -> Container").last())
+        }
+
+        @Test
+        fun `mixed-case identifiers are not keywords outside statement position`() {
+            assertEquals(StructurizrTypes.IDENTIFIER, lexTypes("Users -> web").first())
+            assertEquals(StructurizrTypes.IDENTIFIER, lexTypes("include Users").last())
+            assertEquals(StructurizrTypes.IDENTIFIER, lexTypes("!element Model").last())
+        }
+
+        @Test
+        fun `upper-case element keywords map to the element keyword, not the shape`() {
+            repeat(3) {
+                assertEquals(StructurizrTypes.PERSON, lexTypes("PERSON").first())
+                assertEquals(StructurizrTypes.COMPONENT, lexTypes("x = COMPONENT").last())
+            }
         }
 
         @Test
