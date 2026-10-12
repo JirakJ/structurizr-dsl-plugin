@@ -26,6 +26,8 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jakubjirak.structurizr.preview.dsl.PreviewResult
 import com.jakubjirak.structurizr.preview.dsl.ViewOption
+import org.cef.browser.CefBrowser
+import org.cef.handler.CefLifeSpanHandlerAdapter
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Component
@@ -67,6 +69,9 @@ class StructurizrPreviewPanel(
     @Volatile
     private var disposed = false
 
+    /** Keeps pages away from the browser until its native side exists (EDT only). */
+    private val pages = PageLoadGate { html -> browser?.loadHTML(html) }
+
     init {
         val created = if (JcefSupport.isAvailable()) JcefSupport.runGuarded { JBCefBrowser() } else null
         if (created == null) {
@@ -74,6 +79,7 @@ class StructurizrPreviewPanel(
         } else {
             browser = created
             Disposer.register(this, created)
+            openGateWhenCreated(created)
             add(createToolbar() as Component, BorderLayout.NORTH)
             add(created.component as Component, BorderLayout.CENTER)
             showMessage("Structurizr Preview", "Open a <code>.dsl</code> file to see its diagrams.")
@@ -160,7 +166,24 @@ class StructurizrPreviewPanel(
         } finally {
             updatingSelector = false
         }
-        browser?.loadHTML(page(result.svg))
+        show(page(result.svg))
+    }
+
+    private fun show(html: String) = pages.show(html)
+
+    /**
+     * Opens [pages] once the native browser exists (see [PageLoadGate] for why loads wait). If the
+     * handler cannot be registered, pages are loaded straight away as before rather than never.
+     */
+    private fun openGateWhenCreated(browser: JBCefBrowser) {
+        val registered = JcefSupport.runGuarded {
+            browser.jbCefClient.addLifeSpanHandler(object : CefLifeSpanHandlerAdapter() {
+                override fun onAfterCreated(cefBrowser: CefBrowser?) {
+                    ApplicationManager.getApplication().invokeLater({ pages.browserCreated() }, ModalityState.any()) { disposed }
+                }
+            }, browser.cefBrowser)
+        }
+        if (registered == null) pages.browserCreated()
     }
 
     private fun page(body: String): String {
@@ -178,7 +201,7 @@ class StructurizrPreviewPanel(
     private fun showMessage(title: String, html: String) {
         val bg = hex(UIUtil.getPanelBackground())
         val fg = hex(UIUtil.getLabelForeground())
-        browser?.loadHTML(
+        show(
             """<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
             body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;justify-content:center;
                  align-items:center;height:100vh;margin:0;background:$bg;color:$fg}

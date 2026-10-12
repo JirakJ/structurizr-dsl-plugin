@@ -2,6 +2,14 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.6.4] - 2026-10-12
+
+### Fixed
+- **The preview first showed "Open a .dsl file" and only drew the diagram after Refresh** ([docs#13](https://github.com/JirakJ/jetbrains-plugins-docs/issues/13#issuecomment-6125944359)) — both in the split editor and in the Structurizr Preview tool window. Until its native browser exists, JCEF keeps one deferred page and replays it from `onAfterCreated` via `invokeLater`; when the first render finished in that window it was loaded directly and then overwritten by the replayed placeholder. With the out-of-process JCEF of IntelliJ 2026.2 the window is wide enough to hit on every open. The panel no longer hands any page to JCEF before its browser has been created: pages wait in a small gate, the latest one is loaded from `onAfterCreated`, and later pages load directly — so there is no deferred placeholder left to replay. If the creation listener cannot be registered, pages load directly as before.
+
+### Added
+- 4 regression tests (1031 total) for the gate: nothing loads before creation, only the latest page loads on creation, pages load directly afterwards, repeated creation events are ignored.
+
 ## [2026.6.3] - 2026-10-12
 
 ### Fixed
