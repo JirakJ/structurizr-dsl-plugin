@@ -2,6 +2,12 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [2026.8.0] - 2026-11-10
+
+### Changed
+- The plugin is now completely free — all features unlocked, no license needed.
+- Source code is now open source under Apache-2.0: https://github.com/JirakJ/structurizr-dsl-plugin
+
 ## [2026.6.4] - 2026-10-12
 
 ### Fixed

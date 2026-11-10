@@ -49,6 +49,8 @@
   <li><a href="https://c4model.com/">C4 Model Documentation</a></li>
 </ul>]]></description>
   <change-notes><![CDATA[
+<h3>2026.8.0</h3><ul><li>The plugin is now completely free — all features unlocked, no license needed.</li><li>Source code is now open source under Apache-2.0: https://github.com/JirakJ/structurizr-dsl-plugin</li></ul>
+
         <h3>2026.6.4 — Preview Opens Ready</h3>
         <ul>
             <li><b>Fixed: the preview showed "Open a .dsl file" until you clicked Refresh</b> — when a <code>.dsl</code> file or the Structurizr Preview tool window was opened, the first diagram could be overwritten by the placeholder page while the embedded browser was still starting. The diagram now appears straight away</li>
@@ -102,7 +104,6 @@
             <li><b>Rename Refactoring</b> - Safely rename identifiers across all references in your DSL files</li>
         </ul>
     ]]></change-notes>
-  <product-descriptor code="PSTRUCTURIZRDSL" release-date="20260609" release-version="20266" optional="true"/>
   <!-- Product and dependencies -->
   <depends>com.intellij.modules.platform</depends>
   <!--
@@ -163,8 +164,6 @@
     <!-- Settings -->
     <applicationConfigurable parentId="tools" instance="com.jakubjirak.structurizr.settings.StructurizrSettingsConfigurable" id="com.jakubjirak.structurizr.settings" displayName="Structurizr DSL" />
     <applicationService serviceImplementation="com.jakubjirak.structurizr.settings.StructurizrSettings" />
-    <!-- Licensing -->
-    <applicationService serviceImplementation="com.jakubjirak.structurizr.licensing.FreemiumGate" />
     <!-- Project Settings -->
     <projectConfigurable parentId="com.jakubjirak.structurizr.settings" instance="com.jakubjirak.structurizr.settings.StructurizrProjectSettingsConfigurable" id="com.jakubjirak.structurizr.projectSettings" displayName="Project Settings" />
     <projectService serviceImplementation="com.jakubjirak.structurizr.settings.StructurizrProjectSettings" />

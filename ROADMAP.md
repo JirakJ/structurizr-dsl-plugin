@@ -19,9 +19,9 @@
 - [x] Live templates (10 templates)
 - [x] Documentation provider (Ctrl+Q)
 - [x] ${} variable highlighting
-- [x] Live diagram preview (Pro)
-- [x] Export to SVG/PNG/PlantUML/Mermaid (Pro)
-- [x] CLI integration with auto-download (Pro)
+- [x] Live diagram preview
+- [x] Export to SVG/PNG/PlantUML/Mermaid
+- [x] CLI integration with auto-download
 - [x] Global + project settings
 - [x] 866 unit tests
 
@@ -49,14 +49,14 @@
 
 ### 📋 Future Releases
 
-#### Pro Features
+#### Advanced Features
 - [x] ~~**FR-306: Smart Relationship Completion**~~ ✅ v2026.6.0 — relationship targets suggest defined elements only, source excluded
 - [x] ~~**FR-507: Workspace-level Validation** (unique view keys)~~ ✅ v2026.6.0 — DuplicateViewKeyInspection; valid expressions still open
 - [ ] **FR-608: Extract to !include** — refactor element definition to external file
 - [ ] **FR-701-707: Enhanced Preview** — zoom, pan, click-to-navigate, dark mode, SVG/PNG export from preview
 - [ ] **FR-803: Structurizr Cloud Sync** — push/pull workspaces
 
-#### Enterprise Features  
+#### More Features
 - [ ] **FR-804: Multi-workspace Support** — multiple workspace files in one project
 - [ ] **FR-805: Team Configuration Sharing** — shared styles, themes, settings
 

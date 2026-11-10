@@ -56,26 +56,23 @@ Quickly scaffold DSL structures: `ws` (workspace), `per` (person), `ss` (softwar
 #### 📚 Hover Documentation
 Press **Ctrl+Q** for documentation on any Structurizr DSL keyword.
 
-#### 🖼️ Live Diagram Preview *(Pro)*
+#### 🖼️ Live Diagram Preview
 Real-time C4 diagram rendering in a tool window. Split editor mode for side-by-side DSL code and diagram view.
 
-#### 📤 Diagram Export *(Pro)*
+#### 📤 Diagram Export
 Export diagrams as SVG, PNG, PlantUML, or Mermaid. Copy diagrams to clipboard in any supported format.
 
-#### 🔄 Rename Refactoring *(Pro)*
+#### 🔄 Rename Refactoring
 Rename identifiers across all references in a single operation.
 
-#### ⚡ CLI Integration *(Pro)*
+#### ⚡ CLI Integration
 Auto-download and manage Structurizr CLI directly from the IDE.
 
 ---
 
-### 💰 Pricing Model
+### 💰 Pricing
 
-| Tier | Price | Highlights |
-|------|-------|------------|
-| **Free** | $0 | Syntax highlighting, code completion, go-to-definition, find usages, structure view, breadcrumbs, code folding, formatting, 7 inspections, quick fixes, 10 live templates, hover docs |
-| **Pro** | Freemium | Live diagram preview, split editor, SVG/PNG/PlantUML/Mermaid export, clipboard copy, rename refactoring, CLI integration |
+Free & open source (Apache-2.0) — every feature is available to everyone, no license needed.
 
 ---
 
@@ -106,7 +103,7 @@ Auto-download and manage Structurizr CLI directly from the IDE.
 3. **Scaffold** — Type `ws` + **Tab** to insert a workspace template
 4. **Add elements** — Use `per`, `ss`, `con`, `comp` templates for quick scaffolding
 5. **Navigate** — Use **Ctrl+Space** for completion, **Ctrl+Click** for navigation
-6. **Preview** *(Pro)* — Open the diagram preview tool window for live C4 rendering
+6. **Preview** — Open the diagram preview tool window for live C4 rendering
 
 ---
 
@@ -120,8 +117,8 @@ Auto-download and manage Structurizr CLI directly from the IDE.
 | 4 | `inspections-quick-fixes.png` | Code inspections detecting undefined references and unused elements with quick-fix options |
 | 5 | `structure-view.png` | Structure view showing hierarchical workspace → model → views → elements tree |
 | 6 | `live-templates.png` | Live template expansion for workspace, person, and software system scaffolding |
-| 7 | `live-diagram-preview.png` | Live C4 diagram preview in split editor mode with real-time rendering (Pro) |
-| 8 | `export-diagrams.png` | Export dialog with SVG, PNG, PlantUML, and Mermaid format options (Pro) |
+| 7 | `live-diagram-preview.png` | Live C4 diagram preview in split editor mode with real-time rendering |
+| 8 | `export-diagrams.png` | Export dialog with SVG, PNG, PlantUML, and Mermaid format options |
 
 ---
 
@@ -188,7 +185,6 @@ Auto-download and manage Structurizr CLI directly from the IDE.
 - [ ] Plugin description under 255 characters for short description field
 - [ ] Full description formatted in HTML for Marketplace submission
 - [ ] Screenshots captured at 1280×800 minimum resolution
-- [ ] Pricing tiers configured in JetBrains Marketplace vendor portal
 - [ ] License agreement uploaded
 - [ ] Plugin JAR/ZIP tested on IntelliJ IDEA 2023.2 (build 232)
 - [ ] Plugin JAR/ZIP tested across multiple JetBrains IDEs (WebStorm, PyCharm, etc.)

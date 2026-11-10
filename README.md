@@ -1,5 +1,7 @@
 # Structurizr DSL Plugin for JetBrains IDEs
 
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+
 [![Version](https://img.shields.io/jetbrains/plugin/v/29351-structurizr-dsl.svg)](https://plugins.jetbrains.com/plugin/29351-structurizr-dsl)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/29351-structurizr-dsl.svg)](https://plugins.jetbrains.com/plugin/29351-structurizr-dsl)
 
@@ -107,7 +109,7 @@ The project uses GitHub Actions for continuous integration:
 
 ## License
 
-Copyright © 2026 Jakub Jirák, HTMETA.dev. All rights reserved.
+Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE). Copyright 2026 Jakub Jirák.
 
 ## Links
 
@@ -115,3 +117,11 @@ Copyright © 2026 Jakub Jirák, HTMETA.dev. All rights reserved.
 - [C4 Model](https://c4model.com/)
 - [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/29351-structurizr-dsl)
 - [Issue Tracker](https://github.com/JirakJ/structurizr-dsl-plugin/issues)
+
+## Free & open source
+
+Since version 2026.8.0 the plugin is completely free — every feature is unlocked and no license is needed. The source code is open source under the [Apache License 2.0](LICENSE).
+
+## Contributing
+
+Issues and pull requests are welcome at https://github.com/JirakJ/structurizr-dsl-plugin.

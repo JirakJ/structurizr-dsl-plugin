@@ -1,4 +1,4 @@
-/* Copyright 2026 Jakub Jirák. All rights reserved. Licensed under the proprietary license. See LICENSE for details. */
+/* Copyright 2026 Jakub Jirák. SPDX-License-Identifier: Apache-2.0 */
 package com.jakubjirak.structurizr.settings
 
 import com.intellij.openapi.fileChooser.FileChooser
