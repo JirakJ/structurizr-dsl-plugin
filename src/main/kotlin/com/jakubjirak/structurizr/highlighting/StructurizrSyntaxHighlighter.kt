@@ -196,7 +196,7 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
 
             // Identifiers — gray by default (matches ACE "default" state);
             // annotator overrides to red in variable contexts (relationships, includes)
-            StructurizrTypes.IDENTIFIER -> STRING_KEYS
+            StructurizrTypes.IDENTIFIER -> IDENTIFIER_KEYS
 
             // Comments
             StructurizrTypes.LINE_COMMENT,
@@ -259,7 +259,9 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
 
         @JvmField
         val IDENTIFIER: TextAttributesKey =
-            TextAttributesKey.createTextAttributesKey("STRUCTURIZR_IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER)
+            // Identifiers look like strings by default (as in the Structurizr web editor) but stay customizable
+            // through "Identifier" on the color settings page.
+            TextAttributesKey.createTextAttributesKey("STRUCTURIZR_IDENTIFIER", DefaultLanguageHighlighterColors.STRING)
 
         @JvmField
         val VARIABLE: TextAttributesKey =
@@ -307,7 +309,6 @@ class StructurizrSyntaxHighlighter : SyntaxHighlighterBase() {
         private val OPERATOR_KEYS = arrayOf(OPERATOR)
         private val ARROW_KEYS = arrayOf(ARROW)
         private val BRACES_KEYS = arrayOf(BRACES)
-        private val STAR_KEYS = arrayOf(STAR)
         private val BAD_CHARACTER_KEYS = arrayOf(BAD_CHARACTER)
         private val EMPTY_KEYS = emptyArray<TextAttributesKey>()
     }

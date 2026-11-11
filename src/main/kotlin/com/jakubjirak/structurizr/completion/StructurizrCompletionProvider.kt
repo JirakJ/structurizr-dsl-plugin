@@ -135,7 +135,8 @@ class StructurizrCompletionProvider : CompletionProvider<CompletionParameters>()
             LookupElementBuilder.create("workspace_template")
                 .withPresentableText("workspace { ... }")
                 .withInsertHandler { context, _ ->
-                    val template = "workspace \"Name\" \"Description\" {\n    \n    model {\n        \n    }\n    \n    views {\n        \n    }\n}"
+                    val template = "workspace \"Name\" \"Description\" {\n    \n    model {\n        \n    }\n    \n" +
+                        "    views {\n        \n    }\n}"
                     context.document.replaceString(context.startOffset, context.tailOffset, template)
                 }
                 .withTypeText("template")

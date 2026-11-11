@@ -120,7 +120,13 @@ class StructurizrParserRecoveryTest : ParsingTestCase("parsing", "dsl", Structur
         val tree = dump(StructurizrStructureViewElement(file), 0)
         val views = tree.dropWhile { it.trim() != "views" }.drop(1).map { it.trim() }
         assertEquals(
-            listOf("systemLandscape: landscape", "systemContext svf: context", "container view svf: containers", "component view lib: components", "styles"),
+            listOf(
+                "systemLandscape: landscape",
+                "systemContext svf: context",
+                "container view svf: containers",
+                "component view lib: components",
+                "styles",
+            ),
             views,
         )
         assertTrue(tree.any { it.trim() == "person: Consumer developer / verification workflow (dev)" })
@@ -130,7 +136,9 @@ class StructurizrParserRecoveryTest : ParsingTestCase("parsing", "dsl", Structur
     fun testDeploymentViewLabelShowsEnvironmentNotAsKey() {
         val file = createPsiFile(
             "deploy",
-            "workspace {\n model {\n s = softwareSystem \"S\"\n live = deploymentEnvironment \"Live\" {\n }\n }\n views {\n deployment * \"Live\" {\n include *\n }\n deployment s live \"d1\" {\n include *\n }\n }\n}\n",
+            "workspace {\n model {\n s = softwareSystem \"S\"\n" +
+                " live = deploymentEnvironment \"Live\" {\n }\n }\n views {\n deployment * \"Live\" {\n" +
+                " include *\n }\n deployment s live \"d1\" {\n include *\n }\n }\n}\n",
         )
         val labels = PsiTreeUtil.collectElements(file) { it.elementType == StructurizrTypes.DEPLOYMENT_VIEW }
             .map { StructurizrStructureViewElement(it).presentation.presentableText }

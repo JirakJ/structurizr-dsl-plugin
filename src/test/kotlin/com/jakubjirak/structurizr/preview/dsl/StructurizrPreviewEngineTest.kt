@@ -99,7 +99,8 @@ class StructurizrPreviewEngineTest {
         @Test
         fun `views without a key get Structurizr style generated keys`() {
             val w = StructurizrPreviewEngine.parse(
-                "workspace {\n model {\n s = softwareSystem \"S\"\n }\n views {\n systemContext s {\n include *\n }\n systemContext s {\n include *\n }\n }\n}",
+                "workspace {\n model {\n s = softwareSystem \"S\"\n }\n views {\n systemContext s {\n" +
+                    " include *\n }\n systemContext s {\n include *\n }\n }\n}",
             )
             assertEquals(listOf("SystemContext-001", "SystemContext-002"), w.views.map { it.key })
         }
@@ -121,7 +122,10 @@ class StructurizrPreviewEngineTest {
             assertEquals(setOf("Semantic Verification Framework", "Consumer System", "Campaign Storage"), names(d))
             assertEquals(setOf("Semantic Verification Framework"), d.focus.map { it.name }.toSet())
             val edges = d.edges.map { "${it.source.name} -> ${it.destination.name}" }.toSet()
-            assertEquals(setOf("Consumer System -> Semantic Verification Framework", "Semantic Verification Framework -> Campaign Storage"), edges)
+            assertEquals(
+                setOf("Consumer System -> Semantic Verification Framework", "Semantic Verification Framework -> Campaign Storage"),
+                edges,
+            )
             assertEquals("The framework in context", d.description)
         }
 
@@ -134,7 +138,9 @@ class StructurizrPreviewEngineTest {
             )
             assertEquals(1, d.boundaries.size)
             assertEquals(setOf("SVF Library", "Codex Adapter", "Claude Code Adapter"), d.boundaries[0].members.map { it.name }.toSet())
-            assertTrue(d.edges.any { it.source.name == "SVF Library" && it.destination.name == "Codex Adapter" && it.description == "Delegates" })
+            assertTrue(
+                d.edges.any { it.source.name == "SVF Library" && it.destination.name == "Codex Adapter" && it.description == "Delegates" },
+            )
         }
 
         @Test
@@ -165,14 +171,17 @@ class StructurizrPreviewEngineTest {
         @Test
         fun `exclude removes elements`() {
             val w = StructurizrPreviewEngine.parse(
-                "workspace {\n model {\n u = person \"U\"\n s = softwareSystem \"S\"\n u -> s\n }\n views {\n systemLandscape \"l\" {\n include *\n exclude u\n }\n }\n}",
+                "workspace {\n model {\n u = person \"U\"\n s = softwareSystem \"S\"\n u -> s\n }\n" +
+                    " views {\n systemLandscape \"l\" {\n include *\n exclude u\n }\n }\n}",
             )
             assertEquals(setOf("S"), ViewDiagramBuilder(w).build(w.views.single()).elements.map { it.name }.toSet())
         }
 
         @Test
         fun `a view without include explains that it is empty`() {
-            val w = StructurizrPreviewEngine.parse("workspace {\n model {\n s = softwareSystem \"S\"\n }\n views {\n systemContext s \"c\" {\n }\n }\n}")
+            val w = StructurizrPreviewEngine.parse(
+                "workspace {\n model {\n s = softwareSystem \"S\"\n }\n views {\n systemContext s \"c\" {\n" +
+                " }\n }\n}")
             val d = ViewDiagramBuilder(w).build(w.views.single())
             assertTrue(d.elements.isEmpty())
             assertTrue(d.message!!.contains("include *"))
@@ -268,14 +277,18 @@ class StructurizrPreviewEngineTest {
     inner class Robustness {
         @Test
         fun `keywords are case-insensitive`() {
-            val w = StructurizrPreviewEngine.parse("workspace {\n MODEL {\n s = SoftwareSystem \"S\"\n }\n VIEWS {\n SYSTEMCONTEXT s \"c\" {\n INCLUDE *\n }\n }\n}")
+            val w = StructurizrPreviewEngine.parse(
+                "workspace {\n MODEL {\n s = SoftwareSystem \"S\"\n }\n VIEWS {\n SYSTEMCONTEXT s \"c\" {\n" +
+                " INCLUDE *\n }\n }\n}")
             assertEquals(setOf("S"), ViewDiagramBuilder(w).build(w.views.single()).elements.map { it.name }.toSet())
         }
 
         @Test
         fun `comments, text blocks and line continuations are handled`() {
             val w = StructurizrPreviewEngine.parse(
-                "/* header */\nworkspace \"W\" {\n # hash\n model {\n // line\n s = softwareSystem \"S\" \"\"\"\n   multi\n   line\n \"\"\"\n u = person \\\n   \"User\"\n u -> s \"Uses\" // trailing\n }\n}",
+                "/* header */\nworkspace \"W\" {\n # hash\n model {\n // line\n" +
+                    " s = softwareSystem \"S\" \"\"\"\n   multi\n   line\n \"\"\"\n u = person \\\n" +
+                    "   \"User\"\n u -> s \"Uses\" // trailing\n }\n}",
             )
             assertEquals("multi\nline", w.resolve("s")!!.description)
             assertEquals("User", w.resolve("u")!!.name)
@@ -308,7 +321,8 @@ class StructurizrPreviewEngineTest {
         @Test
         fun `element extension blocks are read once`() {
             val w = StructurizrPreviewEngine.parse(
-                "workspace {\n model {\n s = softwareSystem \"S\"\n db = softwareSystem \"DB\"\n !element s {\n api = container \"API\"\n api -> db \"Reads\"\n }\n }\n}",
+                "workspace {\n model {\n s = softwareSystem \"S\"\n db = softwareSystem \"DB\"\n" +
+                    " !element s {\n api = container \"API\"\n api -> db \"Reads\"\n }\n }\n}",
             )
             assertEquals(1, w.elements.count { it.name == "API" })
             assertEquals(1, w.relationships.size)
@@ -317,7 +331,8 @@ class StructurizrPreviewEngineTest {
         @Test
         fun `relationship expressions in include and exclude do not remove elements`() {
             val w = StructurizrPreviewEngine.parse(
-                "workspace {\n model {\n u = person \"U\"\n s = softwareSystem \"S\"\n u -> s\n }\n views {\n systemLandscape \"l\" {\n include *\n exclude u -> s\n }\n }\n}",
+                "workspace {\n model {\n u = person \"U\"\n s = softwareSystem \"S\"\n u -> s\n }\n" +
+                    " views {\n systemLandscape \"l\" {\n include *\n exclude u -> s\n }\n }\n}",
             )
             assertEquals(setOf("U", "S"), ViewDiagramBuilder(w).build(w.views.single()).elements.map { it.name }.toSet())
         }

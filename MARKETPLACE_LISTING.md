@@ -66,7 +66,7 @@ Export diagrams as SVG, PNG, PlantUML, or Mermaid. Copy diagrams to clipboard in
 Rename identifiers across all references in a single operation.
 
 #### ⚡ CLI Integration
-Auto-download and manage Structurizr CLI directly from the IDE.
+Use an installed Structurizr CLI (configured path, well-known locations or PATH) for PlantUML, Mermaid, DOT and JSON export.
 
 ---
 

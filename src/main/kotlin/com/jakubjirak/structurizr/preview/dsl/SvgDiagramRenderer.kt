@@ -64,7 +64,9 @@ object SvgDiagramRenderer {
             layoutRows += Triple(w, h) { left, top -> placeGrid(middle, left, top) }
         }
         if (diagram.boundaries.isNotEmpty()) {
-            val sizes = diagram.boundaries.map { b -> gridSize(b.members.size).let { (w, h) -> (w + 2 * BOUNDARY_PAD) to (h + 2 * BOUNDARY_PAD + BOUNDARY_LABEL) } }
+            val sizes = diagram.boundaries.map { b ->
+                gridSize(b.members.size).let { (w, h) -> (w + 2 * BOUNDARY_PAD) to (h + 2 * BOUNDARY_PAD + BOUNDARY_LABEL) }
+            }
             val width = sizes.sumOf { it.first } + (sizes.size - 1) * GAP_X
             val height = sizes.maxOf { it.second }
             layoutRows += Triple(width, height) { left, top ->
@@ -89,8 +91,10 @@ object SvgDiagramRenderer {
         val canvasHeight = y - GAP_Y + MARGIN + 30
 
         val svg = StringBuilder()
-        svg.append("""<svg xmlns="http://www.w3.org/2000/svg" width="$canvasWidth" height="$canvasHeight" viewBox="0 0 $canvasWidth $canvasHeight" font-family="Arial, Helvetica, sans-serif">""")
-        svg.append("""<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><polygon points="0 0, 10 4, 0 8" fill="#707070"/></marker></defs>""")
+        svg.append("""<svg xmlns="http://www.w3.org/2000/svg" width="$canvasWidth" height="$canvasHeight" viewBox="0 0 $canvasWidth""")
+        svg.append(""" $canvasHeight" font-family="Arial, Helvetica, sans-serif">""")
+        svg.append("""<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">""")
+        svg.append("""<polygon points="0 0, 10 4, 0 8" fill="#707070"/></marker></defs>""")
         svg.append("""<rect width="100%" height="100%" fill="#ffffff"/>""")
         svg.append("""<text x="$MARGIN" y="${MARGIN + 6}" font-size="20" font-weight="bold" fill="#333333">${esc(diagram.title)}</text>""")
         if (diagram.description.isNotBlank()) {
@@ -98,8 +102,10 @@ object SvgDiagramRenderer {
         }
 
         for ((boundary, box) in boundaryBoxes) {
-            svg.append("""<rect x="${box.x}" y="${box.y}" width="${box.w}" height="${box.h}" rx="6" fill="none" stroke="#888888" stroke-width="1.5" stroke-dasharray="8,5"/>""")
-            svg.append("""<text x="${box.x + 12}" y="${box.y + box.h - 10}" font-size="13" font-weight="bold" fill="#555555">${esc(boundary.label)}</text>""")
+            svg.append("""<rect x="${box.x}" y="${box.y}" width="${box.w}" height="${box.h}" rx="6" fill="none" stroke="#888888"""")
+            svg.append(""" stroke-width="1.5" stroke-dasharray="8,5"/>""")
+            svg.append("""<text x="${box.x + 12}" y="${box.y + box.h - 10}" font-size="13" font-weight="bold"""")
+            svg.append(""" fill="#555555">${esc(boundary.label)}</text>""")
         }
 
         val labels = StringBuilder()
@@ -119,20 +125,24 @@ object SvgDiagramRenderer {
                 val cy = rawY.coerceIn(headerHeight, canvasHeight + MARGIN)
                 x1 = clip(from, cx, cy).first; y1 = clip(from, cx, cy).second
                 x2 = clip(to, cx, cy).first; y2 = clip(to, cx, cy).second
-                svg.append("""<path d="M $x1 $y1 Q $cx $cy $x2 $y2" fill="none" stroke="#707070" stroke-width="1.6" stroke-dasharray="6,4" marker-end="url(#arrow)"/>""")
+                svg.append("""<path d="M $x1 $y1 Q $cx $cy $x2 $y2" fill="none" stroke="#707070" stroke-width="1.6"""")
+                svg.append(""" stroke-dasharray="6,4" marker-end="url(#arrow)"/>""")
                 mx = (x1 + 2 * cx + x2) / 4
                 my = (y1 + 2 * cy + y2) / 4
             } else {
-                svg.append("""<line x1="$x1" y1="$y1" x2="$x2" y2="$y2" stroke="#707070" stroke-width="1.6" stroke-dasharray="6,4" marker-end="url(#arrow)"/>""")
+                svg.append("""<line x1="$x1" y1="$y1" x2="$x2" y2="$y2" stroke="#707070" stroke-width="1.6" stroke-dasharray="6,4"""")
+                svg.append(""" marker-end="url(#arrow)"/>""")
             }
             val text = listOfNotNull(edge.order?.let { "$it." }, edge.description.takeIf { it.isNotBlank() }).joinToString(" ")
             val lines = wrap(text, 30, 2) + listOfNotNull(edge.technology.takeIf { it.isNotBlank() }?.let { "[$it]" })
             if (lines.isNotEmpty()) {
                 val w = (lines.maxOf { it.length } * 6.2).toInt() + 12
                 val h = lines.size * 14 + 6
-                labels.append("""<rect x="${mx - w / 2}" y="${my - h / 2}" width="$w" height="$h" rx="3" fill="#ffffff" fill-opacity="0.92"/>""")
+                labels.append("""<rect x="${mx - w / 2}" y="${my - h / 2}" width="$w" height="$h" rx="3" fill="#ffffff"""")
+                labels.append(""" fill-opacity="0.92"/>""")
                 lines.forEachIndexed { i, line ->
-                    labels.append("""<text x="$mx" y="${my - h / 2 + 15 + i * 14}" font-size="11" text-anchor="middle" fill="#555555">${esc(line)}</text>""")
+                    labels.append("""<text x="$mx" y="${my - h / 2 + 15 + i * 14}" font-size="11" text-anchor="middle"""")
+                    labels.append(""" fill="#555555">${esc(line)}</text>""")
                 }
             }
         }
@@ -147,9 +157,11 @@ object SvgDiagramRenderer {
         val lines = wrap(diagram.message ?: "", 70, 4)
         val height = 120 + lines.size * 20
         val sb = StringBuilder()
-        sb.append("""<svg xmlns="http://www.w3.org/2000/svg" width="640" height="$height" viewBox="0 0 640 $height" font-family="Arial, Helvetica, sans-serif">""")
+        sb.append("""<svg xmlns="http://www.w3.org/2000/svg" width="640" height="$height" viewBox="0 0 640 $height" font-family="Arial,""")
+        sb.append(""" Helvetica, sans-serif">""")
         sb.append("""<rect width="100%" height="100%" fill="#ffffff"/>""")
-        sb.append("""<text x="320" y="50" font-size="18" font-weight="bold" text-anchor="middle" fill="#333333">${esc(diagram.title)}</text>""")
+        sb.append("""<text x="320" y="50" font-size="18" font-weight="bold" text-anchor="middle"""")
+        sb.append(""" fill="#333333">${esc(diagram.title)}</text>""")
         lines.forEachIndexed { i, line ->
             sb.append("""<text x="320" y="${90 + i * 20}" font-size="13" text-anchor="middle" fill="#777777">${esc(line)}</text>""")
         }
@@ -228,9 +240,11 @@ object SvgDiagramRenderer {
         if (element.type == DslElementType.PERSON) {
             sb.append("""<circle cx="${b.cx}" cy="${b.y + 22}" r="20" fill="$fill" stroke="$stroke" stroke-width="2"/>""")
             top = b.y + 36
-            sb.append("""<rect x="${b.x}" y="$top" width="${b.w}" height="${b.h - 36}" rx="18" fill="$fill" stroke="$stroke" stroke-width="2"/>""")
+            sb.append("""<rect x="${b.x}" y="$top" width="${b.w}" height="${b.h - 36}" rx="18" fill="$fill" stroke="$stroke"""")
+            sb.append(""" stroke-width="2"/>""")
         } else {
-            sb.append("""<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="6" fill="$fill" stroke="$stroke" stroke-width="2"/>""")
+            sb.append("""<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="6" fill="$fill" stroke="$stroke"""")
+            sb.append(""" stroke-width="2"/>""")
         }
         val nameLines = wrap(element.name, 26, 2)
         val typeLine = typeLabel(element)
@@ -238,13 +252,16 @@ object SvgDiagramRenderer {
         val total = nameLines.size * 17 + 15 + descLines.size * 13 + if (descLines.isEmpty()) 0 else 6
         var ty = top + ((b.y + b.h - top) - total) / 2 + 13
         for (line in nameLines) {
-            sb.append("""<text x="${b.cx}" y="$ty" font-size="14" font-weight="bold" text-anchor="middle" fill="$text">${esc(line)}</text>""")
+            sb.append("""<text x="${b.cx}" y="$ty" font-size="14" font-weight="bold" text-anchor="middle"""")
+            sb.append(""" fill="$text">${esc(line)}</text>""")
             ty += 17
         }
-        sb.append("""<text x="${b.cx}" y="$ty" font-size="10" text-anchor="middle" fill="$text" fill-opacity="0.85">${esc(typeLine)}</text>""")
+        sb.append("""<text x="${b.cx}" y="$ty" font-size="10" text-anchor="middle" fill="$text"""")
+        sb.append(""" fill-opacity="0.85">${esc(typeLine)}</text>""")
         ty += 15 + if (descLines.isEmpty()) 0 else 6
         for (line in descLines) {
-            sb.append("""<text x="${b.cx}" y="$ty" font-size="11" text-anchor="middle" fill="$text" fill-opacity="0.9">${esc(line)}</text>""")
+            sb.append("""<text x="${b.cx}" y="$ty" font-size="11" text-anchor="middle" fill="$text"""")
+            sb.append(""" fill-opacity="0.9">${esc(line)}</text>""")
             ty += 13
         }
         sb.append("<title>${esc(element.name)}${if (element.description.isNotBlank()) " – " + esc(element.description) else ""}</title>")

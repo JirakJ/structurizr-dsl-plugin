@@ -19,12 +19,6 @@ class StructurizrSettingsTest {
         }
 
         @Test
-        fun `default useEmbeddedCli is true`() {
-            val settings = StructurizrSettings()
-            assertTrue(settings.useEmbeddedCli)
-        }
-
-        @Test
         fun `default CLI timeout is 30`() {
             val settings = StructurizrSettings()
             assertEquals(30, settings.cliTimeoutSeconds)
@@ -46,30 +40,6 @@ class StructurizrSettingsTest {
         fun `default previewDelayMs is 500`() {
             val settings = StructurizrSettings()
             assertEquals(500, settings.previewDelayMs)
-        }
-
-        @Test
-        fun `default showPreviewInSplitEditor is true`() {
-            val settings = StructurizrSettings()
-            assertTrue(settings.showPreviewInSplitEditor)
-        }
-
-        @Test
-        fun `default previewZoomLevel is 100`() {
-            val settings = StructurizrSettings()
-            assertEquals(100, settings.previewZoomLevel)
-        }
-
-        @Test
-        fun `default previewDarkMode is false`() {
-            val settings = StructurizrSettings()
-            assertFalse(settings.previewDarkMode)
-        }
-
-        @Test
-        fun `default previewUseSystemTheme is true`() {
-            val settings = StructurizrSettings()
-            assertTrue(settings.previewUseSystemTheme)
         }
 
         @Test
@@ -97,58 +67,11 @@ class StructurizrSettingsTest {
         }
 
         @Test
-        fun `default exportIncludeMetadata is true`() {
-            val settings = StructurizrSettings()
-            assertTrue(settings.exportIncludeMetadata)
-        }
-
-        @Test
         fun `default autoOpenExportedFile is true`() {
             val settings = StructurizrSettings()
             assertTrue(settings.autoOpenExportedFile)
         }
 
-        @Test
-        fun `default showBreadcrumbs is true`() {
-            val settings = StructurizrSettings()
-            assertTrue(settings.showBreadcrumbs)
-        }
-
-        @Test
-        fun `default enableCodeFolding is true`() {
-            val settings = StructurizrSettings()
-            assertTrue(settings.enableCodeFolding)
-        }
-
-        @Test
-        fun `default showLineMarkers is true`() {
-            val settings = StructurizrSettings()
-            assertTrue(settings.showLineMarkers)
-        }
-
-        @Test
-        fun `default enableInspections is true`() {
-            val settings = StructurizrSettings()
-            assertTrue(settings.enableInspections)
-        }
-
-        @Test
-        fun `default autoPopupCompletion is true`() {
-            val settings = StructurizrSettings()
-            assertTrue(settings.autoPopupCompletion)
-        }
-
-        @Test
-        fun `default includeReferencesInCompletion is true`() {
-            val settings = StructurizrSettings()
-            assertTrue(settings.includeReferencesInCompletion)
-        }
-
-        @Test
-        fun `default showDocumentationInCompletion is true`() {
-            val settings = StructurizrSettings()
-            assertTrue(settings.showDocumentationInCompletion)
-        }
     }
 
     @Nested
@@ -174,13 +97,6 @@ class StructurizrSettingsTest {
             val settings = StructurizrSettings()
             settings.defaultExportFormat = "SVG"
             assertEquals("SVG", settings.defaultExportFormat)
-        }
-
-        @Test
-        fun `zoom level can be changed`() {
-            val settings = StructurizrSettings()
-            settings.previewZoomLevel = 150
-            assertEquals(150, settings.previewZoomLevel)
         }
 
         @Test

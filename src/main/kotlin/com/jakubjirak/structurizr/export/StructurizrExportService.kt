@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -16,20 +17,23 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jakubjirak.structurizr.preview.DiagramRendererService
 import com.jakubjirak.structurizr.preview.ExportFormat
 import com.jakubjirak.structurizr.preview.StructurizrCliService
+import com.jakubjirak.structurizr.preview.dsl.StructurizrPreviewEngine
 import com.jakubjirak.structurizr.settings.StructurizrProjectSettings
 import com.jakubjirak.structurizr.settings.StructurizrSettings
-import java.awt.Color
-import java.awt.Font
-import java.awt.image.BufferedImage
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
-import java.util.Comparator
 import javax.imageio.ImageIO
-import kotlin.io.extension
+
+/** Raised when a diagram cannot be exported; the message is shown to the user. */
+class DiagramExportException(message: String, cause: Throwable? = null) : Exception(message, cause)
 
 /**
  * Project-level service for exporting Structurizr diagrams to various formats.
+ *
+ * SVG and PNG are produced by the plugin's own renderer (the same one the preview uses). PlantUML and Mermaid
+ * use the Structurizr CLI when it is installed and the built-in converter otherwise; DOT and JSON need the CLI.
  */
 @Service(Service.Level.PROJECT)
 class StructurizrExportService(private val project: Project) {
@@ -37,43 +41,39 @@ class StructurizrExportService(private val project: Project) {
     private val log = Logger.getInstance(StructurizrExportService::class.java)
 
     private val settings: StructurizrSettings
-        get() = StructurizrSettings.Companion.getInstance()
-
-    private val projectSettings: StructurizrProjectSettings
-        get() = StructurizrProjectSettings.Companion.getInstance(project)
+        get() = StructurizrSettings.getInstance()
 
     companion object {
         /** Returns the service instance for the given [project]. */
         fun getInstance(project: Project): StructurizrExportService =
             project.service()
-    }
 
-    /** Nested enum representing Structurizr view types. */
-    enum class ViewType {
-        SYSTEM_LANDSCAPE, SYSTEM_CONTEXT, CONTAINER, COMPONENT, DEPLOYMENT, DYNAMIC, FILTERED
-    }
+        /** Turns a view key into a safe file name. */
+        fun fileNameFor(viewKey: String): String =
+            viewKey.replace(Regex("[^A-Za-z0-9._-]+"), "_").trim('_').ifEmpty { "view" }
 
-    /** Data class representing a single view extracted from DSL. */
-    data class ViewInfo(val key: String, val name: String, val type: ViewType)
+        /** Scale that makes a [width]×[height] diagram fit into [maxWidth]×[maxHeight] (between 0.25× and 4×). */
+        fun fitScale(width: Int, height: Int, maxWidth: Int, maxHeight: Int): Double {
+            if (minOf(width, height, maxWidth, maxHeight) <= 0) return 1.0
+            return minOf(maxWidth.toDouble() / width, maxHeight.toDouble() / height).coerceIn(MIN_SCALE, MAX_SCALE)
+        }
+
+        private const val MIN_SCALE = 0.25
+        private const val MAX_SCALE = 4.0
+    }
 
     /** Returns the default export format from settings. */
     fun getDefaultFormat(): DiagramExportFormat =
         DiagramExportFormat.entries.firstOrNull { it.name.equals(settings.defaultExportFormat, ignoreCase = true) }
-            ?: DiagramExportFormat.PNG
+            ?: DiagramExportFormat.SVG
 
-    /** Returns the default export directory from project settings. */
-    fun getDefaultExportDirectory(): String = projectSettings.getEffectiveExportDirectory()
-
-    /** Returns the configured export image dimensions. */
-    fun getExportDimensions(): Pair<Int, Int> = settings.exportImageWidth to settings.exportImageHeight
+    /** Returns the default export directory (project setting, then global setting); empty when none is set. */
+    fun getDefaultExportDirectory(): String = StructurizrProjectSettings.getInstance(project).getEffectiveExportDirectory()
 
     /**
      * Exports a diagram asynchronously.
      *
-     * @param dslFile the source DSL file
-     * @param outputPath the target output path
-     * @param format the export format
-     * @param viewKey optional view key to export
+     * @param viewKey the view to export; `null` exports the workspace's default view
      * @param callback invoked with (success, message)
      */
     fun export(
@@ -81,321 +81,157 @@ class StructurizrExportService(private val project: Project) {
         outputPath: Path,
         format: DiagramExportFormat,
         viewKey: String? = null,
-        callback: (Boolean, String) -> Unit
+        callback: (Boolean, String) -> Unit,
     ) {
         ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Exporting Diagram to ${format.displayName}", true) {
             override fun run(indicator: ProgressIndicator) {
-                try {
+                runExport(indicator, callback) {
                     indicator.isIndeterminate = false
-                    indicator.fraction = 0.0
-                    indicator.text = "Preparing export..."
-
-                    when (format) {
-                        DiagramExportFormat.SVG -> exportToSvg(dslFile, outputPath, viewKey, indicator)
-                        DiagramExportFormat.PNG -> exportToPng(dslFile, outputPath, viewKey, indicator)
-                        DiagramExportFormat.PLANTUML -> exportToPlantUml(dslFile, outputPath, viewKey, indicator)
-                        DiagramExportFormat.MERMAID -> exportToMermaid(dslFile, outputPath, viewKey, indicator)
-                        DiagramExportFormat.DOT -> exportToDot(dslFile, outputPath, viewKey, indicator)
-                        DiagramExportFormat.JSON -> exportToJson(dslFile, outputPath, indicator)
-                    }
-
-                    indicator.fraction = 1.0
+                    exportSingleView(dslFile, outputPath, format, viewKey, indicator)
                     LocalFileSystem.getInstance().refreshAndFindFileByPath(outputPath.toString())
-                    callback(true, "Successfully exported to ${outputPath.fileName}")
-                    showNotification("Export Complete", "Diagram exported to ${outputPath.fileName}", NotificationType.INFORMATION)
-                } catch (e: Exception) {
-                    log.error("Export failed", e)
-                    callback(false, "Export failed: ${e.message}")
+                    "Diagram exported to ${outputPath.fileName}"
                 }
             }
         })
     }
 
-    /**
-     * Exports all views from a DSL file to the given output directory.
-     *
-     * @param dslFile the source DSL file
-     * @param outputDir the output directory
-     * @param format the export format
-     * @param callback invoked with (success, message)
-     */
+    /** Exports every view the workspace defines to [outputDir], one file per view named after the view key. */
     fun exportAllViews(
         dslFile: VirtualFile,
         outputDir: Path,
         format: DiagramExportFormat,
-        callback: (Boolean, String) -> Unit
+        callback: (Boolean, String) -> Unit,
     ) {
         ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Exporting All Views", true) {
             override fun run(indicator: ProgressIndicator) {
-                try {
+                runExport(indicator, callback) {
                     indicator.isIndeterminate = false
                     indicator.text = "Analyzing DSL file..."
-
-                    val dslContent = DiagramRendererService.currentText(dslFile)
-                    val views = extractViews(dslContent)
-
-                    if (views.isEmpty()) {
-                        val outputPath = outputDir.resolve("${dslFile.nameWithoutExtension}.${format.extension}")
-                        export(dslFile, outputPath, format, null) { _, _ -> }
-                    } else {
-                        views.forEachIndexed { index, viewInfo ->
-                            indicator.fraction = index.toDouble() / views.size
-                            indicator.text = "Exporting ${viewInfo.name}..."
-                            val outputPath = outputDir.resolve("${viewInfo.name}.${format.extension}")
-                            exportSingleView(dslFile, outputPath, format, viewInfo.key, indicator)
-                        }
+                    val keys = viewKeys(dslFile)
+                    Files.createDirectories(outputDir)
+                    keys.forEachIndexed { index, key ->
+                        indicator.checkCanceled()
+                        indicator.fraction = index.toDouble() / keys.size
+                        indicator.text = "Exporting $key..."
+                        exportSingleView(dslFile, outputDir.resolve("${fileNameFor(key)}.${format.extension}"), format, key, indicator)
                     }
-
-                    val count = if (views.isEmpty()) 1 else views.size
-                    callback(true, "Exported $count diagram(s)")
-                    showNotification("Bulk Export Complete", "Exported $count diagram(s) to $outputDir", NotificationType.INFORMATION)
-                } catch (e: Exception) {
-                    log.error("Bulk export failed", e)
-                    callback(false, "Export failed: ${e.message}")
+                    LocalFileSystem.getInstance().refreshAndFindFileByPath(outputDir.toString())
+                    "Exported ${keys.size} diagram(s) to $outputDir"
                 }
             }
         })
     }
 
-    private fun exportToSvg(dslFile: VirtualFile, outputPath: Path, viewKey: String?, indicator: ProgressIndicator) {
-        indicator.text = "Generating SVG..."
-        indicator.fraction = 0.3
-        val cliService = StructurizrCliService.Companion.getInstance()
-        if (cliService.isCliAvailable()) {
-            exportWithCli(dslFile, outputPath, ExportFormat.SVG, viewKey, indicator)
-        } else {
-            val rendererService = DiagramRendererService.Companion.getInstance(project)
-            val dslContent = DiagramRendererService.currentText(dslFile)
-            val svgContent = rendererService.renderToSvg(dslContent, viewKey, dslFile)
-                ?: throw Exception("Failed to render SVG")
-            indicator.fraction = 0.8
-            Files.writeString(outputPath, svgContent)
-        }
+    /** Keys of the views defined in [dslFile] (including generated default views). */
+    fun viewKeys(dslFile: VirtualFile): List<String> {
+        val ws = DiagramRendererService.workspace(dslFile)
+        return StructurizrPreviewEngine.viewOptions(ws).map { it.key }
     }
 
-    private fun exportToPng(dslFile: VirtualFile, outputPath: Path, viewKey: String?, indicator: ProgressIndicator) {
-        indicator.text = "Generating PNG..."
-        indicator.fraction = 0.3
-        val cliService = StructurizrCliService.Companion.getInstance()
-        if (cliService.isCliAvailable()) {
-            exportWithCli(dslFile, outputPath, ExportFormat.PNG, viewKey, indicator)
-        } else {
-            val rendererService = DiagramRendererService.Companion.getInstance(project)
-            val dslContent = DiagramRendererService.currentText(dslFile)
-            val svgContent = rendererService.renderToSvg(dslContent, viewKey, dslFile)
-                ?: throw Exception("Failed to render diagram")
-            indicator.fraction = 0.6
-            indicator.text = "Converting to PNG..."
-            convertSvgToPng(svgContent, outputPath)
-        }
-    }
-
-    private fun exportToPlantUml(dslFile: VirtualFile, outputPath: Path, viewKey: String?, indicator: ProgressIndicator) {
-        indicator.text = "Generating PlantUML..."
-        indicator.fraction = 0.3
-        val cliService = StructurizrCliService.Companion.getInstance()
-        if (cliService.isCliAvailable()) {
-            exportWithCli(dslFile, outputPath, ExportFormat.PLANTUML_C4, viewKey, indicator)
-        } else {
-            val dslContent = DiagramRendererService.currentText(dslFile)
-            val plantUml = convertToPlantUml(dslContent, viewKey)
-            indicator.fraction = 0.8
-            Files.writeString(outputPath, plantUml)
-        }
-    }
-
-    private fun exportToMermaid(dslFile: VirtualFile, outputPath: Path, viewKey: String?, indicator: ProgressIndicator) {
-        indicator.text = "Generating Mermaid..."
-        indicator.fraction = 0.3
-        val cliService = StructurizrCliService.Companion.getInstance()
-        if (cliService.isCliAvailable()) {
-            exportWithCli(dslFile, outputPath, ExportFormat.MERMAID, viewKey, indicator)
-        } else {
-            val dslContent = DiagramRendererService.currentText(dslFile)
-            val mermaid = convertToMermaid(dslContent)
-            indicator.fraction = 0.8
-            Files.writeString(outputPath, mermaid)
-        }
-    }
-
-    private fun exportToDot(dslFile: VirtualFile, outputPath: Path, viewKey: String?, indicator: ProgressIndicator) {
-        indicator.text = "Generating DOT..."
-        indicator.fraction = 0.3
-        val cliService = StructurizrCliService.Companion.getInstance()
-        if (!cliService.isCliAvailable()) throw Exception("Structurizr CLI is required for DOT export")
-        exportWithCli(dslFile, outputPath, ExportFormat.DOT, viewKey, indicator)
-    }
-
-    private fun exportToJson(dslFile: VirtualFile, outputPath: Path, indicator: ProgressIndicator) {
-        indicator.text = "Generating JSON..."
-        indicator.fraction = 0.3
-        val cliService = StructurizrCliService.Companion.getInstance()
-        if (!cliService.isCliAvailable()) throw Exception("Structurizr CLI is required for JSON export")
-        exportWithCli(dslFile, outputPath, ExportFormat.JSON, null, indicator)
-    }
-
-    private fun exportWithCli(dslFile: VirtualFile, outputPath: Path, format: ExportFormat, viewKey: String?, indicator: ProgressIndicator) {
-        indicator.fraction = 0.5
-        val cliService = StructurizrCliService.Companion.getInstance()
-        val tempDir = Files.createTempDirectory("structurizr-export")
+    private fun runExport(indicator: ProgressIndicator, callback: (Boolean, String) -> Unit, action: () -> String) {
         try {
-            var exportComplete = false
-            var exportError: String? = null
-
-            cliService.exportToFormat(project, dslFile.path, tempDir.toString(), format) { success, message ->
-                if (success) exportComplete = true else exportError = message
-            }
-
-            var waited = 0
-            while (!exportComplete && exportError == null && waited < 60000) {
-                Thread.sleep(100)
-                waited += 100
-            }
-
-            exportError?.let { throw Exception(it) }
-
-            indicator.fraction = 0.8
-            val exportedFile = tempDir.toFile().listFiles()
-                ?.firstOrNull { it.extension == format.extension }
-                ?: throw Exception("Export file not found")
-
-            Files.copy(exportedFile.toPath(), outputPath, StandardCopyOption.REPLACE_EXISTING)
-        } finally {
-            Files.walk(tempDir).sorted(Comparator.reverseOrder()).forEach(Files::delete)
+            val message = action()
+            indicator.fraction = 1.0
+            callback(true, message)
+            showNotification("Export Complete", message, NotificationType.INFORMATION)
+        } catch (e: ProcessCanceledException) {
+            throw e
+        } catch (e: DiagramExportException) {
+            fail(callback, e.message ?: "Export failed")
+        } catch (e: IOException) {
+            log.warn("Export failed", e)
+            fail(callback, "Export failed: ${e.message}")
         }
+    }
+
+    private fun fail(callback: (Boolean, String) -> Unit, message: String) {
+        callback(false, message)
+        showNotification("Export Failed", message, NotificationType.ERROR)
     }
 
     private fun exportSingleView(
-        dslFile: VirtualFile, outputPath: Path, format: DiagramExportFormat,
-        viewKey: String?, indicator: ProgressIndicator
+        dslFile: VirtualFile,
+        outputPath: Path,
+        format: DiagramExportFormat,
+        viewKey: String?,
+        indicator: ProgressIndicator,
     ) {
+        indicator.fraction = 0.3
         when (format) {
-            DiagramExportFormat.SVG -> exportToSvg(dslFile, outputPath, viewKey, indicator)
-            DiagramExportFormat.PNG -> exportToPng(dslFile, outputPath, viewKey, indicator)
-            DiagramExportFormat.PLANTUML -> exportToPlantUml(dslFile, outputPath, viewKey, indicator)
-            DiagramExportFormat.MERMAID -> exportToMermaid(dslFile, outputPath, viewKey, indicator)
-            DiagramExportFormat.DOT -> exportToDot(dslFile, outputPath, viewKey, indicator)
-            DiagramExportFormat.JSON -> exportToJson(dslFile, outputPath, indicator)
+            DiagramExportFormat.SVG -> Files.writeString(outputPath, renderSvg(dslFile, viewKey))
+            DiagramExportFormat.PNG -> writePng(renderSvg(dslFile, viewKey), outputPath)
+            DiagramExportFormat.PLANTUML, DiagramExportFormat.MERMAID -> textOrCli(dslFile, outputPath, format, viewKey, indicator)
+            DiagramExportFormat.DOT -> requireCli("DOT").also { exportWithCli(dslFile, outputPath, ExportFormat.DOT, viewKey, indicator) }
+            DiagramExportFormat.JSON -> requireCli("JSON").also { exportWithCli(dslFile, outputPath, ExportFormat.JSON, null, indicator) }
         }
     }
 
-    private fun convertSvgToPng(svgContent: String, outputPath: Path) {
-        val width = 800
-        val height = 600
-        val image = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB).apply {
-            val g2d = createGraphics()
-            g2d.color = Color.WHITE
-            g2d.fillRect(0, 0, width, height)
-            g2d.color = Color.BLACK
-            g2d.font = Font("SansSerif", Font.PLAIN, 14)
-            g2d.drawString("Diagram exported from Structurizr DSL", 20, 30)
-            g2d.drawString("For full quality PNG export, install Structurizr CLI", 20, 50)
-            g2d.dispose()
+    private fun renderSvg(dslFile: VirtualFile, viewKey: String?): String =
+        DiagramRendererService.getInstance(project).renderToSvg(DiagramRendererService.currentText(dslFile), viewKey, dslFile)
+            ?: throw DiagramExportException("The diagram could not be rendered")
+
+    private fun writePng(svg: String, outputPath: Path) {
+        val (width, height) = SvgRasterizer.size(svg)
+        val scale = fitScale(width, height, settings.exportImageWidth, settings.exportImageHeight)
+        if (!ImageIO.write(SvgRasterizer.rasterize(svg, scale), "png", outputPath.toFile())) {
+            throw DiagramExportException("No PNG writer available")
         }
-        ImageIO.write(image, "PNG", outputPath.toFile())
     }
 
-    private fun convertToPlantUml(dslContent: String, viewKey: String?): String = buildString {
-        appendLine("@startuml")
-        appendLine("!include <C4/C4_Context>")
-        appendLine()
-
-        val personRegex = Regex("(?:(\\w+)\\s*=\\s*)?person\\s+\"([^\"]+)\"(?:\\s+\"([^\"]+)\")?")
-        val systemRegex = Regex("(?:(\\w+)\\s*=\\s*)?softwareSystem\\s+\"([^\"]+)\"(?:\\s+\"([^\"]+)\")?")
-        val relationRegex = Regex("(\\w+)\\s*->\\s*(\\w+)(?:\\s+\"([^\"]+)\")?")
-
-        personRegex.findAll(dslContent).forEach { match ->
-            val id = match.groupValues[1].ifEmpty { "person_${match.range.first}" }
-            val name = match.groupValues[2]
-            val description = match.groupValues[3]
-            appendLine("Person($id, \"$name\"${if (description.isNotEmpty()) ", \"$description\"" else ""})")
+    /** PlantUML/Mermaid: the Structurizr CLI when installed, otherwise the built-in converter. */
+    private fun textOrCli(
+        dslFile: VirtualFile,
+        outputPath: Path,
+        format: DiagramExportFormat,
+        viewKey: String?,
+        indicator: ProgressIndicator,
+    ) {
+        val cliFormat = if (format == DiagramExportFormat.MERMAID) ExportFormat.MERMAID else ExportFormat.PLANTUML_C4
+        if (StructurizrCliService.getInstance().isCliAvailable(project)) {
+            exportWithCli(dslFile, outputPath, cliFormat, viewKey, indicator)
+        } else {
+            val diagram = StructurizrPreviewEngine.diagram(DiagramRendererService.workspace(dslFile), viewKey).second
+            val text = if (format == DiagramExportFormat.MERMAID) {
+                DiagramTextExporter.toMermaid(diagram)
+            } else {
+                DiagramTextExporter.toPlantUml(diagram)
+            }
+            Files.writeString(outputPath, text)
         }
-
-        systemRegex.findAll(dslContent).forEach { match ->
-            val id = match.groupValues[1].ifEmpty { "system_${match.range.first}" }
-            val name = match.groupValues[2]
-            val description = match.groupValues[3]
-            appendLine("System($id, \"$name\"${if (description.isNotEmpty()) ", \"$description\"" else ""})")
-        }
-
-        appendLine()
-
-        relationRegex.findAll(dslContent).forEach { match ->
-            val from = match.groupValues[1]
-            val to = match.groupValues[2]
-            val label = match.groupValues[3].ifEmpty { "uses" }
-            appendLine("Rel($from, $to, \"$label\")")
-        }
-
-        appendLine()
-        appendLine("@enduml")
     }
 
-    private fun convertToMermaid(dslContent: String): String = buildString {
-        appendLine("flowchart TB")
-        appendLine()
-
-        val personRegex = Regex("(?:(\\w+)\\s*=\\s*)?person\\s+\"([^\"]+)\"(?:\\s+\"([^\"]+)\")?")
-        val systemRegex = Regex("(?:(\\w+)\\s*=\\s*)?softwareSystem\\s+\"([^\"]+)\"(?:\\s+\"([^\"]+)\")?")
-        val relationRegex = Regex("(\\w+)\\s*->\\s*(\\w+)(?:\\s+\"([^\"]+)\")?")
-
-        val persons = mutableListOf<String>()
-        val systems = mutableListOf<String>()
-
-        personRegex.findAll(dslContent).forEach { match ->
-            val id = match.groupValues[1].ifEmpty { "person_${match.range.first}" }
-            val name = match.groupValues[2]
-            persons.add(id)
-            appendLine("    $id[\"👤 $name\"]")
+    private fun requireCli(formatName: String) {
+        if (!StructurizrCliService.getInstance().isCliAvailable(project)) {
+            throw DiagramExportException("$formatName export requires the Structurizr CLI (Settings | Tools | Structurizr DSL)")
         }
-
-        systemRegex.findAll(dslContent).forEach { match ->
-            val id = match.groupValues[1].ifEmpty { "system_${match.range.first}" }
-            val name = match.groupValues[2]
-            systems.add(id)
-            appendLine("    $id[\"🖥️ $name\"]")
-        }
-
-        appendLine()
-
-        relationRegex.findAll(dslContent).forEach { match ->
-            val from = match.groupValues[1]
-            val to = match.groupValues[2]
-            val label = match.groupValues[3].ifEmpty { "uses" }
-            appendLine("    $from -->|$label| $to")
-        }
-
-        appendLine()
-        appendLine("    %% Styling")
-        persons.forEach { id -> appendLine("    style $id fill:#08427B,color:#fff") }
-        systems.forEach { id -> appendLine("    style $id fill:#1168BD,color:#fff") }
     }
 
-    private fun extractViews(dslContent: String): List<ViewInfo> {
-        val views = mutableListOf<ViewInfo>()
+    /**
+     * Runs the CLI into a temporary directory and copies the file for [viewKey] (the CLI writes one file per view,
+     * named `structurizr-<key>.<ext>`), or the only/first produced file when no view is requested.
+     */
+    private fun exportWithCli(
+        dslFile: VirtualFile,
+        outputPath: Path,
+        format: ExportFormat,
+        viewKey: String?,
+        indicator: ProgressIndicator,
+    ) {
+        indicator.fraction = 0.5
+        val tempDir = Files.createTempDirectory("structurizr-export")
+        try {
+            val result = StructurizrCliService.getInstance().exportBlocking(project, dslFile.path, tempDir.toString(), format, indicator)
+            if (!result.first) throw DiagramExportException(result.second ?: "Structurizr CLI export failed")
 
-        Regex("systemLandscape\\s+\"?(\\w+)\"?\\s*\\{").findAll(dslContent).forEach { match ->
-            val key = match.groupValues[1]
-            views.add(ViewInfo(key, "SystemLandscape-$key", ViewType.SYSTEM_LANDSCAPE))
+            indicator.fraction = 0.8
+            val produced = tempDir.toFile().listFiles()?.filter { it.extension == format.extension }.orEmpty().sortedBy { it.name }
+            val chosen = viewKey?.let { key -> produced.firstOrNull { it.nameWithoutExtension.endsWith("-$key") } }
+                ?: produced.firstOrNull()
+            chosen ?: throw DiagramExportException("The Structurizr CLI produced no .${format.extension} file")
+            Files.copy(chosen.toPath(), outputPath, StandardCopyOption.REPLACE_EXISTING)
+        } finally {
+            tempDir.toFile().deleteRecursively()
         }
-        Regex("systemContext\\s+(\\w+)\\s+\"?(\\w+)\"?\\s*\\{").findAll(dslContent).forEach { match ->
-            val key = match.groupValues[2]
-            views.add(ViewInfo(key, "SystemContext-$key", ViewType.SYSTEM_CONTEXT))
-        }
-        Regex("container\\s+(\\w+)\\s+\"?(\\w+)\"?\\s*\\{").findAll(dslContent).forEach { match ->
-            val key = match.groupValues[2]
-            views.add(ViewInfo(key, "Container-$key", ViewType.CONTAINER))
-        }
-        Regex("component\\s+(\\w+)\\s+\"?(\\w+)\"?\\s*\\{").findAll(dslContent).forEach { match ->
-            val key = match.groupValues[2]
-            views.add(ViewInfo(key, "Component-$key", ViewType.COMPONENT))
-        }
-        Regex("deployment\\s+\\*\\s+\"?(\\w+)\"?\\s+\"?(\\w+)\"?\\s*\\{").findAll(dslContent).forEach { match ->
-            val key = match.groupValues[2]
-            views.add(ViewInfo(key, "Deployment-$key", ViewType.DEPLOYMENT))
-        }
-
-        return views
     }
 
     private fun showNotification(title: String, content: String, type: NotificationType) {

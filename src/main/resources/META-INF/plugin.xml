@@ -33,7 +33,7 @@
   <li><b>Split Editor</b> — Side-by-side DSL code and diagram view</li>
   <li><b>Multi-Format Export</b> — Export as SVG, PNG, PlantUML, or Mermaid</li>
   <li><b>Copy to Clipboard</b> — Copy diagrams in any format for instant sharing</li>
-  <li><b>CLI Integration</b> — Auto-download and manage the Structurizr CLI</li>
+  <li><b>CLI Integration</b> — Uses an installed Structurizr CLI for PlantUML, Mermaid, DOT and JSON export</li>
 </ul>
 
 <h3>Requirements</h3>

@@ -2,6 +2,19 @@
 
 All notable changes to the Structurizr DSL Plugin are documented here.
 
+## [Unreleased]
+
+### Fixed
+- **PNG export and Copy as Image produced a placeholder** ("install Structurizr CLI") instead of the diagram. They now rasterize the same diagram the preview shows; PNG size fits the configured maximum width/height.
+- **Export dialog view picker offered fixed view types** ("Container", "Deployment", …) that did not match any view key, so the default view was exported instead. It now lists the views the workspace actually defines; "Export all views" uses the real view keys.
+- **CLI-based exports failed with "Structurizr CLI not found"** unless the CLI had been located earlier in the session; the CLI path from settings was ignored. The configured path (global or per project) is used first, and the CLI timeout setting is honoured.
+- PlantUML and Mermaid export/copy without the CLI now convert the selected view (elements, boundaries, relationships) instead of regex-scraping persons and systems from the whole file.
+- Settings that had no effect were removed (embedded CLI, zoom, dark mode, system theme, metadata, editor/completion toggles that duplicate IDE settings). The remaining ones now work: preview on/off, refresh while typing and its delay (global or per project), default export format and directory, open file after export.
+- "Identifier" on the color settings page now changes identifier colour (default look unchanged).
+
+### Removed
+- Unused `StructurizrCliWrapper` and the never-called CLI download code.
+
 ## [2026.8.0] - 2026-11-10
 
 ### Changed

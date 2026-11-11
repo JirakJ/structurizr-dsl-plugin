@@ -41,9 +41,9 @@ Full language support for [Structurizr DSL](https://docs.structurizr.com/dsl/lan
 | **${} Highlighting** | Variable substitution highlighting in strings |
 | **Live Diagram Preview** | Real-time C4 diagram rendering in a tool window |
 | **Split Editor** | Side-by-side DSL code and diagram view |
-| **Export** | Export diagrams as SVG, PNG, PlantUML, Mermaid |
+| **Export** | Export a view or all views as SVG, PNG, PlantUML (C4) or Mermaid; DOT and JSON via an installed Structurizr CLI |
 | **Copy to Clipboard** | Copy diagrams as SVG, image, PlantUML, or Mermaid |
-| **CLI Integration** | Auto-download and manage Structurizr CLI |
+| **CLI Integration** | Uses an installed Structurizr CLI (configured path, well-known locations or `PATH`) for PlantUML/Mermaid/DOT/JSON export |
 | **Rename Refactoring** | Rename identifiers across all references |
 
 ## Supported Keywords
@@ -84,7 +84,7 @@ Or install from: [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/29
 - **Global:** Settings → Tools → Structurizr DSL
 - **Project:** Settings → Tools → Structurizr DSL (Project)
 
-Configure: CLI path, auto-preview, export format, diagram theme, auto-layout direction.
+Configure: CLI path and timeout, preview on/off, refresh while typing and its delay, default export format and directory, maximum PNG size, opening exported files. Per project: CLI path, export directory and preview delay overrides.
 
 ## Build from Source
 
@@ -97,7 +97,7 @@ Configure: CLI path, auto-preview, export format, diagram theme, auto-layout dir
 
 ```bash
 ./gradlew test
-# 866 tests
+# 1000+ tests
 ```
 
 ## CI/CD

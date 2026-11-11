@@ -154,7 +154,11 @@ class DslWorkspaceParser(private val includeResolver: (String) -> String? = { nu
         val path = if (target.contains("://")) target else normalizePath(state.includeDir + target)
         val text = runCatching { includeResolver(path) }.getOrNull() ?: return
         val outerDir = state.includeDir
-        state.includeDir = if (path.endsWith(".dsl", ignoreCase = true)) path.substringBeforeLast('/', "").let { if (it.isEmpty()) "" else "$it/" } else "$path/"
+        state.includeDir = if (path.endsWith(".dsl", ignoreCase = true)) {
+            path.substringBeforeLast('/', "").let { if (it.isEmpty()) "" else "$it/" }
+        } else {
+            "$path/"
+        }
         state.includeDepth++
         try {
             val statements = readStatements(text)
@@ -258,7 +262,11 @@ class DslWorkspaceParser(private val includeResolver: (String) -> String? = { nu
                 "deploymentnode" -> element(DslElementType.DEPLOYMENT_NODE, 2, 4).also { elementBody(st.children, state, it) }
                 "infrastructurenode" -> element(DslElementType.INFRASTRUCTURE_NODE, 2, 3).also { elementBody(st.children, state, it) }
                 "softwaresysteminstance", "containerinstance" -> {
-                    val type = if (keyword == "containerinstance") DslElementType.CONTAINER_INSTANCE else DslElementType.SOFTWARE_SYSTEM_INSTANCE
+                    val type = if (keyword == "containerinstance") {
+                        DslElementType.CONTAINER_INSTANCE
+                    } else {
+                        DslElementType.SOFTWARE_SYSTEM_INSTANCE
+                    }
                     val instance = DslElement(
                         uid = state.nextUid++,
                         identifier = identifier,
@@ -350,7 +358,8 @@ class DslWorkspaceParser(private val includeResolver: (String) -> String? = { nu
                 "systemcontext" -> newView(state, DslViewType.SYSTEM_CONTEXT, rest.getOrNull(0), null, rest.getOrNull(1), rest.getOrNull(2))
                 "container" -> newView(state, DslViewType.CONTAINER, rest.getOrNull(0), null, rest.getOrNull(1), rest.getOrNull(2))
                 "component" -> newView(state, DslViewType.COMPONENT, rest.getOrNull(0), null, rest.getOrNull(1), rest.getOrNull(2))
-                "deployment" -> newView(state, DslViewType.DEPLOYMENT, rest.getOrNull(0), rest.getOrNull(1), rest.getOrNull(2), rest.getOrNull(3))
+                "deployment" ->
+                    newView(state, DslViewType.DEPLOYMENT, rest.getOrNull(0), rest.getOrNull(1), rest.getOrNull(2), rest.getOrNull(3))
                 "dynamic" -> newView(state, DslViewType.DYNAMIC, rest.getOrNull(0), null, rest.getOrNull(1), rest.getOrNull(2))
                 "custom" -> newView(state, DslViewType.CUSTOM, null, null, rest.getOrNull(0), rest.getOrNull(2)).also { v ->
                     rest.getOrNull(1)?.let { v.title = it }
@@ -369,7 +378,14 @@ class DslWorkspaceParser(private val includeResolver: (String) -> String? = { nu
         }
     }
 
-    private fun newView(state: State, type: DslViewType, scope: String?, environment: String?, key: String?, description: String?): DslView {
+    private fun newView(
+        state: State,
+        type: DslViewType,
+        scope: String?,
+        environment: String?,
+        key: String?,
+        description: String?,
+    ): DslView {
         val generatedKey = {
             val n = (state.viewCounters[type] ?: 0) + 1
             state.viewCounters[type] = n
@@ -412,15 +428,18 @@ class DslWorkspaceParser(private val includeResolver: (String) -> String? = { nu
         ws.views += DslView(DslViewType.SYSTEM_LANDSCAPE, "SystemLandscape", generated = true).also { it.includes += "*" }
         for (system in systems) {
             val scope = system.identifier ?: continue
-            ws.views += DslView(DslViewType.SYSTEM_CONTEXT, "SystemContext-${system.identifier}", scope, generated = true).also { it.includes += "*" }
+            ws.views += DslView(DslViewType.SYSTEM_CONTEXT, "SystemContext-${system.identifier}", scope, generated = true)
+                .also { it.includes += "*" }
             if (ws.children(system).any { it.type == DslElementType.CONTAINER }) {
-                ws.views += DslView(DslViewType.CONTAINER, "Container-${system.identifier}", scope, generated = true).also { it.includes += "*" }
+                ws.views += DslView(DslViewType.CONTAINER, "Container-${system.identifier}", scope, generated = true)
+                    .also { it.includes += "*" }
             }
         }
         for (container in ws.elements.filter { it.type == DslElementType.CONTAINER }) {
             val scope = container.identifier ?: continue
             if (ws.children(container).any { it.type == DslElementType.COMPONENT }) {
-                ws.views += DslView(DslViewType.COMPONENT, "Component-${container.identifier}", scope, generated = true).also { it.includes += "*" }
+                ws.views += DslView(DslViewType.COMPONENT, "Component-${container.identifier}", scope, generated = true)
+                    .also { it.includes += "*" }
             }
         }
     }

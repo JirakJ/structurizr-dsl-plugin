@@ -10,6 +10,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jakubjirak.structurizr.language.psi.StructurizrStyleProperty
 import java.awt.Color
+import java.util.Locale
 
 /**
  * Shows a color swatch in the editor gutter for hex color values in style
@@ -82,9 +83,9 @@ class StructurizrColorProvider : ElementColorProvider {
          */
         fun toHex(color: Color, includeAlpha: Boolean = false): String =
             if (includeAlpha) {
-                String.format("#%02x%02x%02x%02x", color.red, color.green, color.blue, color.alpha)
+                String.format(Locale.ROOT, "#%02x%02x%02x%02x", color.red, color.green, color.blue, color.alpha)
             } else {
-                String.format("#%02x%02x%02x", color.red, color.green, color.blue)
+                String.format(Locale.ROOT, "#%02x%02x%02x", color.red, color.green, color.blue)
             }
     }
 }

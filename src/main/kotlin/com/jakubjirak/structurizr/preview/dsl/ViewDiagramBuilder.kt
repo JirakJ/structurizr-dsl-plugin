@@ -135,7 +135,9 @@ class ViewDiagramBuilder(private val ws: DslWorkspace) {
 
     /** Top-level people/systems that have a relationship with [scope] or anything nested in it. */
     private fun connectedTopLevel(scope: DslElement): Set<DslElement> =
-        connectedOutside(scope) { topLevel(it) }.filter { it.type == DslElementType.PERSON || it.type == DslElementType.SOFTWARE_SYSTEM }.toSet()
+        connectedOutside(scope) { topLevel(it) }
+            .filter { it.type == DslElementType.PERSON || it.type == DslElementType.SOFTWARE_SYSTEM }
+            .toSet()
 
     /**
      * Elements outside [scope] that have a relationship with something inside it, lifted by [lift].
@@ -247,7 +249,9 @@ class ViewDiagramBuilder(private val ws: DslWorkspace) {
             description = view.description.ifBlank { diagram.description },
             elements = elements,
             edges = diagram.edges.filter { it.source in kept && it.destination in kept },
-            boundaries = diagram.boundaries.map { b -> b.copy(members = b.members.filter { it in kept }) }.filter { it.members.isNotEmpty() },
+            boundaries = diagram.boundaries
+                .map { b -> b.copy(members = b.members.filter { it in kept }) }
+                .filter { it.members.isNotEmpty() },
             message = if (elements.isEmpty()) "The filter removes every element of the base view." else null,
         )
     }

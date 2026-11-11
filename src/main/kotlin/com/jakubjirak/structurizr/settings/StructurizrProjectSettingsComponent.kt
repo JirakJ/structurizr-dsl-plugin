@@ -32,16 +32,6 @@ class StructurizrProjectSettingsComponent(private val project: Project) {
         }
     }
 
-    private val defaultWorkspaceField = TextFieldWithBrowseButton().apply {
-        addActionListener {
-            val descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor("dsl")
-                .withTitle("Select Default Workspace")
-                .withDescription("Select the default workspace DSL file")
-            FileChooser.chooseFile(descriptor, project, null) { file ->
-                text = file.path
-            }
-        }
-    }
 
     private val projectExportDirectoryField = TextFieldWithBrowseButton().apply {
         addActionListener {
@@ -63,12 +53,6 @@ class StructurizrProjectSettingsComponent(private val project: Project) {
             row("") { cell(useProjectCliPathCheckbox) }
             row("Project CLI path:") { cell(projectCliPathField).align(Align.FILL) }
         }
-        group("Project Workspace") {
-            row("Default workspace file:") {
-                cell(defaultWorkspaceField).align(Align.FILL)
-                    .comment("The default .dsl file to use for this project")
-            }
-        }
         group("Export Configuration") {
             row("Export directory:") {
                 cell(projectExportDirectoryField).align(Align.FILL)
@@ -88,7 +72,6 @@ class StructurizrProjectSettingsComponent(private val project: Project) {
     fun isModified(settings: StructurizrProjectSettings): Boolean =
         useProjectCliPathCheckbox.isSelected != settings.useProjectCliPath ||
             projectCliPathField.text != settings.projectCliPath ||
-            defaultWorkspaceField.text != settings.defaultWorkspaceFile ||
             projectExportDirectoryField.text != settings.projectExportDirectory ||
             overridePreviewCheckbox.isSelected != settings.overridePreviewSettings ||
             projectPreviewDelaySpinner.number != settings.projectPreviewDelayMs
@@ -97,7 +80,6 @@ class StructurizrProjectSettingsComponent(private val project: Project) {
     fun applyTo(settings: StructurizrProjectSettings) {
         settings.useProjectCliPath = useProjectCliPathCheckbox.isSelected
         settings.projectCliPath = projectCliPathField.text
-        settings.defaultWorkspaceFile = defaultWorkspaceField.text
         settings.projectExportDirectory = projectExportDirectoryField.text
         settings.overridePreviewSettings = overridePreviewCheckbox.isSelected
         settings.projectPreviewDelayMs = projectPreviewDelaySpinner.number
@@ -107,7 +89,6 @@ class StructurizrProjectSettingsComponent(private val project: Project) {
     fun resetFrom(settings: StructurizrProjectSettings) {
         useProjectCliPathCheckbox.isSelected = settings.useProjectCliPath
         projectCliPathField.text = settings.projectCliPath
-        defaultWorkspaceField.text = settings.defaultWorkspaceFile
         projectExportDirectoryField.text = settings.projectExportDirectory
         overridePreviewCheckbox.isSelected = settings.overridePreviewSettings
         projectPreviewDelaySpinner.number = settings.projectPreviewDelayMs

@@ -10,8 +10,9 @@ import javax.xml.parsers.DocumentBuilderFactory
 class StructurizrLiveTemplatesTest {
 
     private val templates: Map<String, org.w3c.dom.Element> by lazy {
-        val stream = javaClass.getResourceAsStream("/liveTemplates/Structurizr.xml")
-            ?: throw IllegalStateException("Structurizr.xml not found on classpath")
+        val stream = checkNotNull(javaClass.getResourceAsStream("/liveTemplates/Structurizr.xml")) {
+            "Structurizr.xml not found on classpath"
+        }
         val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream)
         val nodeList = doc.getElementsByTagName("template")
         val result = mutableMapOf<String, org.w3c.dom.Element>()
