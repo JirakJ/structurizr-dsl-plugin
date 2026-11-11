@@ -1,6 +1,8 @@
 /* Copyright 2026 Jakub Jirák. SPDX-License-Identifier: Apache-2.0 */
 package com.jakubjirak.structurizr.preview
 
+import com.jakubjirak.structurizr.preview.dsl.DslWorkspace
+
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -52,6 +54,9 @@ class DiagramRendererService(@Suppress("unused") private val project: Project) {
         fun currentText(file: VirtualFile): String =
             ApplicationManager.getApplication().runReadAction(Computable { FileDocumentManager.getInstance().getDocument(file)?.text })
                 ?: String(file.contentsToByteArray(), file.charset)
+
+        /** Parses [file] (current editor text, `!include`s resolved) into the preview's workspace model. */
+        fun workspace(file: VirtualFile): DslWorkspace = StructurizrPreviewEngine.parse(currentText(file), includeResolver(file))
 
         /** Retrieves the project-level singleton instance. */
         @JvmStatic

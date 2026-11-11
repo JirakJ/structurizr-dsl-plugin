@@ -2,3 +2,8 @@ build/
 .gradle/
 .idea/
 precompiled/
+.intellijPlatform/
+.kotlin/
+*.iml
+out/
+.env

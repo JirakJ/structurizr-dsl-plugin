@@ -27,7 +27,8 @@ class MissingRequiredPropertyInspection : StructurizrInspectionBase() {
             override fun visitElement(element: PsiElement) {
                 when (element) {
                     is StructurizrPersonDefinition -> checkDefinition(element, element.string, "Person requires a name", holder)
-                    is StructurizrSoftwareSystemDefinition -> checkDefinition(element, element.string, "Software system requires a name", holder)
+                    is StructurizrSoftwareSystemDefinition ->
+                        checkDefinition(element, element.string, "Software system requires a name", holder)
                     is StructurizrContainerDefinition -> checkDefinition(element, element.string, "Container requires a name", holder)
                     is StructurizrComponentDefinition -> checkDefinition(element, element.string, "Component requires a name", holder)
                 }

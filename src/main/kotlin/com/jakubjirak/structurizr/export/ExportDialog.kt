@@ -4,6 +4,10 @@ package com.jakubjirak.structurizr.export
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
+import com.jakubjirak.structurizr.preview.DiagramRendererService
+import com.jakubjirak.structurizr.preview.dsl.StructurizrPreviewEngine
+import com.jakubjirak.structurizr.preview.dsl.ViewOption
+import com.jakubjirak.structurizr.settings.StructurizrSettings
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
@@ -36,8 +40,8 @@ class ExportDialog(
     private val outputPathField = TextFieldWithBrowseButton()
     private val fileNameField = JBTextField()
     private val exportAllViewsCheckbox = JBCheckBox("Export all views separately")
-    private val openAfterExportCheckbox = JBCheckBox("Open file after export", true)
-    private val viewSelector = ComboBox<String>()
+    private val openAfterExportCheckbox = JBCheckBox("Open file after export", StructurizrSettings.getInstance().autoOpenExportedFile)
+    private val viewSelector = ComboBox<ViewOption>()
     private val formatDescriptionLabel = JBLabel()
     private val previewLabel = JBLabel()
 
@@ -75,7 +79,9 @@ class ExportDialog(
             }
         }
 
-        val defaultDir = sourceFile.parent?.path ?: System.getProperty("user.home")
+        val exportService = StructurizrExportService.getInstance(project)
+        formatComboBox.selectedItem = exportService.getDefaultFormat()
+        val defaultDir = exportService.getDefaultExportDirectory().ifBlank { sourceFile.parent?.path ?: System.getProperty("user.home") }
         outputPathField.text = defaultDir
         fileNameField.text = sourceFile.nameWithoutExtension
 
@@ -85,14 +91,9 @@ class ExportDialog(
             }
         })
 
-        viewSelector.apply {
-            addItem("All views")
-            addItem("System Landscape")
-            addItem("System Context")
-            addItem("Container")
-            addItem("Component")
-            addItem("Deployment")
-        }
+        val views = StructurizrPreviewEngine.viewOptions(DiagramRendererService.workspace(sourceFile))
+        views.forEach { viewSelector.addItem(it) }
+        (views.firstOrNull { it.isDefault } ?: views.firstOrNull())?.let { viewSelector.selectedItem = it }
 
         exportAllViewsCheckbox.addActionListener {
             viewSelector.isEnabled = !exportAllViewsCheckbox.isSelected
@@ -174,19 +175,9 @@ class ExportDialog(
     /** Returns whether all views should be exported. */
     fun isExportAllViews(): Boolean = exportAllViewsCheckbox.isSelected
 
-    /** Returns the selected view key, or null for all views. */
-    fun getSelectedViewKey(): String? {
-        if (exportAllViewsCheckbox.isSelected) return null
-        return when (viewSelector.selectedItem as? String) {
-            "All views" -> null
-            "System Landscape" -> "landscape"
-            "System Context" -> "systemContext"
-            "Container" -> "container"
-            "Component" -> "component"
-            "Deployment" -> "deployment"
-            else -> null
-        }
-    }
+    /** Returns the selected view key, or null when all views are exported (or the workspace has none). */
+    fun getSelectedViewKey(): String? =
+        if (exportAllViewsCheckbox.isSelected) null else (viewSelector.selectedItem as? ViewOption)?.key
 
     /** Returns whether files should be opened after export. */
     fun isOpenAfterExport(): Boolean = openAfterExportCheckbox.isSelected

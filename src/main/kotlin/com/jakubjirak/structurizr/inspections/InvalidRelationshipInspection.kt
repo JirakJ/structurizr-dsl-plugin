@@ -4,7 +4,6 @@
  */
 package com.jakubjirak.structurizr.inspections
 
-import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
@@ -49,7 +48,6 @@ class InvalidRelationshipInspection : StructurizrInspectionBase() {
                             target,
                             "'this' can only be used inside an element definition",
                             ProblemHighlightType.ERROR,
-                            *LocalQuickFix.EMPTY_ARRAY
                         )
                         return
                     }
@@ -61,7 +59,6 @@ class InvalidRelationshipInspection : StructurizrInspectionBase() {
                         element,
                         "Self-referencing relationship: source and destination are the same element '$sourceText'",
                         ProblemHighlightType.WARNING,
-                        *LocalQuickFix.EMPTY_ARRAY
                     )
                     return
                 }
@@ -75,7 +72,6 @@ class InvalidRelationshipInspection : StructurizrInspectionBase() {
                         sourceRef,
                         "Undefined relationship source: '$sourceRoot'",
                         ProblemHighlightType.ERROR,
-                        *LocalQuickFix.EMPTY_ARRAY
                     )
                 }
                 if (!isBuiltIn(destRoot) && destRoot !in definedElements) {
@@ -83,7 +79,6 @@ class InvalidRelationshipInspection : StructurizrInspectionBase() {
                         destRef,
                         "Undefined relationship destination: '$destRoot'",
                         ProblemHighlightType.ERROR,
-                        *LocalQuickFix.EMPTY_ARRAY
                     )
                 }
             }

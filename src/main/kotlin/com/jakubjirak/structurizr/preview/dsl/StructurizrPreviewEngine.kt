@@ -33,13 +33,20 @@ object StructurizrPreviewEngine {
      */
     fun render(dsl: String, viewKey: String?, includeResolver: (String) -> String? = { null }): PreviewResult {
         val ws = parse(dsl, includeResolver)
-        val options = viewOptions(ws)
+        val (view, diagram) = diagram(ws, viewKey)
+        return PreviewResult(viewOptions(ws), view?.key, SvgDiagramRenderer.render(diagram))
+    }
+
+    /** Builds the diagram of [viewKey] (default view when `null`/unknown) without rendering it. */
+    fun diagram(ws: DslWorkspace, viewKey: String?): Pair<DslView?, ViewDiagram> {
         val view = ws.findView(viewKey) ?: ws.views.firstOrNull { it.isDefault } ?: ws.views.firstOrNull()
         val diagram = if (view != null) {
             ViewDiagramBuilder(ws).build(view)
         } else {
-            ViewDiagram(ws.name, ws.description, emptyList(), emptyList(), message = "The workspace defines no elements or views yet.")
+            ViewDiagram(ws.name, ws.description, emptyList(), emptyList(), message = NO_CONTENT)
         }
-        return PreviewResult(options, view?.key, SvgDiagramRenderer.render(diagram))
+        return view to diagram
     }
+
+    private const val NO_CONTENT = "The workspace defines no elements or views yet."
 }

@@ -20,6 +20,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.util.Alarm
+import com.jakubjirak.structurizr.settings.StructurizrProjectSettings
+import com.jakubjirak.structurizr.settings.StructurizrSettings
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.messages.Topic
 import com.intellij.util.ui.JBUI
@@ -29,6 +31,7 @@ import com.jakubjirak.structurizr.preview.dsl.ViewOption
 import org.cef.browser.CefBrowser
 import org.cef.handler.CefLifeSpanHandlerAdapter
 import java.awt.BorderLayout
+import java.util.Locale
 import java.awt.Color
 import java.awt.Component
 import javax.swing.DefaultComboBoxModel
@@ -125,11 +128,15 @@ class StructurizrPreviewPanel(
         selectedKey = null
     }
 
-    /** Re-renders after a short delay, coalescing bursts of edits. */
+    /**
+     * Re-renders after the configured delay, coalescing bursts of edits.
+     * Does nothing when "Refresh preview while typing" is switched off (the Refresh button still works).
+     */
     fun scheduleRefresh() {
         if (browser == null || disposed) return
+        if (!StructurizrSettings.getInstance().autoRefreshPreview) return
         alarm.cancelAllRequests()
-        alarm.addRequest({ refreshNow() }, DEBOUNCE_MS)
+        alarm.addRequest({ refreshNow() }, StructurizrProjectSettings.getInstance(project).getEffectivePreviewDelay())
     }
 
     /** Re-reads the source and re-renders the selected view. Safe to call from any thread. */
@@ -211,7 +218,7 @@ class StructurizrPreviewPanel(
         )
     }
 
-    private fun hex(c: Color): String = String.format("#%02x%02x%02x", c.red, c.green, c.blue)
+    private fun hex(c: Color): String = String.format(Locale.ROOT, "#%02x%02x%02x", c.red, c.green, c.blue)
 
     override fun dispose() {
         disposed = true
@@ -219,7 +226,6 @@ class StructurizrPreviewPanel(
     }
 
     companion object {
-        private const val DEBOUNCE_MS = 400
         private const val TOOLBAR_PLACE = "StructurizrPreviewToolbar"
 
         /** Published by the "Refresh Structurizr Preview" action; every open preview re-renders. */

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.intellij.platform)
+    alias(libs.plugins.detekt)
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -23,7 +24,6 @@ dependencies {
             providers.gradleProperty("platformType"),
             providers.gradleProperty("platformVersion"),
         )
-        instrumentationTools()
         pluginVerifier()
         zipSigner()
         testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
@@ -92,5 +92,9 @@ tasks {
     }
 }
 
-
-
+detekt {
+    config.setFrom(files("detekt.yml"))
+    buildUponDefaultConfig = true
+    // Complexity findings in the PSI-facing code and the preview DSL parser/renderer, which would need risky refactors.
+    baseline = file("detekt-baseline.xml")
+}

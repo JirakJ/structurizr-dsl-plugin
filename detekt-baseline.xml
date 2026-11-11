@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:DslWorkspaceParser.kt$DslWorkspaceParser$args.size >= 2 &amp;&amp; !args[0].quoted &amp;&amp; args[1].text == "=" &amp;&amp; !args[1].quoted</ID>
+    <ID>ComplexCondition:DslWorkspaceParser.kt$DslWorkspaceParser$i &lt; n &amp;&amp; !text[i].isWhitespace() &amp;&amp; text[i] != '{' &amp;&amp; text[i] != '}' &amp;&amp; text[i] != '"'</ID>
+    <ID>ComplexCondition:InvalidColorInspection.kt$InvalidColorInspection$propertyName in COLOR_PROPERTIES &amp;&amp; propertyValue != null &amp;&amp; propertyValue.startsWith("#") &amp;&amp; !colorRegex.matches(propertyValue)</ID>
+    <ID>ComplexCondition:SvgDiagramRenderer.kt$SvgDiagramRenderer$x > box.x - 6 &amp;&amp; x &lt; box.x + box.w + 6 &amp;&amp; y > box.y - 6 &amp;&amp; y &lt; box.y + box.h + 6</ID>
+    <ID>ComplexCondition:UndefinedReferenceInspection.kt$UndefinedReferenceInspection$text == "*" || text.startsWith("->") || text.contains("->") || text.isEmpty()</ID>
+    <ID>CyclomaticComplexMethod:DslWorkspaceParser.kt$DslWorkspaceParser$private fun addGeneratedViews(ws: DslWorkspace)</ID>
+    <ID>CyclomaticComplexMethod:DslWorkspaceParser.kt$DslWorkspaceParser$private fun lex(text: String): List&lt;Lexeme></ID>
+    <ID>CyclomaticComplexMethod:DslWorkspaceParser.kt$DslWorkspaceParser$private fun modelBody(statements: List&lt;Statement>, state: State, parent: DslElement?, environment: String?)</ID>
+    <ID>CyclomaticComplexMethod:DslWorkspaceParser.kt$DslWorkspaceParser$private fun viewBody(statements: List&lt;Statement>, view: DslView)</ID>
+    <ID>CyclomaticComplexMethod:DslWorkspaceParser.kt$DslWorkspaceParser$private fun viewsBody(statements: List&lt;Statement>, state: State)</ID>
+    <ID>CyclomaticComplexMethod:StructurizrAnnotator.kt$StructurizrAnnotator$override fun annotate(element: PsiElement, holder: AnnotationHolder)</ID>
+    <ID>CyclomaticComplexMethod:StructurizrBreadcrumbsProvider.kt$StructurizrBreadcrumbsProvider.Companion$private fun getTypeName(type: IElementType?): String</ID>
+    <ID>CyclomaticComplexMethod:StructurizrCompletionProvider.kt$StructurizrCompletionProvider$private fun addContextualStyleCompletions(parameters: CompletionParameters, result: CompletionResultSet)</ID>
+    <ID>CyclomaticComplexMethod:StructurizrDocumentationProvider.kt$StructurizrDocumentationProvider$override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String?</ID>
+    <ID>CyclomaticComplexMethod:StructurizrFoldingBuilder.kt$StructurizrFoldingBuilder$override fun getPlaceholderText(node: ASTNode): String</ID>
+    <ID>CyclomaticComplexMethod:StructurizrLineMarkerProvider.kt$StructurizrLineMarkerProvider$override fun collectNavigationMarkers( element: PsiElement, result: MutableCollection&lt;in RelatedItemLineMarkerInfo&lt;*>>, )</ID>
+    <ID>CyclomaticComplexMethod:StructurizrStructureViewElement.kt$StructurizrStructureViewElement.Companion$private fun getElementTypeName(type: IElementType?): String</ID>
+    <ID>CyclomaticComplexMethod:StructurizrSyntaxHighlighter.kt$StructurizrSyntaxHighlighter$override fun getTokenHighlights(tokenType: IElementType): Array&lt;TextAttributesKey></ID>
+    <ID>CyclomaticComplexMethod:SvgDiagramRenderer.kt$SvgDiagramRenderer$fun render(diagram: ViewDiagram): String</ID>
+    <ID>CyclomaticComplexMethod:ViewDiagramBuilder.kt$ViewDiagramBuilder$private fun deployment(view: DslView): ViewDiagram</ID>
+    <ID>CyclomaticComplexMethod:ViewDiagramBuilder.kt$ViewDiagramBuilder$private fun static(view: DslView): ViewDiagram</ID>
+    <ID>LongMethod:StructurizrAnnotator.kt$StructurizrAnnotator$override fun annotate(element: PsiElement, holder: AnnotationHolder)</ID>
+    <ID>LongMethod:StructurizrCompletionProvider.kt$StructurizrCompletionProvider$override fun addCompletions( parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet )</ID>
+    <ID>LongMethod:StructurizrCompletionProvider.kt$StructurizrCompletionProvider$private fun addContextualStyleCompletions(parameters: CompletionParameters, result: CompletionResultSet)</ID>
+    <ID>LongMethod:StructurizrLanguageCodeStyleSettingsProvider.kt$StructurizrLanguageCodeStyleSettingsProvider$override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: SettingsType)</ID>
+    <ID>LongMethod:StructurizrSyntaxHighlighter.kt$StructurizrSyntaxHighlighter$override fun getTokenHighlights(tokenType: IElementType): Array&lt;TextAttributesKey></ID>
+    <ID>LongMethod:SvgDiagramRenderer.kt$SvgDiagramRenderer$fun render(diagram: ViewDiagram): String</ID>
+    <ID>LongParameterList:DslWorkspace.kt$DslElement$( val uid: Int, val identifier: String?, val type: DslElementType, var name: String, var description: String = "", var technology: String = "", val parent: DslElement? = null, /** Deployment environment name, for deployment elements only. */ val environment: String? = null, /** Identifier of the element an instance refers to, resolved lazily via [DslWorkspace.resolve]. */ val instanceOf: String? = null, )</ID>
+    <ID>LongParameterList:DslWorkspaceParser.kt$DslWorkspaceParser$( state: State, type: DslViewType, scope: String?, environment: String?, key: String?, description: String?, )</ID>
+    <ID>LoopWithTooManyJumpStatements:DslWorkspaceParser.kt$DslWorkspaceParser$for</ID>
+    <ID>LoopWithTooManyJumpStatements:DslWorkspaceParser.kt$DslWorkspaceParser$while</ID>
+    <ID>LoopWithTooManyJumpStatements:StructurizrCompletionProvider.kt$StructurizrCompletionProvider$for</ID>
+    <ID>LoopWithTooManyJumpStatements:SvgDiagramRenderer.kt$SvgDiagramRenderer$for</ID>
+    <ID>LoopWithTooManyJumpStatements:ViewDiagramBuilder.kt$ViewDiagramBuilder$for</ID>
+    <ID>NestedBlockDepth:DslWorkspaceParser.kt$DslWorkspaceParser$private fun lex(text: String): List&lt;Lexeme></ID>
+    <ID>NestedBlockDepth:StructurizrCompletionProvider.kt$StructurizrCompletionProvider.Companion$private fun collectTags(element: PsiElement, tags: MutableSet&lt;String>)</ID>
+    <ID>NestedBlockDepth:ViewDiagramBuilder.kt$ViewDiagramBuilder$private fun deployment(view: DslView): ViewDiagram</ID>
+    <ID>ReturnCount:InvalidRelationshipInspection.kt$InvalidRelationshipInspection.&lt;no name provided>$override fun visitElement(element: PsiElement)</ID>
+    <ID>ReturnCount:StructurizrColorProvider.kt$StructurizrColorProvider$override fun getColorFrom(element: PsiElement): Color?</ID>
+    <ID>ReturnCount:StructurizrCompletionProvider.kt$StructurizrCompletionProvider.Companion$private fun getAssignmentIcon(assignment: PsiElement): Icon</ID>
+    <ID>ReturnCount:StructurizrCompletionProvider.kt$StructurizrCompletionProvider.Companion$private fun getAssignmentTypeText(assignment: PsiElement): String</ID>
+    <ID>ReturnCount:StructurizrFindUsagesProvider.kt$StructurizrFindUsagesProvider$override fun getType(element: PsiElement): String</ID>
+    <ID>ReturnCount:StructurizrIncludeReference.kt$StructurizrIncludeReference$override fun resolve(): PsiElement?</ID>
+    <ID>ReturnCount:StructurizrStructureViewElement.kt$StructurizrStructureViewElement.Companion$private fun extractDefinitionType(assignment: PsiElement): String?</ID>
+    <ID>ReturnCount:StructurizrStructureViewElement.kt$StructurizrStructureViewElement.Companion$private fun getIconForAssignment(assignment: PsiElement): Icon</ID>
+    <ID>TooManyFunctions:DslWorkspaceParser.kt$DslWorkspaceParser</ID>
+  </CurrentIssues>
+</SmellBaseline>

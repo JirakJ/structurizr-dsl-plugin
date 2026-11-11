@@ -155,8 +155,6 @@ class StructurizrFindUsagesProviderTest {
     @DisplayName("Source code type mappings verification")
     inner class SourceTypeMappings {
 
-        private val sourceClass = StructurizrFindUsagesProvider::class.java
-
         @Test
         fun `source references PERSON_DEFINITION type`() {
             // Verify via reflection that the source code references the expected StructurizrTypes

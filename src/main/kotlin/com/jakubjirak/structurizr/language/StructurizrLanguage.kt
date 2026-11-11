@@ -14,7 +14,8 @@ import com.intellij.lang.Language
  */
 object StructurizrLanguage : Language("Structurizr") {
 
-    /** Ensures deserialization returns the singleton [INSTANCE]. */
+    /** Ensures deserialization returns the singleton (called reflectively by Java serialization). */
+    @Suppress("UnusedPrivateMember")
     private fun readResolve(): Any = StructurizrLanguage
 
     /** Returns the human-readable display name shown in the IDE. */

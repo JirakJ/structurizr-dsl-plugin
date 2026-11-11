@@ -4,179 +4,62 @@ package com.jakubjirak.structurizr.export
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jakubjirak.structurizr.preview.DiagramRendererService
-import java.awt.Color
-import java.awt.Font
-import java.awt.Toolkit
+import com.jakubjirak.structurizr.preview.dsl.StructurizrPreviewEngine
+import com.jakubjirak.structurizr.preview.dsl.ViewDiagram
 import java.awt.datatransfer.StringSelection
-import java.awt.image.BufferedImage
+import java.awt.datatransfer.Transferable
 
 /**
- * Service for copying Structurizr diagrams to the system clipboard
- * in various formats (SVG, PlantUML, Mermaid, Image).
+ * Copies a Structurizr view (the workspace's default view unless [viewKey] is given)
+ * to the system clipboard as SVG, PlantUML, Mermaid or a raster image.
  */
 class ClipboardExportService(private val project: Project) {
 
     companion object {
         /** Creates a new instance for the given [project]. */
         fun getInstance(project: Project): ClipboardExportService = ClipboardExportService(project)
+
+        /** Copied images are rendered at twice the diagram's size so they stay sharp when pasted. */
+        private const val IMAGE_SCALE = 2.0
     }
 
     /** Copies the diagram as SVG to the clipboard. */
-    fun copyAsSvg(dslFile: VirtualFile, viewKey: String? = null): Boolean = try {
-        val rendererService = DiagramRendererService.Companion.getInstance(project)
-        val dslContent = DiagramRendererService.currentText(dslFile)
-        val svgContent = rendererService.renderToSvg(dslContent, viewKey, dslFile)
-        if (svgContent != null) {
-            val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-            clipboard.setContents(SvgTransferable(svgContent), null)
-            showNotification("Copied to Clipboard", "SVG diagram copied to clipboard", NotificationType.INFORMATION)
-            true
-        } else {
-            showNotification("Copy Failed", "Failed to render diagram", NotificationType.ERROR)
-            false
-        }
-    } catch (e: Exception) {
-        showNotification("Copy Failed", "Failed to copy: ${e.message}", NotificationType.ERROR)
-        false
-    }
+    fun copyAsSvg(dslFile: VirtualFile, viewKey: String? = null): Boolean =
+        copy("SVG") { renderSvg(dslFile, viewKey)?.let(::SvgTransferable) }
 
-    /** Copies the diagram as PlantUML to the clipboard. */
-    fun copyAsPlantUml(dslFile: VirtualFile, viewKey: String? = null): Boolean = try {
-        val dslContent = DiagramRendererService.currentText(dslFile)
-        @Suppress("UNUSED_VARIABLE")
-        val exportService = StructurizrExportService.Companion.getInstance(project)
-        val plantUml = convertToPlantUml(dslContent, viewKey)
-        val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-        clipboard.setContents(StringSelection(plantUml), null)
-        showNotification("Copied to Clipboard", "PlantUML diagram copied to clipboard", NotificationType.INFORMATION)
-        true
-    } catch (e: Exception) {
-        showNotification("Copy Failed", "Failed to copy: ${e.message}", NotificationType.ERROR)
-        false
-    }
+    /** Copies the diagram as C4-PlantUML to the clipboard. */
+    fun copyAsPlantUml(dslFile: VirtualFile, viewKey: String? = null): Boolean =
+        copy("PlantUML") { StringSelection(DiagramTextExporter.toPlantUml(diagram(dslFile, viewKey))) }
 
     /** Copies the diagram as Mermaid to the clipboard. */
-    fun copyAsMermaid(dslFile: VirtualFile): Boolean = try {
-        val dslContent = DiagramRendererService.currentText(dslFile)
-        val mermaid = convertToMermaid(dslContent)
-        val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-        clipboard.setContents(StringSelection(mermaid), null)
-        showNotification("Copied to Clipboard", "Mermaid diagram copied to clipboard", NotificationType.INFORMATION)
-        true
-    } catch (e: Exception) {
-        showNotification("Copy Failed", "Failed to copy: ${e.message}", NotificationType.ERROR)
-        false
-    }
+    fun copyAsMermaid(dslFile: VirtualFile, viewKey: String? = null): Boolean =
+        copy("Mermaid") { StringSelection(DiagramTextExporter.toMermaid(diagram(dslFile, viewKey))) }
 
     /** Copies the diagram as a raster image to the clipboard. */
-    fun copyAsImage(dslFile: VirtualFile, viewKey: String? = null): Boolean = try {
-        val rendererService = DiagramRendererService.Companion.getInstance(project)
-        val dslContent = DiagramRendererService.currentText(dslFile)
-        val svgContent = rendererService.renderToSvg(dslContent, viewKey, dslFile)
-        if (svgContent != null) {
-            val image = createImageFromSvg(svgContent)
-            val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-            clipboard.setContents(ImageTransferable(image), null)
-            showNotification("Copied to Clipboard", "Diagram image copied to clipboard", NotificationType.INFORMATION)
-            true
-        } else {
-            showNotification("Copy Failed", "Failed to render diagram", NotificationType.ERROR)
-            false
+    fun copyAsImage(dslFile: VirtualFile, viewKey: String? = null): Boolean =
+        copy("image") { renderSvg(dslFile, viewKey)?.let { ImageTransferable(SvgRasterizer.rasterize(it, IMAGE_SCALE)) } }
+
+    private fun copy(what: String, content: () -> Transferable?): Boolean {
+        val transferable = content()
+        if (transferable == null) {
+            showNotification("Copy Failed", "The diagram could not be rendered", NotificationType.ERROR)
+            return false
         }
-    } catch (e: Exception) {
-        showNotification("Copy Failed", "Failed to copy: ${e.message}", NotificationType.ERROR)
-        false
+        CopyPasteManager.getInstance().setContents(transferable)
+        showNotification("Copied to Clipboard", "Diagram copied as $what", NotificationType.INFORMATION)
+        return true
     }
 
-    private fun createImageFromSvg(svgContent: String): BufferedImage {
-        val widthMatch = Regex("width=\"(\\d+)\"").find(svgContent)
-        val heightMatch = Regex("height=\"(\\d+)\"").find(svgContent)
-        val width = widthMatch?.groupValues?.get(1)?.toIntOrNull() ?: 800
-        val height = heightMatch?.groupValues?.get(1)?.toIntOrNull() ?: 600
-        return BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB).apply {
-            val g2d = createGraphics()
-            g2d.color = Color.WHITE
-            g2d.fillRect(0, 0, width, height)
-            g2d.color = Color.BLACK
-            g2d.font = Font("SansSerif", Font.PLAIN, 14)
-            g2d.drawString("Structurizr Diagram", 20, 30)
-            g2d.drawString("For full quality, use SVG export", 20, 50)
-            g2d.dispose()
-        }
-    }
+    private fun renderSvg(dslFile: VirtualFile, viewKey: String?): String? =
+        DiagramRendererService.getInstance(project).renderToSvg(DiagramRendererService.currentText(dslFile), viewKey, dslFile)
 
-    private fun convertToPlantUml(dslContent: String, viewKey: String?): String {
-        val sb = StringBuilder()
-        sb.appendLine("@startuml")
-        sb.appendLine("!include <C4/C4_Context>")
-        sb.appendLine()
-
-        val personRegex = Regex("(?:(\\w+)\\s*=\\s*)?person\\s+\"([^\"]+)\"(?:\\s+\"([^\"]+)\")?")
-        val systemRegex = Regex("(?:(\\w+)\\s*=\\s*)?softwareSystem\\s+\"([^\"]+)\"(?:\\s+\"([^\"]+)\")?")
-        val relationRegex = Regex("(\\w+)\\s*->\\s*(\\w+)(?:\\s+\"([^\"]+)\")?")
-
-        personRegex.findAll(dslContent).forEach { match ->
-            val id = match.groupValues[1].ifEmpty { "person_${match.range.first}" }
-            val name = match.groupValues[2]
-            val description = match.groupValues[3]
-            sb.appendLine("Person($id, \"$name\"${if (description.isNotEmpty()) ", \"$description\"" else ""})")
-        }
-
-        systemRegex.findAll(dslContent).forEach { match ->
-            val id = match.groupValues[1].ifEmpty { "system_${match.range.first}" }
-            val name = match.groupValues[2]
-            val description = match.groupValues[3]
-            sb.appendLine("System($id, \"$name\"${if (description.isNotEmpty()) ", \"$description\"" else ""})")
-        }
-
-        sb.appendLine()
-
-        relationRegex.findAll(dslContent).forEach { match ->
-            val from = match.groupValues[1]
-            val to = match.groupValues[2]
-            val label = match.groupValues[3].ifEmpty { "uses" }
-            sb.appendLine("Rel($from, $to, \"$label\")")
-        }
-
-        sb.appendLine()
-        sb.appendLine("@enduml")
-        return sb.toString()
-    }
-
-    private fun convertToMermaid(dslContent: String): String {
-        val sb = StringBuilder()
-        sb.appendLine("flowchart TB")
-        sb.appendLine()
-
-        val personRegex = Regex("(?:(\\w+)\\s*=\\s*)?person\\s+\"([^\"]+)\"(?:\\s+\"([^\"]+)\")?")
-        val systemRegex = Regex("(?:(\\w+)\\s*=\\s*)?softwareSystem\\s+\"([^\"]+)\"(?:\\s+\"([^\"]+)\")?")
-        val relationRegex = Regex("(\\w+)\\s*->\\s*(\\w+)(?:\\s+\"([^\"]+)\")?")
-
-        personRegex.findAll(dslContent).forEach { match ->
-            val id = match.groupValues[1].ifEmpty { "person_${match.range.first}" }
-            val name = match.groupValues[2]
-            sb.appendLine("    $id[\"👤 $name\"]")
-        }
-
-        systemRegex.findAll(dslContent).forEach { match ->
-            val id = match.groupValues[1].ifEmpty { "system_${match.range.first}" }
-            val name = match.groupValues[2]
-            sb.appendLine("    $id[\"🖥️ $name\"]")
-        }
-
-        sb.appendLine()
-
-        relationRegex.findAll(dslContent).forEach { match ->
-            val from = match.groupValues[1]
-            val to = match.groupValues[2]
-            val label = match.groupValues[3].ifEmpty { "uses" }
-            sb.appendLine("    $from -->|$label| $to")
-        }
-
-        return sb.toString()
+    private fun diagram(dslFile: VirtualFile, viewKey: String?): ViewDiagram {
+        val ws = DiagramRendererService.workspace(dslFile)
+        return StructurizrPreviewEngine.diagram(ws, viewKey).second
     }
 
     private fun showNotification(title: String, content: String, type: NotificationType) {

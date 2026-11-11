@@ -9,6 +9,7 @@ import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
+import com.jakubjirak.structurizr.settings.StructurizrSettings
 import com.intellij.openapi.vfs.VirtualFile
 import com.jakubjirak.structurizr.language.StructurizrFileType
 
@@ -32,6 +33,7 @@ class StructurizrSplitEditorProvider : FileEditorProvider, DumbAware {
      */
     override fun createEditor(project: Project, file: VirtualFile): FileEditor {
         val textEditor = TextEditorProvider.getInstance().createEditor(project, file) as TextEditor
+        if (!StructurizrSettings.getInstance().enableLivePreview) return textEditor
         return try {
             StructurizrSplitEditor(project, textEditor, file)
         } catch (e: LinkageError) {

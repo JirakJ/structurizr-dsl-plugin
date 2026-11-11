@@ -45,7 +45,8 @@ class QuickExportDialog(
             }
         }
 
-        val defaultDir = sourceFile.parent?.path ?: System.getProperty("user.home")
+        val defaultDir = StructurizrExportService.getInstance(project).getDefaultExportDirectory()
+            .ifBlank { sourceFile.parent?.path ?: System.getProperty("user.home") }
         outputPathField.text = defaultDir
         fileNameField.text = sourceFile.nameWithoutExtension
     }

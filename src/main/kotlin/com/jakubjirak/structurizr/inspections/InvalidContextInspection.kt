@@ -4,7 +4,6 @@
  */
 package com.jakubjirak.structurizr.inspections
 
-import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
@@ -73,7 +72,6 @@ class InvalidContextInspection : StructurizrInspectionBase() {
                 element.firstChild ?: element,
                 "container can only be defined inside softwareSystem",
                 ProblemHighlightType.ERROR,
-                *LocalQuickFix.EMPTY_ARRAY
             )
         }
 
@@ -93,7 +91,6 @@ class InvalidContextInspection : StructurizrInspectionBase() {
                 element.firstChild ?: element,
                 "component can only be defined inside container",
                 ProblemHighlightType.ERROR,
-                *LocalQuickFix.EMPTY_ARRAY
             )
         }
 
@@ -103,7 +100,6 @@ class InvalidContextInspection : StructurizrInspectionBase() {
                     element.firstChild ?: element,
                     "$keyword can only be defined inside deploymentNode",
                     ProblemHighlightType.ERROR,
-                    *LocalQuickFix.EMPTY_ARRAY
                 )
             }
         }
@@ -114,7 +110,6 @@ class InvalidContextInspection : StructurizrInspectionBase() {
                     element.firstChild ?: element,
                     "infrastructureNode can only be defined inside deploymentNode",
                     ProblemHighlightType.ERROR,
-                    *LocalQuickFix.EMPTY_ARRAY
                 )
             }
         }
@@ -128,7 +123,6 @@ class InvalidContextInspection : StructurizrInspectionBase() {
                 element.firstChild ?: element,
                 "deploymentNode can only be defined inside deploymentEnvironment or another deploymentNode",
                 ProblemHighlightType.ERROR,
-                *LocalQuickFix.EMPTY_ARRAY
             )
         }
 

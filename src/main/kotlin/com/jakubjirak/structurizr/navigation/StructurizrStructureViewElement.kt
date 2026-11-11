@@ -127,7 +127,9 @@ class StructurizrStructureViewElement(
                 ?: node.findChildByType(StructurizrTypes.STAR)?.text
             // A deployment view names its environment by string or identifier right after the scope.
             val environment = if (view.elementType == StructurizrTypes.DEPLOYMENT_VIEW) {
-                node.getChildren(null).firstOrNull { it.elementType == StructurizrTypes.STRING || it.elementType == StructurizrTypes.IDENTIFIER }?.text?.let(::unquote)
+                node.getChildren(null)
+                    .firstOrNull { it.elementType == StructurizrTypes.STRING || it.elementType == StructurizrTypes.IDENTIFIER }
+                    ?.text?.let(::unquote)
             } else null
             // Only views whose first string *is* the key may fall back to it; for deployment and filtered
             // views the first string is the environment or the base view.
