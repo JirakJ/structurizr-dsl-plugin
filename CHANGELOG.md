@@ -4,6 +4,8 @@ All notable changes to the Structurizr DSL Plugin are documented here.
 
 ## [Unreleased]
 
+## [2026.9.0] - 2026-11-11
+
 ### Fixed
 - **PNG export and Copy as Image produced a placeholder** ("install Structurizr CLI") instead of the diagram. They now rasterize the same diagram the preview shows; PNG size fits the configured maximum width/height.
 - **Export dialog view picker offered fixed view types** ("Container", "Deployment", …) that did not match any view key, so the default view was exported instead. It now lists the views the workspace actually defines; "Export all views" uses the real view keys.
