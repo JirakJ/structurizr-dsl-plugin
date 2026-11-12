@@ -18,7 +18,7 @@ example and a review-findings.dsl with deliberate errors).
 **What to capture:** The Structure tool window open next to workspace.dsl showing the hierarchical tree (workspace → model → views).
 
 ### 4. Settings
-**What to capture:** Settings → Tools → Structurizr DSL page with export, editor, and code-completion options visible.
+**How it is made:** rendered from the real `StructurizrSettingsComponent` with default values by `SettingsScreenshotTest` — run `./gradlew test --tests "*SettingsScreenshotTest*" -PscreenshotsDir=$(pwd)/docs/screenshots`. Shows the Structurizr CLI (path, timeout), Live Preview (on/off, refresh while typing, refresh delay) and Export (format, directory, max PNG size, open after export) groups.
 
 ---
 
