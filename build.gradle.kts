@@ -85,6 +85,8 @@ intellijPlatform {
 tasks {
     test {
         useJUnitPlatform()
+        // Screenshot rendering opts in via: ./gradlew test -PscreenshotsDir=<absolute path>
+        systemProperty("structurizr.screenshots.dir", (project.findProperty("screenshotsDir") ?: "").toString())
     }
 
     wrapper {
